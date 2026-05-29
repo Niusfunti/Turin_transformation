@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turin in Transformation — 2020–2025</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" rel="stylesheet">
+  <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/scrollama@3/build/scrollama.min.js"></script>
+
+  <style>
+    /* ── Reset & tokens ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f172a;
+      --surface:   #1e293b;
+      --border:    #334155;
+      --text:      #f1f5f9;
+      --muted:     #94a3b8;
+      --accent:    #d9531e;
+      --font:      'Fraunces', Georgia, 'Times New Roman', serif;
+      --sans:      system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.65;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Cover ──────────────────────────────────────────────── */
+    #cover {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #cover-map {
+      position: absolute;
+      inset: 0;
+    }
+
+    #cover-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(15,23,42,0.96) 35%,
+        rgba(15,23,42,0.40) 58%,
+        rgba(15,23,42,0.0)  78%
+      );
+      display: flex;
+      align-items: center;
+      padding: 0 6vw;
+    }
+
+    #cover-text {
+      max-width: 520px;
+    }
+
+    .kicker {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    #cover-text h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    #cover-text .lead {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 420px;
+      margin-bottom: 2rem;
+    }
+
+    .scroll-hint {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: nudge 2.2s ease-in-out infinite;
+    }
+
+    .arrow-down {
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7px solid var(--muted);
+    }
+
+    @keyframes nudge {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+
+    /* ── Scrollytelling layout ──────────────────────────────── */
+    #scrolly {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    /* Sticky map panel */
+    #map-panel {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 58%;
+      flex-shrink: 0;
+      order: 2;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Map overlays */
+    #map-ui {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Period badge */
+    #period-badge {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.38rem 1.1rem;
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: opacity 0.35s, transform 0.35s;
+      opacity: 0;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    #period-badge.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Legend */
+    #legend {
+      position: absolute;
+      bottom: 48px;
+      left: 14px;
+      background: rgba(15,23,42,0.93);
+      border: 1px solid var(--border);
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      transition: opacity 0.35s;
+      opacity: 0;
+    }
+
+    #legend.visible { opacity: 1; }
+
+    #legend h4 {
+      font-family: var(--sans);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--sans);
+      font-size: 0.76rem;
+      color: var(--text);
+      padding: 0.12rem 0;
+      transition: opacity 0.3s;
+    }
+
+    .legend-item.dimmed { opacity: 0.2; }
+
+    .legend-swatch {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Stats chips */
+    #stats-chips {
+      position: absolute;
+      top: 14px;
+      right: 46px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: opacity 0.35s;
+      opacity: 0;
+    }
+
+    #stats-chips.visible { opacity: 1; }
+
+    .chip {
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 0.76rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .chip-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .chip-count {
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+
+    .chip-label { color: var(--muted); }
+
+    /* ── Article (scrollable text) ──────────────────────────── */
+    #article {
+      width: 42%;
+      order: 1;
+      padding: 0 2.5rem;
+    }
+
+    .step {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+
+    .step:first-child { padding-top: 12vh; }
+    .step:last-child  { padding-bottom: 20vh; }
+
+    .step-card {
+      background: rgba(15,23,42,0.82);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 1.75rem 1.6rem;
+      max-width: 390px;
+      border-radius: 0 8px 8px 0;
+      backdrop-filter: blur(4px);
+    }
+
+    .step-num {
+      font-family: var(--sans);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .step-card h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.7rem;
+      letter-spacing: -0.01em;
+    }
+
+    .step-card p {
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 0.65rem;
+    }
+
+    .step-card p:last-child { margin-bottom: 0; }
+
+    .big-num {
+      font-family: var(--sans);
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1;
+      display: inline-block;
+      vertical-align: baseline;
+      margin-right: 0.15rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 0.18rem 0.55rem;
+      border-radius: 20px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin: 0.18rem 0.12rem;
+      vertical-align: middle;
+    }
+
+    .pill-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+
+    /* History track (timeline sparkline in featured panels) */
+    .history-wrap {
+      margin: 0.9rem 0 0.5rem;
+    }
+
+    .history-label {
+      font-family: var(--sans);
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .history-track {
+      display: flex;
+      gap: 4px;
+    }
+
+    .history-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .history-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      margin-bottom: 3px;
+    }
+
+    .history-tick {
+      font-family: var(--sans);
+      font-size: 0.48rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* ── Trajectory chips (featured site history) ──────────── */
+    .trajectory {
+      margin: 0.9rem 0 0.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center;
+      font-size: 0.72rem;
+    }
+
+    .traj-chip {
+      padding: 3px 10px;
+      border-radius: 20px;
+      color: #fff;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    .traj-arrow {
+      color: var(--muted);
+      opacity: 0.7;
+      font-size: 0.85rem;
+    }
+
+    /* ── Timeline bar widget ────────────────────────────────── */
+    #timeline-bar {
+      position: absolute;
+      left: 14px;
+      bottom: 28px;
+      width: min(520px, calc(58vw - 28px));
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px 8px;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    #timeline-bar.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .tl-header {
+      font-family: var(--sans);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .tl-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 60px;
+    }
+
+    .tl-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column-reverse;
+      cursor: pointer;
+      border-radius: 3px 3px 0 0;
+      overflow: hidden;
+      min-width: 0;
+      transition: opacity 0.2s;
+    }
+
+    .tl-col.dim { opacity: 0.28; }
+
+    .tl-seg { width: 100%; }
+
+    .tl-labels {
+      display: flex;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .tl-labels span {
+      flex: 1;
+      text-align: center;
+      font-family: var(--sans);
+      font-size: 0.58rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* ── MapLibre popup ─────────────────────────────────────── */
+    .maplibregl-popup-content {
+      background: var(--surface) !important;
+      color: var(--text) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      padding: 1rem !important;
+      font-family: var(--sans);
+      font-size: 0.83rem;
+      max-width: 270px;
+      pointer-events: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+    }
+
+    .maplibregl-popup-close-button {
+      color: var(--muted) !important;
+      font-size: 1rem !important;
+      padding: 0.2rem 0.5rem !important;
+    }
+
+    .maplibregl-popup-tip {
+      border-top-color: var(--surface) !important;
+    }
+
+    .popup-code {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+
+    .popup-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.45rem;
+      line-height: 1.2;
+    }
+
+    .popup-status-row {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .popup-status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .popup-timeline {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 4px;
+    }
+
+    .popup-cell {
+      height: 8px;
+      flex: 1;
+      border-radius: 2px;
+    }
+
+    .popup-axis {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.56rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Outro ──────────────────────────────────────────────── */
+    #outro {
+      padding: 5rem 6vw 4rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    #outro h2 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    #outro p {
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 6vw;
+      font-family: var(--sans);
+      font-size: 0.74rem;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 800px) {
+      #scrolly { flex-direction: column; }
+
+      #map-panel {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: 50vh;
+        order: 1;
+      }
+
+      #article {
+        width: 100%;
+        order: 2;
+        padding: 0 1.2rem;
+      }
+
+      .step {
+        min-height: auto;
+        padding: 2.5rem 0;
+      }
+
+      .step:first-child { padding-top: 2rem; }
+
+      #cover-gradient {
+        background: rgba(15,23,42,0.88);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════ COVER ══════════════════════ -->
+<section id="cover">
+  <div id="cover-map"></div>
+  <div id="cover-gradient">
+    <div id="cover-text">
+      <div class="kicker">Urban data · Turin, Italy · 2020 – 2025</div>
+      <h1>Turin in<br>Transformation</h1>
+      <p class="lead">Five years. 206 urban projects. A city tracked, site by site, as it tries to reinvent itself.</p>
+      <div class="scroll-hint"><span class="arrow-down"></span>&thinsp;Scroll to explore</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ SCROLLY ══════════════════════ -->
+<section id="scrolly">
+
+  <!-- Sticky map -->
+  <div id="map-panel">
+    <div id="map"></div>
+    <div id="map-ui">
+      <div id="period-badge"></div>
+
+      <div id="legend">
+        <h4>Project status</h4>
+        <div class="legend-item" data-status="on hold">
+          <div class="legend-swatch" style="background:#c98a2b"></div>On hold
+        </div>
+        <div class="legend-item" data-status="procedure in progress">
+          <div class="legend-swatch" style="background:#3a7ca5"></div>Procedure in progress
+        </div>
+        <div class="legend-item" data-status="under construction">
+          <div class="legend-swatch" style="background:#d9531e"></div>Under construction
+        </div>
+        <div class="legend-item" data-status="completed">
+          <div class="legend-swatch" style="background:#4a8c5a"></div>Completed
+        </div>
+        <div class="legend-item" data-status="removed">
+          <div class="legend-swatch" style="background:#8a8377"></div>Removed
+        </div>
+      </div>
+
+      <div id="stats-chips"></div>
+
+      <div id="timeline-bar">
+        <div class="tl-header">Status of areas over time</div>
+        <div class="tl-bars" id="tl-bars"></div>
+        <div class="tl-labels" id="tl-labels"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrollable narrative -->
+  <div id="article">
+
+    <div class="step" data-step="overview">
+      <div class="step-card">
+        <div class="step-num">01 — The Dataset</div>
+        <h2>206 sites, tracked since 2020</h2>
+        <p>Since July 2020, the <em>Visitul</em> project has systematically documented every major urban transformation site in Turin — former industrial zones, historic buildings, public spaces under conversion.</p>
+        <p>Across seven snapshots over five years, each site was assigned a status. Together, they form a data portrait of a city in slow, uneven change.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="status">
+      <div class="step-card">
+        <div class="step-num">02 — The Colours</div>
+        <h2>Four stages of change</h2>
+        <p>Every site moves — or doesn't — through a pipeline:</p>
+        <p>
+          <span class="pill"><span class="pill-dot" style="background:#c98a2b"></span>On hold</span>
+          <span class="pill"><span class="pill-dot" style="background:#3a7ca5"></span>Procedure in progress</span>
+          <span class="pill"><span class="pill-dot" style="background:#d9531e"></span>Under construction</span>
+          <span class="pill"><span class="pill-dot" style="background:#4a8c5a"></span>Completed</span>
+        </p>
+        <p>The map shows where every tracked site stood in December 2025. Most of the city is still waiting.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="on_hold">
+      <div class="step-card">
+        <div class="step-num">03 — The Wait</div>
+        <h2><span class="big-num">42</span> sites on hold</h2>
+        <p>Nearly a third of tracked polygon sites remain "on hold" as of December 2025 — frozen in planning, ownership disputes, or political limbo.</p>
+        <p>Some have been documented as stalled since the very first snapshot in July 2020, five years without movement.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="procedure">
+      <div class="step-card">
+        <div class="step-num">04 — The Pipeline</div>
+        <h2><span class="big-num">43</span> in the machine</h2>
+        <p>A near-equal number are navigating bureaucratic procedures — permits, environmental reviews, public consultations. They've started, but nothing is yet built.</p>
+        <p>In Italian urban planning, this phase can take years. Some sites cycle in and out of it repeatedly.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="construction">
+      <div class="step-card">
+        <div class="step-num">05 — The Build</div>
+        <h2><span class="big-num">48</span> under construction</h2>
+        <p>The largest single group in December 2025: sites where work has physically begun — cranes, scaffolding, excavations across the city.</p>
+        <p>This is the highest construction count across all seven snapshots: a late surge after years of procedural delay.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="completed">
+      <div class="step-card">
+        <div class="step-num">06 — The Finish Line</div>
+        <h2>Only <span class="big-num">11</span> completed</h2>
+        <p>Across five years and 150 tracked polygon sites, just eleven have reached completion. Urban transformation, it turns out, is an exercise in patience.</p>
+        <p>Five more sites were removed from tracking entirely — demolished, repurposed, or their transformation abandoned.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="time_2020">
+      <div class="step-card">
+        <div class="step-num">07 — July 2020</div>
+        <h2>Where it began</h2>
+        <p>In the first snapshot, the map is almost entirely grey. The pandemic year: nearly every site documented, almost none moving. Turin had named its problems; it had not yet begun solving them.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="time_2022">
+      <div class="step-card">
+        <div class="step-num">08 — July 2022</div>
+        <h2>The tide turns</h2>
+        <p>Two years later, amber starts to spread — procedures launched, permits filed. A handful of orange patches mark construction that has actually started. The post-pandemic recovery brought renewed energy to planning departments.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="time_2025">
+      <div class="step-card">
+        <div class="step-num">09 — December 2025</div>
+        <h2>The city today</h2>
+        <p>By late 2025, orange dominates — cranes and scaffolding across the metropolitan area. But grey remains stubbornly present. Not every site found its momentum.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="featured_mercato">
+      <div class="step-card">
+        <div class="step-num">10 — A Success Story</div>
+        <h2>Mercato dei Fiori</h2>
+        <p>The former flower market (N031) is one of just eleven sites to make it all the way through the pipeline. On hold in 2020, procedures began in late 2021, construction started in December 2022 — and by late 2025, it was done.</p>
+        <div class="trajectory" id="mercato-trajectory"></div>
+        <p><a href="https://visitul.it/en/now/n031-mercato-fiori/" target="_blank">View on Visitul.it →</a></p>
+      </div>
+    </div>
+
+    <div class="step" data-step="featured_monteverdi">
+      <div class="step-card">
+        <div class="step-num">11 — An Unresolved Saga</div>
+        <h2>Monteverdi</h2>
+        <p>Site N067 holds the record: four status changes across five years. It climbed from "on hold" to "procedure in progress," fell back, rose again — and ended 2025 exactly where it started: on hold.</p>
+        <p>A portrait of bureaucratic uncertainty in miniature.</p>
+        <div class="trajectory" id="monteverdi-trajectory"></div>
+      </div>
+    </div>
+
+    <div class="step" data-step="explore">
+      <div class="step-card">
+        <div class="step-num">12 — Explore</div>
+        <h2>Every site has a story</h2>
+        <p>Click any area on the map to see its name, current status, and five-year history. The data comes from <em>Visitul.it</em>, a civic project tracking Turin's urban transformation.</p>
+        <p>206 sites. Fifteen more years of change ahead — at least.</p>
+      </div>
+    </div>
+
+  </div><!-- /article -->
+</section>
+
+<!-- ══════════════════════ OUTRO ══════════════════════ -->
+<div id="outro">
+  <h2>Follow the transformation</h2>
+  <p>The data behind this story is collected by <a href="https://visitul.it" target="_blank">Visitul.it</a>, an independent civic monitoring project. New snapshots are added periodically as Turin's urban landscape keeps changing.</p>
+</div>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer>
+  <div>Data: <a href="https://visitul.it" target="_blank">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
+  <div>Map: <a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank">MapLibre GL JS</a></div>
+</footer>
+
+<script src="config.js"></script>
+<script>
+'use strict';
+
+// ── Helpers ─────────────────────────────────────────────────
+
+function colorExpr(periodKey) {
+  const entries = Object.entries(CONFIG.statusColors);
+  const expr = ['match', ['get', periodKey]];
+  for (const [status, color] of entries) {
+    expr.push(status, color);
+  }
+  expr.push('#e2e8f0'); // fallback for null/empty
+  return expr;
+}
+
+function opacityExpr(periodKey, focusStatus) {
+  if (!focusStatus) return 0.78;
+  return ['case', ['==', ['get', periodKey], focusStatus], 0.88, 0.07];
+}
+
+function statusColor(s) {
+  return CONFIG.statusColors[s] || '#e2e8f0';
+}
+
+const PERIODS = CONFIG.periods;
+const LAST    = PERIODS[PERIODS.length - 1].key;
+
+const PERIOD_SHORT = {
+  july_2020:      '7/20',
+  october_2021:   '10/21',
+  july_2022:      '7/22',
+  december_2022:  '12/22',
+  april_2024:     '4/24',
+  february_2025:  '2/25',
+  december_2025:  '12/25',
+};
+
+// ── Cover map (decorative only) ──────────────────────────────
+
+const COVER_CENTER = CONFIG.map.coverCenter || CONFIG.map.center;
+
+const coverMap = new maplibregl.Map({
+  container:         'cover-map',
+  style:             CONFIG.map.coverStyle || CONFIG.map.style,
+  center:            COVER_CENTER,
+  zoom:              CONFIG.map.coverZoom,
+  pitch:             20,
+  interactive:       false,
+  attributionControl: false,
+});
+
+// Slow drift animation on the cover — drifts around coverCenter, not the main map center
+function driftCover() {
+  const lng = COVER_CENTER[0] + Math.sin(Date.now() / 40000) * 0.04;
+  const lat = COVER_CENTER[1] + Math.cos(Date.now() / 50000) * 0.02;
+  coverMap.setCenter([lng, lat]);
+  requestAnimationFrame(driftCover);
+}
+coverMap.on('load', () => {
+  coverMap.getStyle().layers.forEach(layer => {
+    const id = layer.id.toLowerCase();
+    const isRoad = (
+      id.includes('road')      || id.includes('highway')   || id.includes('motorway') ||
+      id.includes('trunk')     || id.includes('transit')   || id.includes('tunnel')   ||
+      id.includes('bridge')    || id.includes('transport') || id.includes('track')    ||
+      id.includes('street')    || id.includes('path')      || id.includes('railway')  ||
+      id.includes('rail')      || id.includes('ferry')
+    );
+    // Neutralise pink residential/commercial/retail/industrial areas
+    if (layer.type === 'fill') {
+      const isPink = (
+        id.includes('residential') || id.includes('commercial') ||
+        id.includes('retail')      || id.includes('industrial') ||
+        id.includes('suburb')      || id.includes('neighbourhood')
+      );
+      if (isPink) coverMap.setPaintProperty(layer.id, 'fill-color', '#f0ece4');
+    }
+    // Catch any landuse layer by name (single combined or split by class)
+    if (id.includes('landuse') && layer.type === 'fill') {
+      coverMap.setPaintProperty(layer.id, 'fill-color', [
+        'match', ['get', 'class'],
+        ['park', 'cemetery', 'pitch', 'garden',
+         'national_park', 'nature_reserve', 'protected_area', 'allotments'], '#c8e2c4',
+        '#f0ece4'
+      ]);
+    }
+
+    if (!isRoad) return;
+
+    const isMotorway = id.includes('motorway');
+
+    if (layer.type === 'line') {
+      // Motorways → white; everything else → light grey, thinner line
+      const color = isMotorway
+        ? '#ffffff'
+        : ['match', ['get', 'class'], 'motorway', '#ffffff', '#d0d0d0'];
+      coverMap.setPaintProperty(layer.id, 'line-color', color);
+
+      if (!isMotorway) {
+        coverMap.setPaintProperty(layer.id, 'line-width',
+          ['match', ['get', 'class'], 'motorway', 2, 0.7]
+        );
+      }
+    }
+    if (layer.type === 'fill') {
+      coverMap.setPaintProperty(layer.id, 'fill-color', isMotorway ? '#ffffff' : '#d8d8d8');
+    }
+
+    // Hide road number shields and name labels
+    if (layer.type === 'symbol') {
+      coverMap.setLayoutProperty(layer.id, 'visibility', 'none');
+    }
+  });
+  driftCover();
+});
+
+// ── Main interactive map ─────────────────────────────────────
+
+const map = new maplibregl.Map({
+  container: 'map',
+  style:     CONFIG.map.style,
+  center:    CONFIG.map.center,
+  zoom:      CONFIG.map.zoom,
+  minZoom:   CONFIG.map.minZoom,
+  maxZoom:   CONFIG.map.maxZoom,
+});
+
+map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right');
+
+// ── Popup ────────────────────────────────────────────────────
+
+const popup = new maplibregl.Popup({
+  closeButton:  true,
+  closeOnClick: false,
+  maxWidth:     '290px',
+});
+
+function showPopup(feat, lngLat) {
+  const p      = feat.properties;
+  const status = p[LAST] || 'unknown';
+  const color  = statusColor(status);
+
+  const timelineHtml = PERIODS.map(period => {
+    const s = p[period.key] || '';
+    return `<div class="popup-cell" style="background:${statusColor(s)}" title="${period.label}: ${s || '—'}"></div>`;
+  }).join('');
+
+  popup
+    .setLngLat(lngLat)
+    .setHTML(`
+      <div class="popup-code">${p.code || ''}</div>
+      <div class="popup-name">${p.name || 'Unknown site'}</div>
+      <div class="popup-status-row">
+        <div class="popup-status-dot" style="background:${color}"></div>
+        ${status}
+      </div>
+      <div class="popup-timeline">${timelineHtml}</div>
+      <div class="popup-axis"><span>Jul 2020</span><span>Dec 2025</span></div>
+      ${p.link_eng ? `<a href="${p.link_eng}" target="_blank" style="font-size:0.74rem">Visitul.it →</a>` : ''}
+    `)
+    .addTo(map);
+}
+
+// ── Load data and build layers ───────────────────────────────
+
+let polygonData = null;
+
+map.on('load', async () => {
+  // Fetch all data in parallel
+  const [polyGeo, pointGeo, lineGeo, adminGeo, boundaryGeo] = await Promise.all([
+    fetch('./data/polygon.geojson').then(r => r.json()),
+    fetch('./data/point.geojson').then(r => r.json()),
+    fetch('./data/line.geojson').then(r => r.json()),
+    fetch('./data/ctx_admin.geojson').then(r => r.json()),
+    fetch('./data/ctx_boundary.geojson').then(r => r.json()),
+  ]);
+  polygonData = polyGeo;
+
+  // ── Sources ──────────────────────────────────────────────
+
+  map.addSource('hillshade', {
+    type: 'image',
+    url: './data/hillshade.png',
+    coordinates: [
+      [7.320649, 45.401131],
+      [8.009368, 45.401131],
+      [8.009368, 44.791274],
+      [7.320649, 44.791274],
+    ],
+  });
+
+  map.addSource('ctx-admin',    { type: 'geojson', data: adminGeo });
+  map.addSource('ctx-boundary', { type: 'geojson', data: boundaryGeo });
+  map.addSource('polygons',     { type: 'geojson', data: polyGeo });
+  map.addSource('lines',        { type: 'geojson', data: lineGeo });
+  map.addSource('points',       { type: 'geojson', data: pointGeo });
+
+  // ── Layers in render order (bottom → top) ────────────────
+
+  // 1. Hillshade terrain shadow
+  map.addLayer({
+    id: 'ctx-hillshade', type: 'raster', source: 'hillshade',
+    paint: { 'raster-opacity': 0.32, 'raster-resampling': 'linear' },
+  });
+
+  // 2. Municipality boundaries — dashed
+  map.addLayer({
+    id: 'ctx-admin-line', type: 'line', source: 'ctx-admin',
+    paint: {
+      'line-color': '#475569',
+      'line-width': 1.2,
+      'line-opacity': 0.85,
+      'line-dasharray': [4, 3],
+    },
+  });
+
+  // 3. Turin city boundary — prominent solid line
+  map.addLayer({
+    id: 'ctx-boundary-line', type: 'line', source: 'ctx-boundary',
+    paint: { 'line-color': '#0f172a', 'line-width': 2.2, 'line-opacity': 0.9 },
+  });
+
+  // 4. Transformation polygon fill — extruded; height = 8m base + 18m per status change
+  map.addLayer({
+    id: 'polygons-fill', type: 'fill-extrusion', source: 'polygons',
+    paint: {
+      'fill-extrusion-color':   colorExpr(LAST),
+      'fill-extrusion-opacity': 0.82,
+      'fill-extrusion-height':  ['+', 8, ['*', ['coalesce', ['get', 'status_change_count'], 0], 18]],
+      'fill-extrusion-base':    0,
+    },
+  });
+
+  // 5. Polygon outline
+  map.addLayer({
+    id: 'polygons-outline', type: 'line', source: 'polygons',
+    paint: { 'line-color': '#fff', 'line-width': 0.5, 'line-opacity': 0.35 },
+  });
+
+  // 6. Line transformation features
+  map.addLayer({
+    id: 'lines-line', type: 'line', source: 'lines',
+    paint: { 'line-color': colorExpr(LAST), 'line-width': 4, 'line-opacity': 0.85 },
+  });
+
+  // 7. Point transformation features
+  map.addLayer({
+    id: 'points-circle', type: 'circle', source: 'points',
+    paint: {
+      'circle-color':        colorExpr(LAST),
+      'circle-radius':       6,
+      'circle-stroke-color': '#fff',
+      'circle-stroke-width': 1,
+      'circle-opacity':      0.85,
+    },
+  });
+
+  // 8. Highlight stroke — always on top
+  map.addLayer({
+    id: 'polygons-hl', type: 'line', source: 'polygons',
+    filter: ['==', ['get', 'code'], ''],
+    paint: { 'line-color': '#fff', 'line-width': 3.5, 'line-opacity': 1 },
+  });
+
+  // ── Interactions ─────────────────────────────────────────
+  map.on('click', ['polygons-fill', 'points-circle'], e => showPopup(e.features[0], e.lngLat));
+  map.on('mouseenter', ['polygons-fill', 'points-circle'], () => { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', ['polygons-fill', 'points-circle'], () => { map.getCanvas().style.cursor = ''; });
+
+  buildTrajectory('mercato-trajectory',    'N031');
+  buildTrajectory('monteverdi-trajectory', 'N067');
+  buildTimelineWidget(buildTimelineData(polygonData));
+
+  initScrollama();
+});
+
+// ── Trajectory chips (featured site history) ─────────────────
+
+function buildTrajectory(elementId, code) {
+  const el = document.getElementById(elementId);
+  if (!el || !polygonData) return;
+  const feat = polygonData.features.find(f => f.properties.code === code);
+  if (!feat) return;
+  const p = feat.properties;
+
+  // Collect unique consecutive statuses (deduplicate runs)
+  const statuses = PERIODS.map(period => p[period.key]).filter(Boolean);
+  const deduped = statuses.filter((s, i) => i === 0 || s !== statuses[i - 1]);
+
+  el.innerHTML = deduped.map((s, i) => {
+    const chip = `<span class="traj-chip" style="background:${statusColor(s)}" title="${s}">${shortStatus(s)}</span>`;
+    const arrow = i < deduped.length - 1 ? `<span class="traj-arrow">→</span>` : '';
+    return chip + arrow;
+  }).join('');
+}
+
+function shortStatus(s) {
+  if (s === 'on hold')                   return 'On hold';
+  if (s === 'procedure in progress')     return 'Procedure';
+  if (s.startsWith('under construction')) return 'Construction';
+  if (s === 'completed')                 return 'Completed';
+  if (s === 'removed')                   return 'Removed';
+  return s;
+}
+
+// ── Timeline bar widget ───────────────────────────────────────
+
+const TL_ORDER = [
+  'procedure in progress', 'on hold', 'under construction',
+  'under construction (demolition started)', 'partially under construction',
+  'partially under construction - partially completed', 'completed', 'removed',
+];
+
+const TL_PLABEL = {
+  july_2020: "'20", october_2021: "'21", july_2022: "'22",
+  december_2022: "'22b", april_2024: "'24", february_2025: "'25a", december_2025: "'25",
+};
+
+function buildTimelineData(geoData) {
+  return PERIODS.map(p => {
+    const counts = {};
+    geoData.features.forEach(f => {
+      const s = f.properties[p.key];
+      if (s) counts[s] = (counts[s] || 0) + 1;
+    });
+    return { period: p.key, counts };
+  });
+}
+
+function buildTimelineWidget(tlData) {
+  const barsEl  = document.getElementById('tl-bars');
+  const labsEl  = document.getElementById('tl-labels');
+  if (!barsEl || !labsEl) return;
+
+  const maxTot = Math.max(...tlData.map(t => Object.values(t.counts).reduce((a, b) => a + b, 0)));
+
+  tlData.forEach(t => {
+    const tot = Object.values(t.counts).reduce((a, b) => a + b, 0);
+    const col = document.createElement('div');
+    col.className = 'tl-col';
+    col.dataset.period = t.period;
+    col.style.height = (tot / maxTot * 100) + '%';
+
+    TL_ORDER.forEach(s => {
+      if (t.counts[s]) {
+        const seg = document.createElement('div');
+        seg.className = 'tl-seg';
+        seg.style.background = statusColor(s);
+        seg.style.height = (t.counts[s] / tot * 100) + '%';
+        col.appendChild(seg);
+      }
+    });
+
+    barsEl.appendChild(col);
+
+    const sp = document.createElement('span');
+    sp.textContent = TL_PLABEL[t.period] || t.period;
+    labsEl.appendChild(sp);
+  });
+}
+
+function highlightTL(periodKey) {
+  document.querySelectorAll('.tl-col').forEach(c => {
+    c.classList.toggle('dim', c.dataset.period !== periodKey);
+  });
+}
+
+// ── Scrollama ────────────────────────────────────────────────
+
+function initScrollama() {
+  const scroller = scrollama();
+
+  scroller
+    .setup({ step: '#article .step', offset: 0.5 })
+    .onStepEnter(({ element }) => applyStep(element.dataset.step));
+
+  window.addEventListener('resize', scroller.resize);
+}
+
+// ── Step transition logic ─────────────────────────────────────
+
+function applyStep(stepId) {
+  const cfg = CONFIG.steps.find(s => s.id === stepId);
+  if (!cfg) return;
+
+  if (!map.isStyleLoaded()) { map.once('idle', () => applyStep(stepId)); return; }
+
+  const { period, center, zoom, pitch, focusStatus, highlight } = cfg;
+
+  // Fly
+  map.flyTo({
+    center:   center || CONFIG.map.center,
+    zoom:     zoom   || CONFIG.map.zoom,
+    pitch:    pitch  || 0,
+    bearing:  0,
+    duration: 1400,
+    essential: true,
+  });
+
+  // Recolour layers
+  if (map.getLayer('polygons-fill')) {
+    map.setPaintProperty('polygons-fill', 'fill-extrusion-color',
+      focusStatus
+        ? ['case', ['==', ['get', period], focusStatus], colorExpr(period), '#1e293b']
+        : colorExpr(period)
+    );
+    map.setPaintProperty('polygons-fill', 'fill-extrusion-opacity', focusStatus ? 0.82 : 0.82);
+  }
+  if (map.getLayer('points-circle')) {
+    map.setPaintProperty('points-circle',   'circle-color',   colorExpr(period));
+    map.setPaintProperty('points-circle',   'circle-opacity', focusStatus ? 0.18 : 0.85);
+  }
+  if (map.getLayer('lines-line')) {
+    map.setPaintProperty('lines-line',      'line-color',     colorExpr(period));
+    map.setPaintProperty('lines-line',      'line-opacity',   focusStatus ? 0.18 : 0.85);
+  }
+
+  // Highlight
+  if (map.getLayer('polygons-hl')) {
+    map.setFilter('polygons-hl',
+      highlight
+        ? ['==', ['get', 'code'], highlight]
+        : ['==', ['get', 'code'], '']   // matches nothing
+    );
+  }
+
+  // Period badge
+  const badge = document.getElementById('period-badge');
+  const showBadge = ['time_2020', 'time_2022', 'time_2025'].includes(stepId);
+  if (showBadge) {
+    badge.textContent = PERIODS.find(p => p.key === period)?.label ?? period;
+    badge.classList.add('visible');
+  } else {
+    badge.classList.remove('visible');
+  }
+
+  // Legend
+  const showLegend = ![].includes(stepId); // show on all steps
+  document.getElementById('legend').classList.toggle('visible', showLegend);
+
+  document.querySelectorAll('.legend-item').forEach(item => {
+    if (focusStatus) {
+      item.classList.toggle('dimmed', item.dataset.status !== focusStatus);
+    } else {
+      item.classList.remove('dimmed');
+    }
+  });
+
+  // Timeline bar — show during temporal steps and highlight active period
+  const timelineSteps = ['time_2020', 'time_2022', 'time_2025'];
+  const tlBar = document.getElementById('timeline-bar');
+  if (tlBar) {
+    tlBar.classList.toggle('visible', timelineSteps.includes(stepId));
+    if (timelineSteps.includes(stepId)) highlightTL(period);
+  }
+
+  // Stats chips
+  renderChips(stepId);
+}
+
+// ── Stats chips per step ──────────────────────────────────────
+
+const CHIP_MAP = {
+  overview:     [{ color: '#d9531e', count: CONFIG.stats.total,        label: 'sites tracked'      }],
+  on_hold:      [{ color: '#c98a2b', count: CONFIG.stats.onHold,       label: 'on hold'            }],
+  procedure:    [{ color: '#3a7ca5', count: CONFIG.stats.procedure,    label: 'in procedure'       }],
+  construction: [{ color: '#d9531e', count: CONFIG.stats.construction, label: 'under construction' }],
+  completed:    [
+    { color: '#4a8c5a', count: CONFIG.stats.completed, label: 'completed' },
+    { color: '#8a8377', count: CONFIG.stats.removed,   label: 'removed'   },
+  ],
+};
+
+function renderChips(stepId) {
+  const bar = document.getElementById('stats-chips');
+  const items = CHIP_MAP[stepId];
+  if (items) {
+    bar.innerHTML = items.map(c => `
+      <div class="chip">
+        <div class="chip-dot" style="background:${c.color}"></div>
+        <span class="chip-count">${c.count}</span>
+        <span class="chip-label">${c.label}</span>
+      </div>
+    `).join('');
+    bar.classList.add('visible');
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+</script>
+</body>
+</html>
