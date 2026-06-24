@@ -26,6 +26,19 @@ const CONFIG = {
     'unknown':                                                '#b8b0a5',
   },
 
+  // Curated legend — which statuses appear in the on-map legend, and their labels.
+  // Colors are pulled from statusColors above, so they always stay in sync.
+  legend: [
+    { status: 'on hold',                label: 'On hold' },
+    { status: 'procedure in progress',  label: 'Procedure in progress' },
+    { status: 'under construction',     label: 'Under construction' },
+    { status: 'completed',              label: 'Completed' },
+    { status: 'removed',                label: 'Removed' },
+  ],
+
+  // Curated "pipeline" pills shown in the status step (a narrative subset of legend)
+  pipeline: ['on hold', 'procedure in progress', 'under construction', 'completed'],
+
   // Chronological snapshots in the data
   periods: [
     { key: 'july_2020',      label: 'July 2020' },

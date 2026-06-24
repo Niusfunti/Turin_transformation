@@ -4,11 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Turin in Transformation — 2020–2025</title>
+  <meta name="description" content="A five-year data story tracking 206 urban transformation sites across Turin, from 2020 to 2025 — built from the Visitul.it civic monitoring project.">
+  <meta name="author" content="Neus Fontanet Garcia">
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <!-- Social sharing (Open Graph + Twitter cards)
+       Live site confirmed at https://niusfunti.github.io/Turin_transformation/ (Pages serves this folder at root).
+       og:url/og:image are absolute because social crawlers fetch them from the live site.
+       NOTE: share-card.png must be deployed to the site root alongside index.html for the preview to work. -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="Turin in Transformation — 2020–2025">
+  <meta property="og:description" content="206 urban projects, tracked site by site across five years, as a city tries to reinvent itself.">
+  <meta property="og:image"       content="https://niusfunti.github.io/Turin_transformation/share-card.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url"         content="https://niusfunti.github.io/Turin_transformation/">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Turin in Transformation — 2020–2025">
+  <meta name="twitter:description" content="206 urban projects, tracked site by site across five years, as a city tries to reinvent itself.">
+  <meta name="twitter:image"       content="https://niusfunti.github.io/Turin_transformation/share-card.png">
 
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&display=swap" rel="stylesheet">
-  <link href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" rel="stylesheet">
-  <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
-  <script src="https://unpkg.com/scrollama@3/build/scrollama.min.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"
+        integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"
+          integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/scrollama@3.2.0/build/scrollama.min.js"
+          integrity="sha384-trt5UkaI73mRdcngswspDe4cRMaS9HcWgFr+IgtdUGBbsS4/9FF7MDIX7xl+O9zI" crossorigin="anonymous"></script>
 
   <style>
     /* ── Reset & tokens ─────────────────────────────────────── */
@@ -275,6 +299,7 @@
       padding: 1.75rem 1.6rem;
       max-width: 390px;
       border-radius: 0 8px 8px 0;
+      -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
     }
 
@@ -415,6 +440,7 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px 14px 8px;
+      -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
       opacity: 0;
       transition: opacity 0.4s;
@@ -472,6 +498,15 @@
       color: var(--muted);
       white-space: nowrap;
       overflow: hidden;
+    }
+
+    .tl-caption {
+      margin-top: 6px;
+      font-family: var(--sans);
+      font-size: 0.56rem;
+      color: var(--muted);
+      opacity: 0.75;
+      line-height: 1.3;
     }
 
     /* ── MapLibre popup ─────────────────────────────────────── */
@@ -570,14 +605,83 @@
     /* ── Footer ─────────────────────────────────────────────── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 1.5rem 6vw;
+      padding: 2.5rem 6vw 2rem;
       font-family: var(--sans);
-      font-size: 0.74rem;
+      font-size: 0.78rem;
       color: var(--muted);
+    }
+
+    .footer-main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-byline p {
+      margin-bottom: 0.25rem;
+      line-height: 1.6;
+    }
+
+    .footer-author {
+      font-size: 0.92rem;
+      color: var(--text);
+      margin-bottom: 0.5rem !important;
+    }
+
+    .footer-author strong { font-weight: 700; }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+
+    .footer-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .footer-funding {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.72rem;
+      line-height: 1.6;
+    }
+
+    .footer-credits {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 0.5rem;
+      gap: 0.4rem;
+      font-size: 0.70rem;
+      opacity: 0.65;
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .scroll-hint { animation: none; }
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
     }
 
     /* ── Responsive ─────────────────────────────────────────── */
@@ -637,21 +741,7 @@
 
       <div id="legend">
         <h4>Project status</h4>
-        <div class="legend-item" data-status="on hold">
-          <div class="legend-swatch" style="background:#c98a2b"></div>On hold
-        </div>
-        <div class="legend-item" data-status="procedure in progress">
-          <div class="legend-swatch" style="background:#3a7ca5"></div>Procedure in progress
-        </div>
-        <div class="legend-item" data-status="under construction">
-          <div class="legend-swatch" style="background:#d9531e"></div>Under construction
-        </div>
-        <div class="legend-item" data-status="completed">
-          <div class="legend-swatch" style="background:#4a8c5a"></div>Completed
-        </div>
-        <div class="legend-item" data-status="removed">
-          <div class="legend-swatch" style="background:#8a8377"></div>Removed
-        </div>
+        <!-- legend items injected from CONFIG.legend by buildLegend() -->
       </div>
 
       <div id="stats-chips"></div>
@@ -660,6 +750,7 @@
         <div class="tl-header">Status of areas over time</div>
         <div class="tl-bars" id="tl-bars"></div>
         <div class="tl-labels" id="tl-labels"></div>
+        <div class="tl-caption">Count of polygon areas with a recorded status per snapshot</div>
       </div>
     </div>
   </div>
@@ -681,12 +772,7 @@
         <div class="step-num">02 — The Colours</div>
         <h2>Four stages of change</h2>
         <p>Every site moves — or doesn't — through a pipeline:</p>
-        <p>
-          <span class="pill"><span class="pill-dot" style="background:#c98a2b"></span>On hold</span>
-          <span class="pill"><span class="pill-dot" style="background:#3a7ca5"></span>Procedure in progress</span>
-          <span class="pill"><span class="pill-dot" style="background:#d9531e"></span>Under construction</span>
-          <span class="pill"><span class="pill-dot" style="background:#4a8c5a"></span>Completed</span>
-        </p>
+        <p id="pipeline-pills"><!-- pills injected from CONFIG.pipeline by buildPipelinePills() --></p>
         <p>The map shows where every tracked site stood in December 2025. Most of the city is still waiting.</p>
       </div>
     </div>
@@ -757,7 +843,7 @@
         <h2>Mercato dei Fiori</h2>
         <p>The former flower market (N031) is one of just eleven sites to make it all the way through the pipeline. On hold in 2020, procedures began in late 2021, construction started in December 2022 — and by late 2025, it was done.</p>
         <div class="trajectory" id="mercato-trajectory"></div>
-        <p><a href="https://visitul.it/en/now/n031-mercato-fiori/" target="_blank">View on Visitul.it →</a></p>
+        <p><a href="https://visitul.it/en/now/n031-mercato-fiori/" target="_blank" rel="noopener">View on Visitul.it →</a></p>
       </div>
     </div>
 
@@ -786,13 +872,45 @@
 <!-- ══════════════════════ OUTRO ══════════════════════ -->
 <div id="outro">
   <h2>Follow the transformation</h2>
-  <p>The data behind this story is collected by <a href="https://visitul.it" target="_blank">Visitul.it</a>, an independent civic monitoring project. New snapshots are added periodically as Turin's urban landscape keeps changing.</p>
+  <p>The data behind this story is collected by <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a>, an independent civic monitoring project. New snapshots are added periodically as Turin's urban landscape keeps changing.</p>
 </div>
 
 <!-- ══════════════════════ FOOTER ══════════════════════ -->
 <footer>
-  <div>Data: <a href="https://visitul.it" target="_blank">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
-  <div>Map: <a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank">MapLibre GL JS</a></div>
+  <div class="footer-main">
+    <div class="footer-byline">
+      <p class="footer-author">A data story by <strong>Neus Fontanet Garcia</strong></p>
+      <p>Doctoral research at DIST, Politecnico di Torino</p>
+      <p>Supervised by Prof. Piero Boccardo &middot; Research group SDG11Lab</p>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:neus.fontanet@polito.it" aria-label="Email Neus Fontanet Garcia">
+        <span class="footer-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></span>
+        neus.fontanet@polito.it
+      </a>
+      <a href="https://www.linkedin.com/in/neusfontanet" target="_blank" rel="noopener" aria-label="LinkedIn profile (opens in a new tab)">
+        <span class="footer-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>
+        linkedin.com/in/neusfontanet
+      </a>
+      <a href="https://orcid.org/0009-0007-4691-4827" target="_blank" rel="noopener" aria-label="ORCID record (opens in a new tab)">
+        <span class="footer-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.016-5.325 5.016h-3.919V7.416zm1.444 1.303v7.444h2.297c2.359 0 3.872-1.581 3.872-3.722 0-1.744-1.228-3.722-3.872-3.722h-2.297z"/></svg></span>
+        ORCID 0009-0007-4691-4827
+      </a>
+      <a href="https://github.com/Niusfunti/Turin_transformation" target="_blank" rel="noopener" aria-label="Geodatabase on GitHub (opens in a new tab)">
+        <span class="footer-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span>
+        Geodatabase on GitHub
+      </a>
+    </div>
+  </div>
+
+  <div class="footer-funding">
+    Funded by the European Union – NextGenerationEU under PNRR — MUR DM 118/2023, CUP E14D23001910006
+  </div>
+
+  <div class="footer-credits">
+    <div>Data: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
+    <div>Map: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a></div>
+  </div>
 </footer>
 
 <script src="config.js"></script>
@@ -823,15 +941,41 @@ function statusColor(s) {
 const PERIODS = CONFIG.periods;
 const LAST    = PERIODS[PERIODS.length - 1].key;
 
-const PERIOD_SHORT = {
-  july_2020:      '7/20',
-  october_2021:   '10/21',
-  july_2022:      '7/22',
-  december_2022:  '12/22',
-  april_2024:     '4/24',
-  february_2025:  '2/25',
-  december_2025:  '12/25',
-};
+const PREFERS_REDUCED_MOTION =
+  window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Small HTML-escape helper for any data interpolated into setHTML()
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[ch]));
+}
+
+// Build the on-map legend from CONFIG.legend (colors from statusColors)
+function buildLegend() {
+  const el = document.getElementById('legend');
+  if (!el) return;
+  const items = (CONFIG.legend || []).map(({ status, label }) => `
+    <div class="legend-item" data-status="${escapeHtml(status)}">
+      <div class="legend-swatch" style="background:${statusColor(status)}"></div>${escapeHtml(label)}
+    </div>`).join('');
+  el.innerHTML = '<h4>Project status</h4>' + items;
+}
+
+// Display label for a status — prefers the curated CONFIG.legend label, else the raw status
+function statusLabel(status) {
+  const entry = (CONFIG.legend || []).find(l => l.status === status);
+  return entry ? entry.label : status;
+}
+
+// Build the narrative pipeline pills from CONFIG.pipeline (colors from statusColors)
+function buildPipelinePills() {
+  const el = document.getElementById('pipeline-pills');
+  if (!el) return;
+  el.innerHTML = (CONFIG.pipeline || []).map(status => `
+    <span class="pill"><span class="pill-dot" style="background:${statusColor(status)}"></span>${escapeHtml(statusLabel(status))}</span>
+  `).join('');
+}
 
 // ── Cover map (decorative only) ──────────────────────────────
 
@@ -847,12 +991,31 @@ const coverMap = new maplibregl.Map({
   attributionControl: false,
 });
 
-// Slow drift animation on the cover — drifts around coverCenter, not the main map center
+// Slow drift animation on the cover — drifts around coverCenter, not the main map center.
+// Pauses when the cover is scrolled off-screen, and is skipped entirely for reduced-motion users.
+let driftRAF = null;
 function driftCover() {
   const lng = COVER_CENTER[0] + Math.sin(Date.now() / 40000) * 0.04;
   const lat = COVER_CENTER[1] + Math.cos(Date.now() / 50000) * 0.02;
   coverMap.setCenter([lng, lat]);
-  requestAnimationFrame(driftCover);
+  driftRAF = requestAnimationFrame(driftCover);
+}
+
+function startDrift() {
+  if (PREFERS_REDUCED_MOTION || driftRAF !== null) return;
+  driftRAF = requestAnimationFrame(driftCover);
+}
+
+function stopDrift() {
+  if (driftRAF !== null) { cancelAnimationFrame(driftRAF); driftRAF = null; }
+}
+
+// Only run the drift while the cover is actually visible
+const coverEl = document.getElementById('cover');
+if (coverEl && 'IntersectionObserver' in window) {
+  new IntersectionObserver(entries => {
+    entries.forEach(e => e.isIntersecting ? startDrift() : stopDrift());
+  }, { threshold: 0.05 }).observe(coverEl);
 }
 coverMap.on('load', () => {
   coverMap.getStyle().layers.forEach(layer => {
@@ -909,7 +1072,7 @@ coverMap.on('load', () => {
       coverMap.setLayoutProperty(layer.id, 'visibility', 'none');
     }
   });
-  driftCover();
+  startDrift();
 });
 
 // ── Main interactive map ─────────────────────────────────────
@@ -941,21 +1104,25 @@ function showPopup(feat, lngLat) {
 
   const timelineHtml = PERIODS.map(period => {
     const s = p[period.key] || '';
-    return `<div class="popup-cell" style="background:${statusColor(s)}" title="${period.label}: ${s || '—'}"></div>`;
+    return `<div class="popup-cell" style="background:${statusColor(s)}" title="${escapeHtml(period.label)}: ${escapeHtml(s || '—')}"></div>`;
   }).join('');
+
+  const firstLabel = PERIODS[0].label;
+  const lastLabel  = PERIODS[PERIODS.length - 1].label;
+  const safeLink   = (p.link_eng && /^https?:\/\//i.test(p.link_eng)) ? p.link_eng : null;
 
   popup
     .setLngLat(lngLat)
     .setHTML(`
-      <div class="popup-code">${p.code || ''}</div>
-      <div class="popup-name">${p.name || 'Unknown site'}</div>
+      <div class="popup-code">${escapeHtml(p.code || '')}</div>
+      <div class="popup-name">${escapeHtml(p.name || 'Unknown site')}</div>
       <div class="popup-status-row">
         <div class="popup-status-dot" style="background:${color}"></div>
-        ${status}
+        ${escapeHtml(status)}
       </div>
       <div class="popup-timeline">${timelineHtml}</div>
-      <div class="popup-axis"><span>Jul 2020</span><span>Dec 2025</span></div>
-      ${p.link_eng ? `<a href="${p.link_eng}" target="_blank" style="font-size:0.74rem">Visitul.it →</a>` : ''}
+      <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
+      ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">Visitul.it →</a>` : ''}
     `)
     .addTo(map);
 }
@@ -964,15 +1131,45 @@ function showPopup(feat, lngLat) {
 
 let polygonData = null;
 
+// Fetch a GeoJSON file, throwing a clear error on HTTP failure (so file:// / 404s surface)
+async function fetchGeoJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(`${path} → HTTP ${r.status}`);
+  return r.json();
+}
+
+function showDataError(err) {
+  console.error('Failed to load map data:', err);
+  const panel = document.getElementById('map-panel');
+  if (!panel || document.getElementById('data-error')) return;
+  const box = document.createElement('div');
+  box.id = 'data-error';
+  box.style.cssText =
+    'position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;' +
+    'padding:2rem;text-align:center;background:rgba(15,23,42,0.95);color:#f1f5f9;' +
+    'font-family:system-ui,sans-serif;font-size:0.95rem;line-height:1.6;';
+  box.innerHTML =
+    '<div><strong style="display:block;font-size:1.1rem;margin-bottom:0.6rem">Map data could not be loaded</strong>' +
+    'The story data failed to load. If you opened this file directly, serve it over HTTP instead ' +
+    '(<code>python -m http.server</code>) and reload.</div>';
+  panel.appendChild(box);
+}
+
 map.on('load', async () => {
-  // Fetch all data in parallel
-  const [polyGeo, pointGeo, lineGeo, adminGeo, boundaryGeo] = await Promise.all([
-    fetch('./data/polygon.geojson').then(r => r.json()),
-    fetch('./data/point.geojson').then(r => r.json()),
-    fetch('./data/line.geojson').then(r => r.json()),
-    fetch('./data/ctx_admin.geojson').then(r => r.json()),
-    fetch('./data/ctx_boundary.geojson').then(r => r.json()),
-  ]);
+  let polyGeo, pointGeo, lineGeo, adminGeo, boundaryGeo;
+  try {
+    // Fetch all data in parallel
+    [polyGeo, pointGeo, lineGeo, adminGeo, boundaryGeo] = await Promise.all([
+      fetchGeoJSON('./data/polygon.geojson'),
+      fetchGeoJSON('./data/point.geojson'),
+      fetchGeoJSON('./data/line.geojson'),
+      fetchGeoJSON('./data/ctx_admin.geojson'),
+      fetchGeoJSON('./data/ctx_boundary.geojson'),
+    ]);
+  } catch (err) {
+    showDataError(err);
+    return;
+  }
   polygonData = polyGeo;
 
   // ── Sources ──────────────────────────────────────────────
@@ -1066,6 +1263,8 @@ map.on('load', async () => {
   map.on('mouseenter', ['polygons-fill', 'points-circle'], () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', ['polygons-fill', 'points-circle'], () => { map.getCanvas().style.cursor = ''; });
 
+  buildLegend();
+  buildPipelinePills();
   buildTrajectory('mercato-trajectory',    'N031');
   buildTrajectory('monteverdi-trajectory', 'N067');
   buildTimelineWidget(buildTimelineData(polygonData));
@@ -1203,7 +1402,8 @@ function applyStep(stepId) {
         ? ['case', ['==', ['get', period], focusStatus], colorExpr(period), '#1e293b']
         : colorExpr(period)
     );
-    map.setPaintProperty('polygons-fill', 'fill-extrusion-opacity', focusStatus ? 0.82 : 0.82);
+    // fill-extrusion-opacity is layer-wide (not per-feature), so focus dimming is done via color above
+    map.setPaintProperty('polygons-fill', 'fill-extrusion-opacity', 0.82);
   }
   if (map.getLayer('points-circle')) {
     map.setPaintProperty('points-circle',   'circle-color',   colorExpr(period));
@@ -1259,14 +1459,15 @@ function applyStep(stepId) {
 
 // ── Stats chips per step ──────────────────────────────────────
 
+// Chip colors are pulled from CONFIG.statusColors so they stay in sync with the palette.
 const CHIP_MAP = {
-  overview:     [{ color: '#d9531e', count: CONFIG.stats.total,        label: 'sites tracked'      }],
-  on_hold:      [{ color: '#c98a2b', count: CONFIG.stats.onHold,       label: 'on hold'            }],
-  procedure:    [{ color: '#3a7ca5', count: CONFIG.stats.procedure,    label: 'in procedure'       }],
-  construction: [{ color: '#d9531e', count: CONFIG.stats.construction, label: 'under construction' }],
+  overview:     [{ color: CONFIG.statusColors['under construction'],    count: CONFIG.stats.total,        label: 'sites tracked'      }],
+  on_hold:      [{ color: statusColor('on hold'),                       count: CONFIG.stats.onHold,       label: 'on hold'            }],
+  procedure:    [{ color: statusColor('procedure in progress'),         count: CONFIG.stats.procedure,    label: 'in procedure'       }],
+  construction: [{ color: statusColor('under construction'),            count: CONFIG.stats.construction, label: 'under construction' }],
   completed:    [
-    { color: '#4a8c5a', count: CONFIG.stats.completed, label: 'completed' },
-    { color: '#8a8377', count: CONFIG.stats.removed,   label: 'removed'   },
+    { color: statusColor('completed'), count: CONFIG.stats.completed, label: 'completed' },
+    { color: statusColor('removed'),   count: CONFIG.stats.removed,   label: 'removed'   },
   ],
 };
 
