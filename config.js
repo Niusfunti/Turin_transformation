@@ -39,15 +39,15 @@ const CONFIG = {
   // Curated "pipeline" pills shown in the status step (a narrative subset of legend)
   pipeline: ['on hold', 'procedure in progress', 'under construction', 'completed'],
 
-  // Chronological snapshots in the data
+  // Chronological snapshots in the data (labelIt = Italian label for the language toggle)
   periods: [
-    { key: 'july_2020',      label: 'July 2020' },
-    { key: 'october_2021',   label: 'October 2021' },
-    { key: 'july_2022',      label: 'July 2022' },
-    { key: 'december_2022',  label: 'December 2022' },
-    { key: 'april_2024',     label: 'April 2024' },
-    { key: 'february_2025',  label: 'February 2025' },
-    { key: 'december_2025',  label: 'December 2025' },
+    { key: 'july_2020',      label: 'July 2020',      labelIt: 'Luglio 2020' },
+    { key: 'october_2021',   label: 'October 2021',   labelIt: 'Ottobre 2021' },
+    { key: 'july_2022',      label: 'July 2022',      labelIt: 'Luglio 2022' },
+    { key: 'december_2022',  label: 'December 2022',  labelIt: 'Dicembre 2022' },
+    { key: 'april_2024',     label: 'April 2024',     labelIt: 'Aprile 2024' },
+    { key: 'february_2025',  label: 'February 2025',  labelIt: 'Febbraio 2025' },
+    { key: 'december_2025',  label: 'December 2025',  labelIt: 'Dicembre 2025' },
   ],
 
   // Aggregate statistics shown in the stat chips (derived from the data)
@@ -61,6 +61,199 @@ const CONFIG = {
     construction:  48,
     completed:     11,
     removed:        5,
+  },
+
+  // ── Internationalisation (English ⇄ Italian) ──────────────────────────────
+  // English is the source language and lives inline in index.html. This block
+  // holds the Italian overrides plus the label dictionaries used by the
+  // dynamically generated UI (legend, pills, chips, popups, period badge).
+  //
+  //  - i18n.it ........... Italian HTML keyed by the element's data-i18n attribute
+  //                        (a missing key falls back to the English in the DOM)
+  //  - i18n.statusFull ... full status label per language, keyed by the English
+  //                        status *data value* stored in the GeoJSON
+  //  - i18n.statusShort .. short status label (trajectory chips)
+  //  - i18n.chipLabels ... labels for the stat chips, keyed by a chip key
+  //  - i18n.uiText ....... misc programmatic strings (legend title, popup, doc title)
+  i18n: {
+
+    // Languages offered by the top-right switcher. First entry is the default.
+    languages: [
+      { code: 'en', label: 'EN', name: 'English' },
+      { code: 'it', label: 'IT', name: 'Italiano' },
+    ],
+
+    statusFull: {
+      en: {
+        'on hold':                                            'On hold',
+        'procedure in progress':                              'Procedure in progress',
+        'under construction':                                 'Under construction',
+        'under construction (demolition started)':            'Under construction (demolition started)',
+        'partially under construction':                       'Partially under construction',
+        'partially under construction - partially completed': 'Partially under construction – partially completed',
+        'completed':                                          'Completed',
+        'removed':                                            'Removed',
+        'unknown':                                            'Unknown',
+      },
+      it: {
+        'on hold':                                            'In attesa',
+        'procedure in progress':                              'Procedimento in corso',
+        'under construction':                                 'In cantiere',
+        'under construction (demolition started)':            'In cantiere (demolizione iniziata)',
+        'partially under construction':                       'Parzialmente in cantiere',
+        'partially under construction - partially completed': 'Parzialmente in cantiere – parzialmente completata',
+        'completed':                                          'Completato',
+        'removed':                                            'Rimosso',
+        'unknown':                                            'Sconosciuto',
+      },
+    },
+
+    statusShort: {
+      en: {
+        'on hold':               'On hold',
+        'procedure in progress': 'Procedure',
+        'under construction':    'Construction',
+        'completed':             'Completed',
+        'removed':               'Removed',
+      },
+      it: {
+        'on hold':               'In attesa',
+        'procedure in progress': 'Procedimento',
+        'under construction':    'Cantiere',
+        'completed':             'Completato',
+        'removed':               'Rimosso',
+      },
+    },
+
+    chipLabels: {
+      en: {
+        tracked:      'sites tracked',
+        onHold:       'on hold',
+        procedure:    'in procedure',
+        construction: 'under construction',
+        completed:    'completed',
+        removed:      'removed',
+      },
+      it: {
+        tracked:      'aree monitorate',
+        onHold:       'in attesa',
+        procedure:    'in procedimento',
+        construction: 'in cantiere',
+        completed:    'completate',
+        removed:      'rimosse',
+      },
+    },
+
+    uiText: {
+      en: {
+        legendTitle: 'Project status',
+        unknownSite: 'Unknown site',
+        visitulLink: 'Visitul.it →',
+        docTitle:    'Turin in Transformation — 2020–2025',
+      },
+      it: {
+        legendTitle: 'Stato dei progetti',
+        unknownSite: 'Area sconosciuta',
+        visitulLink: 'Visitul.it →',
+        docTitle:    'Torino in trasformazione — 2020–2025',
+      },
+    },
+
+    // Italian text for the static narrative, cover, outro and footer.
+    // Keys match the data-i18n attributes in index.html. HTML is allowed.
+    it: {
+      // Cover
+      'cover.kicker': 'Dati urbani · Torino, Italia · 2020 – 2025',
+      'cover.h1':     'Torino in<br>trasformazione',
+      'cover.lead':   '206 progetti urbani. Una città monitorata, area per area, mentre tenta di reinventarsi.',
+      'cover.scroll': 'Scorri per esplorare',
+
+      // Step 01 — overview
+      's1.num': '01 — Il dataset',
+      's1.h2':  '206 aree, monitorate dal 2020',
+      's1.p1':  'Dal luglio 2020 il progetto <em>Visitul</em> documenta sistematicamente ogni grande area di trasformazione urbana di Torino — ex zone industriali, edifici storici, spazi pubblici in riconversione.',
+      's1.p2':  'In sette rilevazioni nell’arco di cinque anni, a ogni area è stato assegnato uno stato. Insieme compongono il ritratto di una città in lento e disomogeneo cambiamento.',
+
+      // Step 02 — status
+      's2.num': '02 — I colori',
+      's2.h2':  'Quattro fasi del cambiamento',
+      's2.p1':  'Ogni area attraversa — o no — un percorso:',
+      's2.p2':  'La mappa mostra lo stato di ogni area monitorata a dicembre 2025. Gran parte della città è ancora in attesa.',
+
+      // Step 03 — on hold
+      's3.num': '03 — L’attesa',
+      's3.h2':  '<span class="big-num">42</span> aree in attesa',
+      's3.p1':  'Quasi un terzo delle aree poligonali monitorate resta «in attesa» a dicembre 2025 — bloccate tra pianificazione, contenziosi sulla proprietà o stallo politico.',
+      's3.p2':  'Alcune risultano ferme fin dalla primissima rilevazione del luglio 2020: cinque anni senza movimenti.',
+
+      // Step 04 — procedure
+      's4.num': '04 — L’iter',
+      's4.h2':  '<span class="big-num">43</span> nella macchina burocratica',
+      's4.p1':  'Un numero quasi pari sta attraversando iter burocratici — permessi, valutazioni ambientali, consultazioni pubbliche. Sono partite, ma nulla è ancora costruito.',
+      's4.p2':  'Nell’urbanistica italiana questa fase può durare anni. Alcune aree vi entrano ed escono ripetutamente.',
+
+      // Step 05 — construction
+      's5.num': '05 — Il cantiere',
+      's5.h2':  '<span class="big-num">48</span> in cantiere',
+      's5.p1':  'Il gruppo più numeroso a dicembre 2025: aree dove i lavori sono fisicamente iniziati — gru, ponteggi, scavi in tutta la città.',
+      's5.p2':  'È il numero di cantieri più alto fra tutte e sette le rilevazioni: un’impennata tardiva dopo anni di ritardi procedurali.',
+
+      // Step 06 — completed
+      's6.num': '06 — Il traguardo',
+      's6.h2':  'Solo <span class="big-num">11</span> completate',
+      's6.p1':  'In cinque anni e 150 aree poligonali monitorate, solo undici hanno raggiunto il completamento. La trasformazione urbana, si scopre, è un esercizio di pazienza.',
+      's6.p2':  'Altre cinque aree sono state rimosse dal monitoraggio — demolite, riconvertite o con la trasformazione abbandonata.',
+
+      // Step 07 — July 2020
+      's7.num': '07 — Luglio 2020',
+      's7.h2':  'Dove tutto è iniziato',
+      's7.p1':  'Nella prima rilevazione la mappa è quasi interamente grigia. L’anno della pandemia: quasi ogni area documentata, quasi nessuna in movimento. Torino aveva dato un nome ai suoi problemi; non aveva ancora iniziato a risolverli.',
+
+      // Step 08 — July 2022
+      's8.num': '08 — Luglio 2022',
+      's8.h2':  'La svolta',
+      's8.p1':  'Due anni dopo, l’ambra inizia a diffondersi — iter avviati, permessi depositati. Qualche macchia arancione segnala cantieri davvero partiti. La ripresa post-pandemica ha portato nuova energia agli uffici di pianificazione.',
+
+      // Step 09 — December 2025
+      's9.num': '09 — Dicembre 2025',
+      's9.h2':  'La città oggi',
+      's9.p1':  'A fine 2025 domina l’arancione — gru e ponteggi in tutta l’area metropolitana. Ma il grigio resta ostinatamente presente. Non tutte le aree hanno trovato il loro slancio.',
+
+      // Step 10 — Mercato dei Fiori
+      's10.num':  '10 — Una storia di successo',
+      's10.h2':   'Mercato dei Fiori',
+      's10.p1':   'L’ex mercato dei fiori (N031) è una delle sole undici aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e concluso entro fine 2025.',
+      's10.link': 'Vedi su Visitul.it →',
+
+      // Step 11 — Monteverdi
+      's11.num': '11 — Una vicenda irrisolta',
+      's11.h2':  'Monteverdi',
+      's11.p1':  'L’area N067 detiene il record: quattro cambi di stato in cinque anni. È passata da «in attesa» a «procedimento in corso», è retrocessa, è risalita — e ha chiuso il 2025 esattamente dov’era partita: in attesa.',
+      's11.p2':  'Un ritratto in miniatura dell’incertezza burocratica.',
+
+      // Step 12 — explore
+      's12.num': '12 — Esplora',
+      's12.h2':  'Ogni area ha una storia',
+      's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono da <em>Visitul.it</em>, un progetto civico che monitora la trasformazione urbana di Torino.',
+      's12.p2':  '206 aree. Almeno altri quindici anni di cambiamenti davanti.',
+
+      // Timeline widget
+      'tl.header':  'Stato delle aree nel tempo',
+      'tl.caption': 'Numero di aree poligonali con uno stato registrato per rilevazione',
+
+      // Outro
+      'outro.h2': 'Segui la trasformazione',
+      'outro.p':  'I dati alla base di questa storia sono raccolti da <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a>, un progetto indipendente di monitoraggio civico. Nuove rilevazioni vengono aggiunte periodicamente, man mano che il paesaggio urbano di Torino continua a cambiare.',
+
+      // Footer
+      'footer.author':  'Una data story di <strong>Neus Fontanet Garcia</strong>',
+      'footer.role':    'Dottorato di ricerca presso il DIST, Politecnico di Torino',
+      'footer.sup':     'Supervisione del Prof. Piero Boccardo &middot; Gruppo di ricerca SDG11Lab',
+      'footer.github':  'Geodatabase su GitHub',
+      'footer.funding': 'Finanziato dall’Unione Europea – NextGenerationEU nell’ambito del PNRR — MUR DM 118/2023, CUP E14D23001910006',
+      'footer.credits.data': 'Dati: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; Catasto INSPIRE',
+      'footer.credits.map':  'Mappa: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a>',
+    },
   },
 
   // Featured cases used in the narrative steps

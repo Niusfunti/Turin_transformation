@@ -673,6 +673,47 @@
       opacity: 0.65;
     }
 
+    /* ── Language switcher ──────────────────────────────────── */
+    /* Absolute (not fixed) so it sits at the top of the page and scrolls away
+       with the cover, rather than staying pinned over the map UI. */
+    #lang-switch {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 1200;
+      display: flex;
+      gap: 2px;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+
+    #lang-switch button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.26rem 0.6rem;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    #lang-switch button:hover { color: var(--text); }
+
+    #lang-switch button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
     /* ── Reduced motion ─────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -720,12 +761,17 @@
 <!-- ══════════════════════ COVER ══════════════════════ -->
 <section id="cover">
   <div id="cover-map"></div>
+
+  <!-- Language switcher — lives in the cover so it scrolls away with the header.
+       Buttons are injected from CONFIG.i18n.languages by buildLangSwitch() -->
+  <div id="lang-switch" role="group" aria-label="Language / Lingua"></div>
+
   <div id="cover-gradient">
     <div id="cover-text">
-      <div class="kicker">Urban data · Turin, Italy · 2020 – 2025</div>
-      <h1>Turin in<br>Transformation</h1>
-      <p class="lead">206 urban projects. A city tracked, site by site, as it tries to reinvent itself.</p>
-      <div class="scroll-hint"><span class="arrow-down"></span>&thinsp;Scroll to explore</div>
+      <div class="kicker" data-i18n="cover.kicker">Urban data · Turin, Italy · 2020 – 2025</div>
+      <h1 data-i18n="cover.h1">Turin in<br>Transformation</h1>
+      <p class="lead" data-i18n="cover.lead">206 urban projects. A city tracked, site by site, as it tries to reinvent itself.</p>
+      <div class="scroll-hint"><span class="arrow-down"></span>&thinsp;<span data-i18n="cover.scroll">Scroll to explore</span></div>
     </div>
   </div>
 </section>
@@ -747,10 +793,10 @@
       <div id="stats-chips"></div>
 
       <div id="timeline-bar">
-        <div class="tl-header">Status of areas over time</div>
+        <div class="tl-header" data-i18n="tl.header">Status of areas over time</div>
         <div class="tl-bars" id="tl-bars"></div>
         <div class="tl-labels" id="tl-labels"></div>
-        <div class="tl-caption">Count of polygon areas with a recorded status per snapshot</div>
+        <div class="tl-caption" data-i18n="tl.caption">Count of polygon areas with a recorded status per snapshot</div>
       </div>
     </div>
   </div>
@@ -760,109 +806,109 @@
 
     <div class="step" data-step="overview">
       <div class="step-card">
-        <div class="step-num">01 — The Dataset</div>
-        <h2>206 sites, tracked since 2020</h2>
-        <p>Since July 2020, the <em>Visitul</em> project has systematically documented every major urban transformation site in Turin — former industrial zones, historic buildings, public spaces under conversion.</p>
-        <p>Across seven snapshots over five years, each site was assigned a status. Together, they form a data portrait of a city in slow, uneven change.</p>
+        <div class="step-num" data-i18n="s1.num">01 — The Dataset</div>
+        <h2 data-i18n="s1.h2">206 sites, tracked since 2020</h2>
+        <p data-i18n="s1.p1">Since July 2020, the <em>Visitul</em> project has systematically documented every major urban transformation site in Turin — former industrial zones, historic buildings, public spaces under conversion.</p>
+        <p data-i18n="s1.p2">Across seven snapshots over five years, each site was assigned a status. Together, they form a data portrait of a city in slow, uneven change.</p>
       </div>
     </div>
 
     <div class="step" data-step="status">
       <div class="step-card">
-        <div class="step-num">02 — The Colours</div>
-        <h2>Four stages of change</h2>
-        <p>Every site moves — or doesn't — through a pipeline:</p>
+        <div class="step-num" data-i18n="s2.num">02 — The Colours</div>
+        <h2 data-i18n="s2.h2">Four stages of change</h2>
+        <p data-i18n="s2.p1">Every site moves — or doesn't — through a pipeline:</p>
         <p id="pipeline-pills"><!-- pills injected from CONFIG.pipeline by buildPipelinePills() --></p>
-        <p>The map shows where every tracked site stood in December 2025. Most of the city is still waiting.</p>
+        <p data-i18n="s2.p2">The map shows where every tracked site stood in December 2025. Most of the city is still waiting.</p>
       </div>
     </div>
 
     <div class="step" data-step="on_hold">
       <div class="step-card">
-        <div class="step-num">03 — The Wait</div>
-        <h2><span class="big-num">42</span> sites on hold</h2>
-        <p>Nearly a third of tracked polygon sites remain "on hold" as of December 2025 — frozen in planning, ownership disputes, or political limbo.</p>
-        <p>Some have been documented as stalled since the very first snapshot in July 2020, five years without movement.</p>
+        <div class="step-num" data-i18n="s3.num">03 — The Wait</div>
+        <h2 data-i18n="s3.h2"><span class="big-num">42</span> sites on hold</h2>
+        <p data-i18n="s3.p1">Nearly a third of tracked polygon sites remain "on hold" as of December 2025 — frozen in planning, ownership disputes, or political limbo.</p>
+        <p data-i18n="s3.p2">Some have been documented as stalled since the very first snapshot in July 2020, five years without movement.</p>
       </div>
     </div>
 
     <div class="step" data-step="procedure">
       <div class="step-card">
-        <div class="step-num">04 — The Pipeline</div>
-        <h2><span class="big-num">43</span> in the machine</h2>
-        <p>A near-equal number are navigating bureaucratic procedures — permits, environmental reviews, public consultations. They've started, but nothing is yet built.</p>
-        <p>In Italian urban planning, this phase can take years. Some sites cycle in and out of it repeatedly.</p>
+        <div class="step-num" data-i18n="s4.num">04 — The Pipeline</div>
+        <h2 data-i18n="s4.h2"><span class="big-num">43</span> in the machine</h2>
+        <p data-i18n="s4.p1">A near-equal number are navigating bureaucratic procedures — permits, environmental reviews, public consultations. They've started, but nothing is yet built.</p>
+        <p data-i18n="s4.p2">In Italian urban planning, this phase can take years. Some sites cycle in and out of it repeatedly.</p>
       </div>
     </div>
 
     <div class="step" data-step="construction">
       <div class="step-card">
-        <div class="step-num">05 — The Build</div>
-        <h2><span class="big-num">48</span> under construction</h2>
-        <p>The largest single group in December 2025: sites where work has physically begun — cranes, scaffolding, excavations across the city.</p>
-        <p>This is the highest construction count across all seven snapshots: a late surge after years of procedural delay.</p>
+        <div class="step-num" data-i18n="s5.num">05 — The Build</div>
+        <h2 data-i18n="s5.h2"><span class="big-num">48</span> under construction</h2>
+        <p data-i18n="s5.p1">The largest single group in December 2025: sites where work has physically begun — cranes, scaffolding, excavations across the city.</p>
+        <p data-i18n="s5.p2">This is the highest construction count across all seven snapshots: a late surge after years of procedural delay.</p>
       </div>
     </div>
 
     <div class="step" data-step="completed">
       <div class="step-card">
-        <div class="step-num">06 — The Finish Line</div>
-        <h2>Only <span class="big-num">11</span> completed</h2>
-        <p>Across five years and 150 tracked polygon sites, just eleven have reached completion. Urban transformation, it turns out, is an exercise in patience.</p>
-        <p>Five more sites were removed from tracking entirely — demolished, repurposed, or their transformation abandoned.</p>
+        <div class="step-num" data-i18n="s6.num">06 — The Finish Line</div>
+        <h2 data-i18n="s6.h2">Only <span class="big-num">11</span> completed</h2>
+        <p data-i18n="s6.p1">Across five years and 150 tracked polygon sites, just eleven have reached completion. Urban transformation, it turns out, is an exercise in patience.</p>
+        <p data-i18n="s6.p2">Five more sites were removed from tracking entirely — demolished, repurposed, or their transformation abandoned.</p>
       </div>
     </div>
 
     <div class="step" data-step="time_2020">
       <div class="step-card">
-        <div class="step-num">07 — July 2020</div>
-        <h2>Where it began</h2>
-        <p>In the first snapshot, the map is almost entirely grey. The pandemic year: nearly every site documented, almost none moving. Turin had named its problems; it had not yet begun solving them.</p>
+        <div class="step-num" data-i18n="s7.num">07 — July 2020</div>
+        <h2 data-i18n="s7.h2">Where it began</h2>
+        <p data-i18n="s7.p1">In the first snapshot, the map is almost entirely grey. The pandemic year: nearly every site documented, almost none moving. Turin had named its problems; it had not yet begun solving them.</p>
       </div>
     </div>
 
     <div class="step" data-step="time_2022">
       <div class="step-card">
-        <div class="step-num">08 — July 2022</div>
-        <h2>The tide turns</h2>
-        <p>Two years later, amber starts to spread — procedures launched, permits filed. A handful of orange patches mark construction that has actually started. The post-pandemic recovery brought renewed energy to planning departments.</p>
+        <div class="step-num" data-i18n="s8.num">08 — July 2022</div>
+        <h2 data-i18n="s8.h2">The tide turns</h2>
+        <p data-i18n="s8.p1">Two years later, amber starts to spread — procedures launched, permits filed. A handful of orange patches mark construction that has actually started. The post-pandemic recovery brought renewed energy to planning departments.</p>
       </div>
     </div>
 
     <div class="step" data-step="time_2025">
       <div class="step-card">
-        <div class="step-num">09 — December 2025</div>
-        <h2>The city today</h2>
-        <p>By late 2025, orange dominates — cranes and scaffolding across the metropolitan area. But grey remains stubbornly present. Not every site found its momentum.</p>
+        <div class="step-num" data-i18n="s9.num">09 — December 2025</div>
+        <h2 data-i18n="s9.h2">The city today</h2>
+        <p data-i18n="s9.p1">By late 2025, orange dominates — cranes and scaffolding across the metropolitan area. But grey remains stubbornly present. Not every site found its momentum.</p>
       </div>
     </div>
 
     <div class="step" data-step="featured_mercato">
       <div class="step-card">
-        <div class="step-num">10 — A Success Story</div>
-        <h2>Mercato dei Fiori</h2>
-        <p>The former flower market (N031) is one of just eleven sites to make it all the way through the pipeline. On hold in 2020, procedures began in late 2021, construction started in December 2022 — and by late 2025, it was done.</p>
+        <div class="step-num" data-i18n="s10.num">10 — A Success Story</div>
+        <h2 data-i18n="s10.h2">Mercato dei Fiori</h2>
+        <p data-i18n="s10.p1">The former flower market (N031) is one of just eleven sites to make it all the way through the pipeline. On hold in 2020, procedures began in late 2021, construction started in December 2022 — and by late 2025, it was done.</p>
         <div class="trajectory" id="mercato-trajectory"></div>
-        <p><a href="https://visitul.it/en/now/n031-mercato-fiori/" target="_blank" rel="noopener">View on Visitul.it →</a></p>
+        <p><a href="https://visitul.it/en/now/n031-mercato-fiori/" target="_blank" rel="noopener" data-i18n="s10.link">View on Visitul.it →</a></p>
       </div>
     </div>
 
     <div class="step" data-step="featured_monteverdi">
       <div class="step-card">
-        <div class="step-num">11 — An Unresolved Saga</div>
-        <h2>Monteverdi</h2>
-        <p>Site N067 holds the record: four status changes across five years. It climbed from "on hold" to "procedure in progress," fell back, rose again — and ended 2025 exactly where it started: on hold.</p>
-        <p>A portrait of bureaucratic uncertainty in miniature.</p>
+        <div class="step-num" data-i18n="s11.num">11 — An Unresolved Saga</div>
+        <h2 data-i18n="s11.h2">Monteverdi</h2>
+        <p data-i18n="s11.p1">Site N067 holds the record: four status changes across five years. It climbed from "on hold" to "procedure in progress," fell back, rose again — and ended 2025 exactly where it started: on hold.</p>
+        <p data-i18n="s11.p2">A portrait of bureaucratic uncertainty in miniature.</p>
         <div class="trajectory" id="monteverdi-trajectory"></div>
       </div>
     </div>
 
     <div class="step" data-step="explore">
       <div class="step-card">
-        <div class="step-num">12 — Explore</div>
-        <h2>Every site has a story</h2>
-        <p>Click any area on the map to see its name, current status, and five-year history. The data comes from <em>Visitul.it</em>, a civic project tracking Turin's urban transformation.</p>
-        <p>206 sites. Fifteen more years of change ahead — at least.</p>
+        <div class="step-num" data-i18n="s12.num">12 — Explore</div>
+        <h2 data-i18n="s12.h2">Every site has a story</h2>
+        <p data-i18n="s12.p1">Click any area on the map to see its name, current status, and five-year history. The data comes from <em>Visitul.it</em>, a civic project tracking Turin's urban transformation.</p>
+        <p data-i18n="s12.p2">206 sites. Fifteen more years of change ahead — at least.</p>
       </div>
     </div>
 
@@ -871,17 +917,17 @@
 
 <!-- ══════════════════════ OUTRO ══════════════════════ -->
 <div id="outro">
-  <h2>Follow the transformation</h2>
-  <p>The data behind this story is collected by <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a>, an independent civic monitoring project. New snapshots are added periodically as Turin's urban landscape keeps changing.</p>
+  <h2 data-i18n="outro.h2">Follow the transformation</h2>
+  <p data-i18n="outro.p">The data behind this story is collected by <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a>, an independent civic monitoring project. New snapshots are added periodically as Turin's urban landscape keeps changing.</p>
 </div>
 
 <!-- ══════════════════════ FOOTER ══════════════════════ -->
 <footer>
   <div class="footer-main">
     <div class="footer-byline">
-      <p class="footer-author">A data story by <strong>Neus Fontanet Garcia</strong></p>
-      <p>Doctoral research at DIST, Politecnico di Torino</p>
-      <p>Supervised by Prof. Piero Boccardo &middot; Research group SDG11Lab</p>
+      <p class="footer-author" data-i18n="footer.author">A data story by <strong>Neus Fontanet Garcia</strong></p>
+      <p data-i18n="footer.role">Doctoral research at DIST, Politecnico di Torino</p>
+      <p data-i18n="footer.sup">Supervised by Prof. Piero Boccardo &middot; Research group SDG11Lab</p>
     </div>
     <div class="footer-links">
       <a href="mailto:neus.fontanet@polito.it" aria-label="Email Neus Fontanet Garcia">
@@ -898,18 +944,18 @@
       </a>
       <a href="https://github.com/Niusfunti/Turin_transformation" target="_blank" rel="noopener" aria-label="Geodatabase on GitHub (opens in a new tab)">
         <span class="footer-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span>
-        Geodatabase on GitHub
+        <span data-i18n="footer.github">Geodatabase on GitHub</span>
       </a>
     </div>
   </div>
 
-  <div class="footer-funding">
+  <div class="footer-funding" data-i18n="footer.funding">
     Funded by the European Union – NextGenerationEU under PNRR — MUR DM 118/2023, CUP E14D23001910006
   </div>
 
   <div class="footer-credits">
-    <div>Data: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
-    <div>Map: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a></div>
+    <div data-i18n="footer.credits.data">Data: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
+    <div data-i18n="footer.credits.map">Map: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a></div>
   </div>
 </footer>
 
@@ -951,21 +997,123 @@ function escapeHtml(value) {
   }[ch]));
 }
 
+// ── Internationalisation (English ⇄ Italian) ────────────────
+// English is the source language and lives inline in the DOM; Italian overrides
+// come from CONFIG.i18n. We capture the English HTML once at startup so switching
+// back to English never needs a duplicated dictionary.
+
+const I18N           = CONFIG.i18n || {};
+const LANGS          = I18N.languages || [{ code: 'en', label: 'EN' }];
+const DEFAULT_LANG   = LANGS[0].code;
+const LANG_STORE_KEY = 'turin_lang';
+const I18N_EN        = {};            // captured English HTML, keyed by data-i18n
+let   LANG           = DEFAULT_LANG;  // active language code
+let   currentStepId  = null;          // last step entered (for language refresh)
+
+// Read a saved language preference, falling back to the default
+(function initLangPref() {
+  let saved = null;
+  try { saved = localStorage.getItem(LANG_STORE_KEY); } catch (_) {}
+  if (saved && LANGS.some(l => l.code === saved)) LANG = saved;
+})();
+
+// Snapshot the English copy of every translatable element
+function captureEnglish() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    I18N_EN[el.dataset.i18n] = el.innerHTML;
+  });
+}
+
+// Swap all static [data-i18n] elements to the active language
+function applyStaticLang() {
+  const itDict = I18N.it || {};
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = LANG === 'en' ? I18N_EN[key] : (itDict[key] ?? I18N_EN[key]);
+    if (val != null) el.innerHTML = val;
+  });
+  document.documentElement.lang = LANG;
+  const docTitle = (I18N.uiText?.[LANG] || {}).docTitle;
+  if (docTitle) document.title = docTitle;
+}
+
+// Language-aware label lookups (fall back to the raw English data value)
+function uiText(key)        { return (I18N.uiText?.[LANG] || {})[key] ?? (I18N.uiText?.en || {})[key] ?? ''; }
+function statusFull(status) { return (I18N.statusFull?.[LANG] || {})[status] ?? status; }
+function periodLabel(p)     { if (!p) return ''; return LANG === 'en' ? p.label : (p.labelIt || p.label); }
+
+function buildLangSwitch() {
+  const el = document.getElementById('lang-switch');
+  if (!el) return;
+  el.innerHTML = LANGS.map(l => `
+    <button type="button" data-lang="${escapeHtml(l.code)}" lang="${escapeHtml(l.code)}"
+            aria-pressed="${l.code === LANG}" ${l.name ? `title="${escapeHtml(l.name)}"` : ''}>${escapeHtml(l.label)}</button>
+  `).join('');
+  el.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.dataset.lang));
+  });
+  updateLangButtons();
+}
+
+function updateLangButtons() {
+  document.querySelectorAll('#lang-switch button').forEach(btn => {
+    const on = btn.dataset.lang === LANG;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-pressed', String(on));
+  });
+}
+
+// Switch language: persist, swap static text, refresh dynamic UI (no map fly)
+function setLang(lang) {
+  if (!LANGS.some(l => l.code === lang)) return;
+  LANG = lang;
+  try { localStorage.setItem(LANG_STORE_KEY, lang); } catch (_) {}
+  applyStaticLang();
+  updateLangButtons();
+  refreshDynamicLang();
+}
+
+// Rebuild every runtime-generated label in the active language, without re-flying
+function refreshDynamicLang() {
+  buildLegend();
+  buildPipelinePills();
+  buildTrajectory('mercato-trajectory',    'N031');
+  buildTrajectory('monteverdi-trajectory', 'N067');
+
+  const cfg = CONFIG.steps.find(s => s.id === currentStepId);
+  // Re-apply the current step's legend dimming
+  document.querySelectorAll('.legend-item').forEach(item => {
+    item.classList.toggle('dimmed', !!cfg?.focusStatus && item.dataset.status !== cfg.focusStatus);
+  });
+  // Re-localise the period badge if it's visible
+  const badge = document.getElementById('period-badge');
+  if (badge && badge.classList.contains('visible') && cfg) {
+    badge.textContent = periodLabel(PERIODS.find(p => p.key === cfg.period)) || cfg.period;
+  }
+  // Re-render stat chips for the current step in the active language
+  renderChips(currentStepId);
+}
+
+// Run i18n setup immediately (script is at end of <body>, so the DOM is ready).
+// captureEnglish() must run before applyStaticLang() so EN is never lost.
+captureEnglish();
+buildLangSwitch();
+applyStaticLang();
+
 // Build the on-map legend from CONFIG.legend (colors from statusColors)
 function buildLegend() {
   const el = document.getElementById('legend');
   if (!el) return;
-  const items = (CONFIG.legend || []).map(({ status, label }) => `
+  const items = (CONFIG.legend || []).map(({ status }) => `
     <div class="legend-item" data-status="${escapeHtml(status)}">
-      <div class="legend-swatch" style="background:${statusColor(status)}"></div>${escapeHtml(label)}
+      <div class="legend-swatch" style="background:${statusColor(status)}"></div>${escapeHtml(statusLabel(status))}
     </div>`).join('');
-  el.innerHTML = '<h4>Project status</h4>' + items;
+  el.innerHTML = `<h4>${escapeHtml(uiText('legendTitle'))}</h4>` + items;
 }
 
-// Display label for a status — prefers the curated CONFIG.legend label, else the raw status
+// Display label for a status — language-aware full label (falls back to raw value)
 function statusLabel(status) {
-  const entry = (CONFIG.legend || []).find(l => l.status === status);
-  return entry ? entry.label : status;
+  return statusFull(status);
 }
 
 // Build the narrative pipeline pills from CONFIG.pipeline (colors from statusColors)
@@ -1104,25 +1252,25 @@ function showPopup(feat, lngLat) {
 
   const timelineHtml = PERIODS.map(period => {
     const s = p[period.key] || '';
-    return `<div class="popup-cell" style="background:${statusColor(s)}" title="${escapeHtml(period.label)}: ${escapeHtml(s || '—')}"></div>`;
+    return `<div class="popup-cell" style="background:${statusColor(s)}" title="${escapeHtml(periodLabel(period))}: ${escapeHtml(s ? statusFull(s) : '—')}"></div>`;
   }).join('');
 
-  const firstLabel = PERIODS[0].label;
-  const lastLabel  = PERIODS[PERIODS.length - 1].label;
+  const firstLabel = periodLabel(PERIODS[0]);
+  const lastLabel  = periodLabel(PERIODS[PERIODS.length - 1]);
   const safeLink   = (p.link_eng && /^https?:\/\//i.test(p.link_eng)) ? p.link_eng : null;
 
   popup
     .setLngLat(lngLat)
     .setHTML(`
       <div class="popup-code">${escapeHtml(p.code || '')}</div>
-      <div class="popup-name">${escapeHtml(p.name || 'Unknown site')}</div>
+      <div class="popup-name">${escapeHtml(p.name || uiText('unknownSite'))}</div>
       <div class="popup-status-row">
         <div class="popup-status-dot" style="background:${color}"></div>
-        ${escapeHtml(status)}
+        ${escapeHtml(statusFull(status))}
       </div>
       <div class="popup-timeline">${timelineHtml}</div>
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
-      ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">Visitul.it →</a>` : ''}
+      ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">${escapeHtml(uiText('visitulLink'))}</a>` : ''}
     `)
     .addTo(map);
 }
@@ -1293,12 +1441,11 @@ function buildTrajectory(elementId, code) {
 }
 
 function shortStatus(s) {
-  if (s === 'on hold')                   return 'On hold';
-  if (s === 'procedure in progress')     return 'Procedure';
-  if (s.startsWith('under construction')) return 'Construction';
-  if (s === 'completed')                 return 'Completed';
-  if (s === 'removed')                   return 'Removed';
-  return s;
+  const dict = I18N.statusShort?.[LANG] || {};
+  if (dict[s]) return dict[s];
+  // 'under construction (demolition started)' etc. collapse to the construction label
+  if (s.startsWith('under construction')) return dict['under construction'] || statusFull(s);
+  return statusFull(s);
 }
 
 // ── Timeline bar widget ───────────────────────────────────────
@@ -1381,6 +1528,8 @@ function applyStep(stepId) {
   const cfg = CONFIG.steps.find(s => s.id === stepId);
   if (!cfg) return;
 
+  currentStepId = stepId;
+
   if (!map.isStyleLoaded()) { map.once('idle', () => applyStep(stepId)); return; }
 
   const { period, center, zoom, pitch, focusStatus, highlight } = cfg;
@@ -1427,7 +1576,7 @@ function applyStep(stepId) {
   const badge = document.getElementById('period-badge');
   const showBadge = ['time_2020', 'time_2022', 'time_2025'].includes(stepId);
   if (showBadge) {
-    badge.textContent = PERIODS.find(p => p.key === period)?.label ?? period;
+    badge.textContent = periodLabel(PERIODS.find(p => p.key === period)) || period;
     badge.classList.add('visible');
   } else {
     badge.classList.remove('visible');
@@ -1460,16 +1609,22 @@ function applyStep(stepId) {
 // ── Stats chips per step ──────────────────────────────────────
 
 // Chip colors are pulled from CONFIG.statusColors so they stay in sync with the palette.
+// labelKey resolves to a language-aware string via CONFIG.i18n.chipLabels in renderChips().
 const CHIP_MAP = {
-  overview:     [{ color: CONFIG.statusColors['under construction'],    count: CONFIG.stats.total,        label: 'sites tracked'      }],
-  on_hold:      [{ color: statusColor('on hold'),                       count: CONFIG.stats.onHold,       label: 'on hold'            }],
-  procedure:    [{ color: statusColor('procedure in progress'),         count: CONFIG.stats.procedure,    label: 'in procedure'       }],
-  construction: [{ color: statusColor('under construction'),            count: CONFIG.stats.construction, label: 'under construction' }],
+  overview:     [{ color: CONFIG.statusColors['under construction'],    count: CONFIG.stats.total,        labelKey: 'tracked'      }],
+  on_hold:      [{ color: statusColor('on hold'),                       count: CONFIG.stats.onHold,       labelKey: 'onHold'       }],
+  procedure:    [{ color: statusColor('procedure in progress'),         count: CONFIG.stats.procedure,    labelKey: 'procedure'    }],
+  construction: [{ color: statusColor('under construction'),            count: CONFIG.stats.construction, labelKey: 'construction' }],
   completed:    [
-    { color: statusColor('completed'), count: CONFIG.stats.completed, label: 'completed' },
-    { color: statusColor('removed'),   count: CONFIG.stats.removed,   label: 'removed'   },
+    { color: statusColor('completed'), count: CONFIG.stats.completed, labelKey: 'completed' },
+    { color: statusColor('removed'),   count: CONFIG.stats.removed,   labelKey: 'removed'   },
   ],
 };
+
+function chipLabel(key) {
+  const dict = I18N.chipLabels?.[LANG] || I18N.chipLabels?.en || {};
+  return dict[key] ?? key;
+}
 
 function renderChips(stepId) {
   const bar = document.getElementById('stats-chips');
@@ -1479,7 +1634,7 @@ function renderChips(stepId) {
       <div class="chip">
         <div class="chip-dot" style="background:${c.color}"></div>
         <span class="chip-count">${c.count}</span>
-        <span class="chip-label">${c.label}</span>
+        <span class="chip-label">${escapeHtml(chipLabel(c.labelKey))}</span>
       </div>
     `).join('');
     bar.classList.add('visible');
