@@ -583,6 +583,13 @@
       margin-bottom: 0.5rem;
     }
 
+    .popup-landuse {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .popup-landuse b { color: var(--text); font-weight: 600; }
+
     /* ── Outro ──────────────────────────────────────────────── */
     #outro {
       padding: 5rem 6vw 4rem;
@@ -1272,6 +1279,11 @@ function showPopup(feat, lngLat) {
   const lastLabel  = periodLabel(PERIODS[PERIODS.length - 1]);
   const safeLink   = (p.link_eng && /^https?:\/\//i.test(p.link_eng)) ? p.link_eng : null;
 
+  // Land use: prefer the full OSM tag list, fall back to the single primary
+  // class, then to the WorldCover label when OSM mapped no land use here.
+  const nonEmpty = v => (typeof v === 'string' && v.trim()) ? v.trim() : '';
+  const landUse  = nonEmpty(p.osm_class) || nonEmpty(p.primary_class) || nonEmpty(p.worldcover_label);
+
   popup
     .setLngLat(lngLat)
     .setHTML(`
@@ -1283,6 +1295,7 @@ function showPopup(feat, lngLat) {
       </div>
       <div class="popup-timeline">${timelineHtml}</div>
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
+      ${landUse ? `<div class="popup-landuse">${escapeHtml(uiText('landUse'))}: <b>${escapeHtml(landUse)}</b></div>` : ''}
       ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">${escapeHtml(uiText('visitulLink'))}</a>` : ''}
     `)
     .addTo(map);
