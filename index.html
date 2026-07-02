@@ -987,6 +987,19 @@ function statusColor(s) {
 const PERIODS = CONFIG.periods;
 const LAST    = PERIODS[PERIODS.length - 1].key;
 
+// A feature "exists" on the map only from its first surveyed period onward.
+// It is hidden in every period before first_recorded_period, so late-appearing
+// areas (e.g. N165, N166) pop in as the story advances instead of showing as
+// grey blobs from the very first snapshot. Trailing/interior empties are
+// unaffected — they keep rendering in the empty fallback colour.
+function appearedFilter(periodKey) {
+  const pIdx = PERIODS.findIndex(p => p.key === periodKey);
+  const firstIdx = ['match', ['get', 'first_recorded_period']];
+  PERIODS.forEach((p, i) => firstIdx.push(p.key, i));
+  firstIdx.push(PERIODS.length); // missing/blank first period → never shown
+  return ['<=', firstIdx, pIdx];
+}
+
 const PREFERS_REDUCED_MOTION =
   window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1367,6 +1380,7 @@ map.on('load', async () => {
   // 4. Transformation polygon fill — extruded; height = 8m base + 18m per status change
   map.addLayer({
     id: 'polygons-fill', type: 'fill-extrusion', source: 'polygons',
+    filter: appearedFilter(LAST),
     paint: {
       'fill-extrusion-color':   colorExpr(LAST),
       'fill-extrusion-opacity': 0.82,
@@ -1378,18 +1392,21 @@ map.on('load', async () => {
   // 5. Polygon outline
   map.addLayer({
     id: 'polygons-outline', type: 'line', source: 'polygons',
+    filter: appearedFilter(LAST),
     paint: { 'line-color': '#fff', 'line-width': 0.5, 'line-opacity': 0.35 },
   });
 
   // 6. Line transformation features
   map.addLayer({
     id: 'lines-line', type: 'line', source: 'lines',
+    filter: appearedFilter(LAST),
     paint: { 'line-color': colorExpr(LAST), 'line-width': 4, 'line-opacity': 0.85 },
   });
 
   // 7. Point transformation features
   map.addLayer({
     id: 'points-circle', type: 'circle', source: 'points',
+    filter: appearedFilter(LAST),
     paint: {
       'circle-color':        colorExpr(LAST),
       'circle-radius':       6,
@@ -1562,6 +1579,11 @@ function applyStep(stepId) {
     map.setPaintProperty('lines-line',      'line-color',     colorExpr(period));
     map.setPaintProperty('lines-line',      'line-opacity',   focusStatus ? 0.18 : 0.85);
   }
+
+  // Show each feature only from the period it first appears (hide leading empties)
+  ['polygons-fill', 'polygons-outline', 'lines-line', 'points-circle'].forEach(id => {
+    if (map.getLayer(id)) map.setFilter(id, appearedFilter(period));
+  });
 
   // Highlight
   if (map.getLayer('polygons-hl')) {
