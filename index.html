@@ -1602,11 +1602,19 @@ function applyStep(stepId) {
   }
   if (map.getLayer('points-circle')) {
     map.setPaintProperty('points-circle',   'circle-color',   colorExpr(period));
-    map.setPaintProperty('points-circle',   'circle-opacity', focusStatus ? 0.18 : 0.85);
+    // On focus, keep points that match the focused status visible; dim the rest
+    // (was a flat 0.18 that hid the matching points too).
+    map.setPaintProperty('points-circle',   'circle-opacity',
+      focusStatus
+        ? ['case', ['==', ['get', period], focusStatus], 0.9, 0.12]
+        : 0.85);
   }
   if (map.getLayer('lines-line')) {
     map.setPaintProperty('lines-line',      'line-color',     colorExpr(period));
-    map.setPaintProperty('lines-line',      'line-opacity',   focusStatus ? 0.18 : 0.85);
+    map.setPaintProperty('lines-line',      'line-opacity',
+      focusStatus
+        ? ['case', ['==', ['get', period], focusStatus], 0.9, 0.12]
+        : 0.85);
   }
 
   // Show each feature only from the period it first appears (hide leading empties)
