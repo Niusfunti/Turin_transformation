@@ -1,0 +1,107 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "model_version": "mock-v0",
+    "generated": "2026-07-02",
+    "image_source": "Politecnico di Torino – airborne (MOCK / placeholder)",
+    "crs_note": "coordinates in EPSG:4326 (RFC 7946)",
+    "description": "MOCK sample of AI-detected transformation evidence, Turin — conforms to DETECTIONS_SCHEMA.md. Not real model output."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "detection_id": "DET-0001",
+        "class": "construction_site",
+        "confidence": 0.94,
+        "image_date": "2024-06-15",
+        "baseline_date": "2021-05-10",
+        "model_version": "mock-v0",
+        "area_code": "N166",
+        "area_name": "PARRI",
+        "image_source": "Politecnico di Torino – airborne (MOCK)",
+        "notes": "Active works — corroborates recorded 'under construction'."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.677005,45.045330],[7.677805,45.045330],[7.677805,45.045930],[7.677005,45.045930],[7.677005,45.045330]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "detection_id": "DET-0002",
+        "class": "construction_site",
+        "confidence": 0.78,
+        "image_date": "2024-06-15",
+        "baseline_date": "2021-05-10",
+        "model_version": "mock-v0",
+        "area_code": "N165",
+        "area_name": "GALLETTIFICIO MILITARE (AURORA)",
+        "image_source": "Politecnico di Torino – airborne (MOCK)",
+        "notes": "Lower confidence — partial works visible."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.693238,45.079819],[7.694038,45.079819],[7.694038,45.080419],[7.693238,45.080419],[7.693238,45.079819]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "detection_id": "DET-0003",
+        "class": "new_building",
+        "confidence": 0.91,
+        "image_date": "2024-06-15",
+        "baseline_date": "2020-04-01",
+        "model_version": "mock-v0",
+        "area_code": "N031",
+        "area_name": "MERCATO FIORI",
+        "image_source": "Politecnico di Torino – airborne (MOCK)",
+        "notes": "New structure present — corroborates recorded 'completed'."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.693574,45.079407],[7.694374,45.079407],[7.694374,45.080007],[7.693574,45.080007],[7.693574,45.079407]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "detection_id": "DET-0004",
+        "class": "cleared_site",
+        "confidence": 0.83,
+        "image_date": "2025-03-20",
+        "baseline_date": "2022-07-01",
+        "model_version": "mock-v0",
+        "area_code": "N042",
+        "area_name": "BASSE STURA",
+        "image_source": "Politecnico di Torino – airborne (MOCK)",
+        "notes": "Site cleared — consistent with recorded 'removed'."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.674705,45.117572],[7.675505,45.117572],[7.675505,45.118172],[7.674705,45.118172],[7.674705,45.117572]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "detection_id": "DET-0005",
+        "class": "new_building",
+        "confidence": 0.72,
+        "image_date": "2024-06-15",
+        "baseline_date": "2020-04-01",
+        "model_version": "mock-v0",
+        "area_code": null,
+        "area_name": null,
+        "image_source": "Politecnico di Torino – airborne (MOCK)",
+        "notes": "UNMATCHED — change detected where the geodatabase records no area."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7.686500,45.070000],[7.687300,45.070000],[7.687300,45.070600],[7.686500,45.070600],[7.686500,45.070000]]]
+      }
+    }
+  ]
+}
