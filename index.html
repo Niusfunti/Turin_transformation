@@ -1594,7 +1594,7 @@ function applyStep(stepId) {
   if (map.getLayer('polygons-fill')) {
     map.setPaintProperty('polygons-fill', 'fill-extrusion-color',
       focusStatus
-        ? ['case', ['==', ['get', period], focusStatus], colorExpr(period), '#1e293b']
+        ? ['case', ['==', ['get', period], focusStatus], colorExpr(period), '#dde2e8']
         : colorExpr(period)
     );
     // fill-extrusion-opacity is layer-wide (not per-feature), so focus dimming is done via color above
