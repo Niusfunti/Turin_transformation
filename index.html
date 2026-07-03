@@ -803,7 +803,7 @@
         <div class="tl-header" data-i18n="tl.header">Status of areas over time</div>
         <div class="tl-bars" id="tl-bars"></div>
         <div class="tl-labels" id="tl-labels"></div>
-        <div class="tl-caption" data-i18n="tl.caption">Count of polygon areas with a recorded status per snapshot</div>
+        <div class="tl-caption" data-i18n="tl.caption">Count of areas with a recorded status per snapshot</div>
       </div>
     </div>
   </div>
@@ -1320,6 +1320,7 @@ function showPopup(feat, lngLat) {
 // ── Load data and build layers ───────────────────────────────
 
 let polygonData = null;
+let timelineData = null;   // all geometries (polygons + points + lines) for the timeline bar
 
 // Fetch a GeoJSON file, throwing a clear error on HTTP failure (so file:// / 404s surface)
 async function fetchGeoJSON(path) {
@@ -1361,6 +1362,9 @@ map.on('load', async () => {
     return;
   }
   polygonData = polyGeo;
+  // Timeline bar counts every geometry type, not just polygons
+  timelineData = { type: 'FeatureCollection',
+    features: [...polyGeo.features, ...pointGeo.features, ...lineGeo.features] };
 
   // ── Sources ──────────────────────────────────────────────
 
@@ -1461,7 +1465,7 @@ map.on('load', async () => {
   buildPipelinePills();
   buildTrajectory('mercato-trajectory',    'N031');
   buildTrajectory('monteverdi-trajectory', 'N067');
-  buildTimelineWidget(buildTimelineData(polygonData));
+  buildTimelineWidget(buildTimelineData(timelineData));
 
   initScrollama();
 });

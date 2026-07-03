@@ -241,7 +241,7 @@ const CONFIG = {
 
       // Timeline widget
       'tl.header':  'Stato delle aree nel tempo',
-      'tl.caption': 'Numero di aree poligonali con uno stato registrato per rilevazione',
+      'tl.caption': 'Numero di aree con uno stato registrato per rilevazione',
 
       // Outro
       'outro.h2': 'Segui la trasformazione',
