@@ -498,6 +498,7 @@
       text-align: center;
       font-family: var(--sans);
       font-size: 0.58rem;
+      line-height: 1.2;
       color: var(--muted);
       white-space: nowrap;
       overflow: hidden;
@@ -1115,6 +1116,13 @@ function refreshDynamicLang() {
   }
   // Re-render stat chips for the current step in the active language
   renderChips(currentStepId);
+
+  // Re-localise the timeline axis labels (month names differ per language)
+  document.querySelectorAll('#tl-labels span').forEach((sp, i) => {
+    if (!PERIODS[i]) return;
+    const l = tlShortLabel(PERIODS[i].key);
+    sp.innerHTML = `${escapeHtml(l.mon)}<br>${escapeHtml(l.yr)}`;
+  });
 }
 
 // Run i18n setup immediately (script is at end of <body>, so the DOM is ready).
@@ -1509,10 +1517,13 @@ const TL_ORDER = [
   'partially under construction - partially completed', 'completed', 'removed',
 ];
 
-const TL_PLABEL = {
-  july_2020: "'20", october_2021: "'21", july_2022: "'22",
-  december_2022: "'22b", april_2024: "'24", february_2025: "'25a", december_2025: "'25",
-};
+// Two-line timeline axis label: abbreviated month over full year, language-aware.
+// Derived from CONFIG.periods (label / labelIt), so adding a period needs no map here.
+function tlShortLabel(periodKey) {
+  const p = PERIODS.find(x => x.key === periodKey);
+  const [mon = '', yr = ''] = (periodLabel(p) || periodKey).split(' ');
+  return { mon: mon.slice(0, 3), yr };
+}
 
 function buildTimelineData(geoData) {
   return PERIODS.map(p => {
@@ -1554,7 +1565,8 @@ function buildTimelineWidget(tlData) {
     barsEl.appendChild(col);
 
     const sp = document.createElement('span');
-    sp.textContent = TL_PLABEL[t.period] || t.period;
+    const lbl = tlShortLabel(t.period);
+    sp.innerHTML = `${escapeHtml(lbl.mon)}<br>${escapeHtml(lbl.yr)}`;
     labsEl.appendChild(sp);
   });
 }
