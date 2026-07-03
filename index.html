@@ -1240,6 +1240,22 @@ coverMap.on('load', () => {
       coverMap.setLayoutProperty(layer.id, 'visibility', 'none');
     }
   });
+
+  // Turin city outline — subtle navy frame in the site palette (#00284b).
+  // City boundary only (no municipality dashes) so the hero stays uncluttered;
+  // the west edge dissolves into the same-colour cover gradient on the left.
+  fetch('./data/ctx_boundary.geojson')
+    .then(r => r.json())
+    .then(geojson => {
+      if (coverMap.getSource('cover-boundary')) return;
+      coverMap.addSource('cover-boundary', { type: 'geojson', data: geojson });
+      coverMap.addLayer({
+        id: 'cover-boundary-line', type: 'line', source: 'cover-boundary',
+        paint: { 'line-color': '#00284b', 'line-width': 1.5, 'line-opacity': 0.8 },
+      });
+    })
+    .catch(() => {});
+
   startDrift();
 });
 
