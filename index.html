@@ -477,10 +477,13 @@
       border-radius: 3px 3px 0 0;
       overflow: hidden;
       min-width: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.15s;
     }
 
     .tl-col.dim { opacity: 0.28; }
+
+    /* hover cue: lift + brighten so any bar (even a dimmed one) reads as clickable */
+    .tl-col:hover { opacity: 1; transform: translateY(-4px); box-shadow: 0 4px 10px rgba(0,40,75,0.35); }
 
     .tl-seg { width: 100%; }
 
@@ -1534,6 +1537,8 @@ function buildTimelineWidget(tlData) {
     const col = document.createElement('div');
     col.className = 'tl-col';
     col.dataset.period = t.period;
+    col.title = periodLabel(PERIODS.find(p => p.key === t.period)) || t.period;
+    col.addEventListener('click', () => recolorToPeriod(t.period));
     col.style.height = (tot / maxTot * 100) + '%';
 
     TL_ORDER.forEach(s => {
@@ -1558,6 +1563,31 @@ function highlightTL(periodKey) {
   document.querySelectorAll('.tl-col').forEach(c => {
     c.classList.toggle('dim', c.dataset.period !== periodKey);
   });
+}
+
+// Recolour the map to any snapshot without moving the camera — lets readers
+// click the timeline bar to explore all 7 periods, not just the 3 scroll stops.
+// Shows the full status picture for that period (no single-status focus).
+function recolorToPeriod(period) {
+  if (map.getLayer('polygons-fill'))
+    map.setPaintProperty('polygons-fill', 'fill-extrusion-color', colorExpr(period));
+  if (map.getLayer('points-circle')) {
+    map.setPaintProperty('points-circle', 'circle-color',   colorExpr(period));
+    map.setPaintProperty('points-circle', 'circle-opacity', 0.85);
+  }
+  if (map.getLayer('lines-line')) {
+    map.setPaintProperty('lines-line', 'line-color',   colorExpr(period));
+    map.setPaintProperty('lines-line', 'line-opacity', 0.85);
+  }
+  ['polygons-fill', 'polygons-outline', 'lines-line', 'points-circle'].forEach(id => {
+    if (map.getLayer(id)) map.setFilter(id, appearedFilter(period));
+  });
+  const badge = document.getElementById('period-badge');
+  if (badge) {
+    badge.textContent = periodLabel(PERIODS.find(p => p.key === period)) || period;
+    badge.classList.add('visible');
+  }
+  highlightTL(period);
 }
 
 // ── Scrollama ────────────────────────────────────────────────
