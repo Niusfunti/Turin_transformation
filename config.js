@@ -56,11 +56,11 @@ const CONFIG = {
     polygons:     150,
     points:        53,
     lines:          3,
-    onHold:        42,
-    procedure:     43,
-    construction:  48,
-    completed:     11,
-    removed:        5,
+    onHold:        43,
+    procedure:     48,
+    construction:  51,
+    completed:     39,
+    removed:       20,
   },
 
   // ── Internationalisation (English ⇄ Italian) ──────────────────────────────
@@ -184,27 +184,27 @@ const CONFIG = {
 
       // Step 03 — on hold
       's3.num': '03 — L’attesa',
-      's3.h2':  '<span class="big-num">42</span> aree in attesa',
-      's3.p1':  'Quasi un terzo delle aree poligonali monitorate resta «in attesa» a dicembre 2025 — bloccate tra pianificazione, contenziosi sulla proprietà o stallo politico.',
+      's3.h2':  '<span class="big-num">43</span> aree in attesa',
+      's3.p1':  'Circa un quinto delle aree monitorate resta «in attesa» a dicembre 2025 — bloccate tra pianificazione, contenziosi sulla proprietà o stallo politico.',
       's3.p2':  'Alcune risultano ferme fin dalla primissima rilevazione del luglio 2020: cinque anni senza movimenti.',
 
       // Step 04 — procedure
       's4.num': '04 — L’iter',
-      's4.h2':  '<span class="big-num">43</span> nella macchina burocratica',
+      's4.h2':  '<span class="big-num">48</span> nella macchina burocratica',
       's4.p1':  'Un numero quasi pari sta attraversando iter burocratici — permessi, valutazioni ambientali, consultazioni pubbliche. Sono partite, ma nulla è ancora costruito.',
       's4.p2':  'Nell’urbanistica italiana questa fase può durare anni. Alcune aree vi entrano ed escono ripetutamente.',
 
       // Step 05 — construction
       's5.num': '05 — Il cantiere',
-      's5.h2':  '<span class="big-num">48</span> in cantiere',
+      's5.h2':  '<span class="big-num">51</span> in cantiere',
       's5.p1':  'Il gruppo più numeroso a dicembre 2025: aree dove i lavori sono fisicamente iniziati — gru, ponteggi, scavi in tutta la città.',
       's5.p2':  'È il numero di cantieri più alto fra tutte e sette le rilevazioni: un’impennata tardiva dopo anni di ritardi procedurali.',
 
       // Step 06 — completed
       's6.num': '06 — Il traguardo',
-      's6.h2':  'Solo <span class="big-num">11</span> completate',
-      's6.p1':  'In cinque anni e 150 aree poligonali monitorate, solo undici hanno raggiunto il completamento. La trasformazione urbana, si scopre, è un esercizio di pazienza.',
-      's6.p2':  'Altre cinque aree sono state rimosse dal monitoraggio — demolite, riconvertite o con la trasformazione abbandonata.',
+      's6.h2':  'Solo <span class="big-num">39</span> completate',
+      's6.p1':  'In cinque anni e 206 aree monitorate, solo 39 hanno raggiunto il completamento. La trasformazione urbana, si scopre, è un esercizio di pazienza.',
+      's6.p2':  'Altre venti aree sono state rimosse dal monitoraggio — demolite, riconvertite o con la trasformazione abbandonata.',
 
       // Step 07 — July 2020
       's7.num': '07 — Luglio 2020',
@@ -224,7 +224,7 @@ const CONFIG = {
       // Step 10 — Mercato dei Fiori
       's10.num':  '10 — Una storia di successo',
       's10.h2':   'Mercato dei Fiori',
-      's10.p1':   'L’ex mercato dei fiori (N031) è una delle sole undici aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e concluso entro fine 2025.',
+      's10.p1':   'L’ex mercato dei fiori (N031) è una delle 39 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e concluso entro fine 2025.',
       's10.link': 'Vedi su Visitul.it →',
 
       // Step 11 — Monteverdi
