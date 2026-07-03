@@ -970,7 +970,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=5994acaa"></script>
+<script src="config.js?v=1fc214e2"></script>
 <script>
 'use strict';
 
@@ -1009,6 +1009,23 @@ function appearedFilter(periodKey) {
   PERIODS.forEach((p, i) => firstIdx.push(p.key, i));
   firstIdx.push(PERIODS.length); // missing/blank first period → never shown
   return ['<=', firstIdx, pIdx];
+}
+
+// Once an area reaches "removed" it is gone from the map: hidden in that period
+// and every later one. It still shows in the earlier periods, while it had a
+// real status. (True if the feature was NOT removed in any period up to now.)
+function notRemovedBy(periodKey) {
+  const pIdx = PERIODS.findIndex(p => p.key === periodKey);
+  const anyRemoved = ['any'];
+  PERIODS.forEach((p, i) => {
+    if (i <= pIdx) anyRemoved.push(['==', ['get', p.key], 'removed']);
+  });
+  return ['!', anyRemoved];
+}
+
+// What a map layer should show for a period: appeared AND not-yet-removed.
+function visibleFilter(periodKey) {
+  return ['all', appearedFilter(periodKey), notRemovedBy(periodKey)];
 }
 
 const PREFERS_REDUCED_MOTION =
@@ -1064,6 +1081,16 @@ function applyStaticLang() {
 // Language-aware label lookups (fall back to the raw English data value)
 function uiText(key)        { return (I18N.uiText?.[LANG] || {})[key] ?? (I18N.uiText?.en || {})[key] ?? ''; }
 function statusFull(status) { return (I18N.statusFull?.[LANG] || {})[status] ?? status; }
+// Land-use value → active language. English keeps the raw token(s); Italian
+// translates each comma-separated token via I18N.landUseTerms.it (unknown → English).
+function landUseLabel(value) {
+  if (!value || LANG !== 'it') return value;
+  const dict = I18N.landUseTerms?.it || {};
+  return value.split(',').map(part => {
+    const t = part.trim();
+    return dict[t.toLowerCase()] || t;
+  }).join(', ');
+}
 function periodLabel(p)     { if (!p) return ''; return LANG === 'en' ? p.label : (p.labelIt || p.label); }
 
 function buildLangSwitch() {
@@ -1304,7 +1331,9 @@ function showPopup(feat, lngLat) {
 
   const firstLabel = periodLabel(PERIODS[0]);
   const lastLabel  = periodLabel(PERIODS[PERIODS.length - 1]);
-  const safeLink   = (p.link_eng && /^https?:\/\//i.test(p.link_eng)) ? p.link_eng : null;
+  // Prefer the Italian Visitul link when the page is in Italian, else English.
+  const rawLink    = (LANG === 'it' && p.link_ita) ? p.link_ita : p.link_eng;
+  const safeLink   = (rawLink && /^https?:\/\//i.test(rawLink)) ? rawLink : null;
 
   // Land use: prefer the full OSM tag list, fall back to the single primary
   // class, then to the WorldCover label when OSM mapped no land use here.
@@ -1322,7 +1351,7 @@ function showPopup(feat, lngLat) {
       </div>
       <div class="popup-timeline">${timelineHtml}</div>
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
-      ${landUse ? `<div class="popup-landuse">${escapeHtml(uiText('landUse'))}: <b>${escapeHtml(landUse)}</b></div>` : ''}
+      ${landUse ? `<div class="popup-landuse">${escapeHtml(uiText('landUse'))}: <b>${escapeHtml(landUseLabel(landUse))}</b></div>` : ''}
       ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">${escapeHtml(uiText('visitulLink'))}</a>` : ''}
     `)
     .addTo(map);
@@ -1424,7 +1453,7 @@ map.on('load', async () => {
   // 4. Transformation polygon fill — extruded; height = 8m base + 18m per status change
   map.addLayer({
     id: 'polygons-fill', type: 'fill-extrusion', source: 'polygons',
-    filter: appearedFilter(LAST),
+    filter: visibleFilter(LAST),
     paint: {
       'fill-extrusion-color':   colorExpr(LAST),
       'fill-extrusion-opacity': 0.82,
@@ -1436,21 +1465,21 @@ map.on('load', async () => {
   // 5. Polygon outline
   map.addLayer({
     id: 'polygons-outline', type: 'line', source: 'polygons',
-    filter: appearedFilter(LAST),
+    filter: visibleFilter(LAST),
     paint: { 'line-color': '#fff', 'line-width': 0.5, 'line-opacity': 0.35 },
   });
 
   // 6. Line transformation features
   map.addLayer({
     id: 'lines-line', type: 'line', source: 'lines',
-    filter: appearedFilter(LAST),
+    filter: visibleFilter(LAST),
     paint: { 'line-color': colorExpr(LAST), 'line-width': 4, 'line-opacity': 0.85 },
   });
 
   // 7. Point transformation features
   map.addLayer({
     id: 'points-circle', type: 'circle', source: 'points',
-    filter: appearedFilter(LAST),
+    filter: visibleFilter(LAST),
     paint: {
       'circle-color':        colorExpr(LAST),
       'circle-radius':       6,
@@ -1530,7 +1559,8 @@ function buildTimelineData(geoData) {
     const counts = {};
     geoData.features.forEach(f => {
       const s = f.properties[p.key];
-      if (s) counts[s] = (counts[s] || 0) + 1;
+      // "removed" areas are gone, not a status — don't count them in the bars
+      if (s && s !== 'removed') counts[s] = (counts[s] || 0) + 1;
     });
     return { period: p.key, counts };
   });
@@ -1592,7 +1622,7 @@ function recolorToPeriod(period) {
     map.setPaintProperty('lines-line', 'line-opacity', 0.85);
   }
   ['polygons-fill', 'polygons-outline', 'lines-line', 'points-circle'].forEach(id => {
-    if (map.getLayer(id)) map.setFilter(id, appearedFilter(period));
+    if (map.getLayer(id)) map.setFilter(id, visibleFilter(period));
   });
   const badge = document.getElementById('period-badge');
   if (badge) {
@@ -1665,7 +1695,7 @@ function applyStep(stepId) {
 
   // Show each feature only from the period it first appears (hide leading empties)
   ['polygons-fill', 'polygons-outline', 'lines-line', 'points-circle'].forEach(id => {
-    if (map.getLayer(id)) map.setFilter(id, appearedFilter(period));
+    if (map.getLayer(id)) map.setFilter(id, visibleFilter(period));
   });
 
   // Highlight
