@@ -183,11 +183,13 @@ const CONFIG = {
         N193: { tag: 'Before → during', caption: 'An empty field in winter 2022; excavation and construction underway by summer 2025.' },
         N031: { tag: 'During → finishing', caption: 'Under construction in 2022; the former flower market reaches completion by late 2025.' },
         N049: { tag: 'Long build', caption: 'Early groundworks in 2022; the Parco della Salute hospital campus well advanced by 2025.' },
+        N067: { tag: 'Stalled build', caption: 'A building shell under active construction in winter 2022; by summer 2025 it still stands unfinished — materials cleared and vegetation reclaiming the surrounding site.' },
       },
       it: {
         N193: { tag: 'Prima → durante', caption: 'Un campo vuoto nell’inverno 2022; scavi e cantiere avviati entro l’estate 2025.' },
         N031: { tag: 'Durante → conclusione', caption: 'In cantiere nel 2022; l’ex mercato dei fiori raggiunge il completamento entro fine 2025.' },
         N049: { tag: 'Cantiere lungo', caption: 'Primi scavi nel 2022; il campus ospedaliero Parco della Salute ben avanzato nel 2025.' },
+        N067: { tag: 'Cantiere fermo', caption: 'Una struttura in costruzione nell’inverno 2022; entro l’estate 2025 resta incompiuta — materiali rimossi e vegetazione che riconquista l’area circostante.' },
       },
     },
 
@@ -383,6 +385,14 @@ const CONFIG = {
       bounds: [7.657451, 45.022089, 7.665859, 45.028341],  // from data/ortho/N049/bounds.json
       before: 'data/ortho/N049/2022_winter.jpg',
       after:  'data/ortho/N049/2025_summer.jpg',
+      hasDetections: false,
+    },
+    {
+      code: 'N067',
+      name: 'Monteverdi',
+      bounds: [7.709065, 45.084284, 7.712437, 45.086518],  // from data/ortho/N067/bounds.json
+      before: 'data/ortho/N067/2022_winter.jpg',
+      after:  'data/ortho/N067/2025_summer.jpg',
       hasDetections: false,
     },
   ],
