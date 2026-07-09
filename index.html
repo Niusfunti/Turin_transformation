@@ -764,7 +764,245 @@
       #cover-gradient {
         background: rgba(0,40,75,0.88);
       }
+
+      #evidence { padding: 3.5rem 1.2rem 1rem; }
+      .ev-swipe { height: 58vw; max-height: 340px; }
+      #aerial-overlay { padding: 0.8rem; }
+      #aerial-overlay .ev-swipe { height: 30vh; }
     }
+
+    /* ── Aerial before/after evidence ───────────────────────── */
+    #evidence {
+      padding: 5rem 6vw 1rem;
+      border-top: 1px solid var(--border);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .evidence-intro { max-width: 620px; margin-bottom: 2.25rem; }
+    .evidence-intro h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 0.7rem; }
+    .evidence-intro p  { color: var(--muted); line-height: 1.7; }
+    .evidence-intro .ev-note {
+      margin-top: 0.9rem;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-left: 2px solid var(--accent);
+      padding-left: 0.75rem;
+      opacity: 0.85;
+    }
+
+    .ev-card { margin-bottom: 2.75rem; }
+
+    .ev-card-head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.7rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .ev-card-code {
+      font-family: var(--sans);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      background: rgba(242,102,46,0.12);
+      border: 1px solid rgba(242,102,46,0.4);
+      border-radius: 4px;
+      padding: 0.12rem 0.4rem;
+    }
+    .ev-card-name { font-size: 1.15rem; font-weight: 700; }
+    .ev-card-tag {
+      font-family: var(--sans);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .ev-card-caption {
+      font-family: var(--sans);
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 0.85rem;
+      max-width: 640px;
+    }
+
+    /* Swipe comparison area */
+    .ev-swipe {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: pan-y;
+    }
+    .ev-layer {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    /* placeholder look (no imagery yet) */
+    .ev-layer.placeholder {
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 12px, rgba(255,255,255,0) 12px 24px);
+    }
+    .ev-before { z-index: 1; }
+    .ev-before.placeholder { background-color: #223247; }
+    .ev-after  { z-index: 2; }         /* clipped by JS via clip-path */
+    .ev-after.placeholder  { background-color: #2c3e52; }
+
+    /* single centred label shown while imagery is pending (not clipped by swipe) */
+    .ev-ph-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .ev-ph-label {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 0.35rem 0.8rem;
+      background: rgba(0,40,75,0.6);
+      border-radius: 6px;
+    }
+
+    /* year badges */
+    .ev-year {
+      position: absolute;
+      top: 0.6rem;
+      z-index: 4;
+      font-family: var(--sans);
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .ev-year.left  { left: 0.6rem; }
+    .ev-year.right { right: 0.6rem; }
+
+    /* divider handle */
+    .ev-divider {
+      position: absolute;
+      top: 0; bottom: 0;
+      z-index: 5;
+      width: 2px;
+      background: rgba(255,255,255,0.85);
+      transform: translateX(-1px);
+      cursor: ew-resize;
+    }
+    .ev-divider::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+    }
+    .ev-divider::after {
+      content: '⇔';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.9rem;
+      color: #0f172a;
+      pointer-events: none;
+    }
+    .ev-drag-hint {
+      position: absolute;
+      bottom: 0.6rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      font-family: var(--sans);
+      font-size: 0.66rem;
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.45);
+      padding: 0.18rem 0.55rem;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    /* AI-detection toggle */
+    .ev-controls {
+      margin-top: 0.7rem;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+    }
+    .ev-detect-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .ev-detect-toggle input { accent-color: var(--accent); }
+    .ev-detect-toggle.disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* popup "aerial before/after" button */
+    .popup-aerial-btn {
+      display: block;
+      margin-top: 0.5rem;
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 5px;
+      padding: 0.32rem 0.6rem;
+      cursor: pointer;
+    }
+    .popup-aerial-btn:hover { filter: brightness(1.08); }
+
+    /* Aerial before/after pop-up over the sticky map */
+    #aerial-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: rgba(0,40,75,0.55);
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    #aerial-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    .aerial-overlay-inner { width: 100%; max-width: 540px; }
+
+    #aerial-overlay .ev-card {
+      margin-bottom: 0;
+      background: rgba(0,40,75,0.94);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.2rem 1.2rem;
+      box-shadow: 0 12px 44px rgba(0,0,0,0.5);
+    }
+    #aerial-overlay .ev-swipe { height: 300px; }
+    #aerial-overlay .ev-card-caption { margin-bottom: 0.7rem; }
   </style>
 </head>
 <body>
@@ -809,6 +1047,11 @@
         <div class="tl-labels" id="tl-labels"></div>
         <div class="tl-caption" data-i18n="tl.caption">Count of areas with a recorded status per snapshot</div>
       </div>
+    </div>
+
+    <!-- Aerial before/after pop-up (shown on aerial steps, over the map) -->
+    <div id="aerial-overlay">
+      <div class="aerial-overlay-inner" id="aerial-overlay-inner"><!-- filled by showAerialOverlay() --></div>
     </div>
   </div>
 
@@ -904,9 +1147,17 @@
       </div>
     </div>
 
+    <div class="step" data-step="mercato_aerial">
+      <div class="step-card">
+        <div class="step-num" data-i18n="saer.num">11 — From above</div>
+        <h2 data-i18n="saer.h2">The same block, four years apart</h2>
+        <p data-i18n="saer.p1">Winter 2022, still a working site; summer 2025, complete. Drag the slider on the image to reveal the change.</p>
+      </div>
+    </div>
+
     <div class="step" data-step="featured_monteverdi">
       <div class="step-card">
-        <div class="step-num" data-i18n="s11.num">11 — An Unresolved Saga</div>
+        <div class="step-num" data-i18n="s11.num">12 — An Unresolved Saga</div>
         <h2 data-i18n="s11.h2">Monteverdi</h2>
         <p data-i18n="s11.p1">Site N067 holds the record: four status changes across five years. It climbed from "on hold" to "procedure in progress," fell back, rose again — and ended 2025 exactly where it started: on hold.</p>
         <p data-i18n="s11.p2">A portrait of bureaucratic uncertainty in miniature.</p>
@@ -916,7 +1167,7 @@
 
     <div class="step" data-step="explore">
       <div class="step-card">
-        <div class="step-num" data-i18n="s12.num">12 — Explore</div>
+        <div class="step-num" data-i18n="s12.num">13 — Explore</div>
         <h2 data-i18n="s12.h2">Every site has a story</h2>
         <p data-i18n="s12.p1">Click any area on the map to see its name, current status, and five-year history. The data comes from <em>Visitul.it</em>, a civic project tracking Turin's urban transformation.</p>
         <p data-i18n="s12.p2">206 sites. Fifteen more years of change ahead — at least.</p>
@@ -924,6 +1175,17 @@
     </div>
 
   </div><!-- /article -->
+</section>
+
+<!-- ══════════════════════ AERIAL EVIDENCE (before/after) ══════════════════════ -->
+<section id="evidence">
+  <div class="evidence-intro">
+    <div class="step-num" data-i18n="ev.num">14 — Seen from above</div>
+    <h2 data-i18n="ev.h2">The proof from above</h2>
+    <p data-i18n="ev.p1">The status timeline tells you <em>what</em> changed. Aerial photography shows you <em>how much</em>. For a few construction sites, compare winter 2022 with summer 2025 — drag the handle to reveal the transformation.</p>
+    <p class="ev-note" data-i18n="ev.note">Coming soon: detections from an AI model (YOLO World) will highlight construction objects in the 2025 image, corroborating the recorded transformations.</p>
+  </div>
+  <div id="evidence-cards"><!-- built by buildEvidenceCards() --></div>
 </section>
 
 <!-- ══════════════════════ OUTRO ══════════════════════ -->
@@ -970,7 +1232,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=1fc214e2"></script>
+<script src="config.js?v=6b223dae"></script>
 <script>
 'use strict';
 
@@ -1130,8 +1392,11 @@ function refreshDynamicLang() {
   buildPipelinePills();
   buildTrajectory('mercato-trajectory',    'N031');
   buildTrajectory('monteverdi-trajectory', 'N067');
+  buildEvidenceCards();
 
   const cfg = CONFIG.steps.find(s => s.id === currentStepId);
+  // Rebuild the aerial pop-up in the new language if it's currently open
+  if (cfg?.aerial) showAerialOverlay(cfg.aerial);
   // Re-apply the current step's legend dimming
   document.querySelectorAll('.legend-item').forEach(item => {
     item.classList.toggle('dimmed', !!cfg?.focusStatus && item.dataset.status !== cfg.focusStatus);
@@ -1353,6 +1618,7 @@ function showPopup(feat, lngLat) {
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
       ${landUse ? `<div class="popup-landuse">${escapeHtml(uiText('landUse'))}: <b>${escapeHtml(landUseLabel(landUse))}</b></div>` : ''}
       ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">${escapeHtml(uiText('visitulLink'))}</a>` : ''}
+      ${EVIDENCE_CODES.has(p.code) ? `<button type="button" class="popup-aerial-btn" onclick="scrollToEvidence('${escapeHtml(p.code)}')">${escapeHtml(uiText('evAerialBtn'))}</button>` : ''}
     `)
     .addTo(map);
 }
@@ -1737,6 +2003,9 @@ function applyStep(stepId) {
     if (timelineSteps.includes(stepId)) highlightTL(period);
   }
 
+  // Aerial before/after pop-up (over the map) — only on steps with an `aerial` code
+  if (cfg.aerial) showAerialOverlay(cfg.aerial); else hideAerialOverlay();
+
   // Stats chips
   renderChips(stepId);
 }
@@ -1777,6 +2046,139 @@ function renderChips(stepId) {
     bar.classList.remove('visible');
   }
 }
+
+// ── Aerial before/after evidence cards ────────────────────────
+// Scaffold: renders one draggable before/after "swipe" card per CONFIG.evidenceCases.
+// While `before`/`after` are null the panels are grey placeholders; when real crop
+// paths are set they render as background images (a pure data swap — no code change).
+// The AI-detection toggle is present but inert until per-site detection GeoJSON exists.
+
+const EVIDENCE_CASES = CONFIG.evidenceCases || [];
+const EVIDENCE_CODES = new Set(EVIDENCE_CASES.map(c => c.code));
+
+// Sites whose comparison is shown inline in the story (as a map pop-up) instead of
+// in the closing gallery. Derived from any CONFIG.steps entry carrying `aerial: code`.
+const EVIDENCE_INLINE = {};   // code -> step id
+(CONFIG.steps || []).forEach(s => { if (s.aerial) EVIDENCE_INLINE[s.aerial] = s.id; });
+
+// Language-aware per-site caption/tag lookup (falls back to English, then empty)
+function evidenceText(code) {
+  const dict = (I18N.evidence?.[LANG]) || (I18N.evidence?.en) || {};
+  return dict[code] || (I18N.evidence?.en || {})[code] || { tag: '', caption: '' };
+}
+
+// Inner markup of a swipe card (head + caption + swipe + toggle) — no outer .ev-card
+// wrapper, so it can be reused by both the closing gallery and the inline pop-up.
+function evidenceCardInner(c) {
+  const t        = evidenceText(c.code);
+  const hasImg   = !!(c.before && c.after);
+  const beforeBg = hasImg ? `style="background-image:url('${escapeHtml(c.before)}')"` : '';
+  const afterBg  = hasImg ? `style="background-image:url('${escapeHtml(c.after)}')"`  : '';
+  const phClass  = hasImg ? '' : ' placeholder';
+  // One centred "imagery pending" overlay (not clipped by the swipe), placeholder only
+  const phOverlay = hasImg ? '' :
+    `<div class="ev-ph-overlay"><span class="ev-ph-label">${escapeHtml(uiText('evPending'))}</span></div>`;
+
+  // AI-detection toggle — enabled only when the site has detection data
+  const toggleDisabled = c.hasDetections ? '' : ' disabled';
+  const toggleLabel    = c.hasDetections ? uiText('evDetections') : uiText('evDetectionsPending');
+
+  return `
+    <div class="ev-card-head">
+      <span class="ev-card-code">${escapeHtml(c.code)}</span>
+      <span class="ev-card-name">${escapeHtml(c.name)}</span>
+      <span class="ev-card-tag">${escapeHtml(t.tag)}</span>
+    </div>
+    <div class="ev-card-caption">${escapeHtml(t.caption)}</div>
+    <div class="ev-swipe" data-code="${escapeHtml(c.code)}">
+      <div class="ev-layer ev-before${phClass}" ${beforeBg}></div>
+      <div class="ev-layer ev-after${phClass}" ${afterBg}></div>
+      ${phOverlay}
+      <div class="ev-year left">${escapeHtml(uiText('evYear2022'))}</div>
+      <div class="ev-year right">${escapeHtml(uiText('evYear2025'))}</div>
+      <div class="ev-divider"></div>
+      <div class="ev-drag-hint">${escapeHtml(uiText('evDrag'))}</div>
+    </div>
+    <div class="ev-controls">
+      <label class="ev-detect-toggle${toggleDisabled ? ' disabled' : ''}">
+        <input type="checkbox"${toggleDisabled} data-code="${escapeHtml(c.code)}">
+        <span>${escapeHtml(toggleLabel)}</span>
+      </label>
+    </div>`;
+}
+
+// Closing gallery — every evidence case except those shown inline in the story.
+function buildEvidenceCards() {
+  const wrap = document.getElementById('evidence-cards');
+  if (!wrap) return;
+  wrap.innerHTML = EVIDENCE_CASES
+    .filter(c => !EVIDENCE_INLINE[c.code])
+    .map(c => `<div class="ev-card" id="ev-card-${escapeHtml(c.code)}">${evidenceCardInner(c)}</div>`)
+    .join('');
+  wrap.querySelectorAll('.ev-swipe').forEach(initSwipe);
+}
+
+// Inline pop-up over the sticky map, shown on steps carrying an `aerial` code.
+function showAerialOverlay(code) {
+  const ov    = document.getElementById('aerial-overlay');
+  const inner = document.getElementById('aerial-overlay-inner');
+  const c     = EVIDENCE_CASES.find(x => x.code === code);
+  if (!ov || !inner || !c) return;
+  inner.innerHTML = `<div class="ev-card">${evidenceCardInner(c)}</div>`;
+  inner.querySelectorAll('.ev-swipe').forEach(initSwipe);
+  ov.classList.add('visible');
+}
+function hideAerialOverlay() {
+  const ov = document.getElementById('aerial-overlay');
+  if (ov) ov.classList.remove('visible');
+}
+
+// Swipe drag state — one active swipe at a time, so window listeners attach once
+// (buildEvidenceCards can re-run on language switch without leaking listeners).
+let evActiveSwipe = null;
+
+function setSwipePos(swipe, pct) {
+  pct = Math.max(0, Math.min(100, pct));
+  const after   = swipe.querySelector('.ev-after');
+  const divider = swipe.querySelector('.ev-divider');
+  if (after)   after.style.clipPath = `inset(0 0 0 ${pct}%)`;  // reveal 2025 up to divider
+  if (divider) divider.style.left   = `${pct}%`;
+}
+function swipePctFromEvent(swipe, e) {
+  const rect = swipe.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  return (x / rect.width) * 100;
+}
+function initSwipe(swipe) {
+  swipe.addEventListener('pointerdown', e => {
+    evActiveSwipe = swipe;
+    const hint = swipe.querySelector('.ev-drag-hint');
+    if (hint) hint.style.opacity = '0';
+    setSwipePos(swipe, swipePctFromEvent(swipe, e));
+  });
+  setSwipePos(swipe, 50);  // start centred
+}
+// Attached once, at module load
+window.addEventListener('pointermove', e => {
+  if (!evActiveSwipe) return;
+  setSwipePos(evActiveSwipe, swipePctFromEvent(evActiveSwipe, e));
+  e.preventDefault();
+}, { passive: false });
+window.addEventListener('pointerup', () => { evActiveSwipe = null; });
+
+// Called from the map popup's "aerial before/after" button. Sites shown inline scroll
+// to their story step (which triggers the pop-up); the rest scroll to the gallery card.
+function scrollToEvidence(code) {
+  const stepId = EVIDENCE_INLINE[code];
+  const el = stepId
+    ? document.querySelector(`#article .step[data-step="${stepId}"]`)
+    : document.getElementById('ev-card-' + code);
+  if (el) el.scrollIntoView({ behavior: PREFERS_REDUCED_MOTION ? 'auto' : 'smooth', block: 'center' });
+  if (typeof popup !== 'undefined' && popup) popup.remove();
+}
+
+// Build once on load (independent of the map); rebuilt on language switch.
+buildEvidenceCards();
 </script>
 </body>
 </html>

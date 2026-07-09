@@ -150,6 +150,14 @@ const CONFIG = {
         visitulLink: 'Visitul.it →',
         landUse:     'Land use',
         docTitle:    'Turin in Transformation — 2020–2025',
+        // Aerial before/after evidence section
+        evYear2022:  'Winter 2022',
+        evYear2025:  'Summer 2025',
+        evPending:   'Aerial imagery pending',
+        evDrag:      'Drag to compare',
+        evDetections:        'Show AI detections',
+        evDetectionsPending: 'AI detections coming soon',
+        evAerialBtn: '🛰 Aerial before/after',
       },
       it: {
         legendTitle: 'Stato dei progetti',
@@ -157,6 +165,29 @@ const CONFIG = {
         visitulLink: 'Visitul.it →',
         landUse:     'Uso del suolo',
         docTitle:    'Torino in trasformazione — 2020–2025',
+        // Aerial before/after evidence section
+        evYear2022:  'Inverno 2022',
+        evYear2025:  'Estate 2025',
+        evPending:   'Ortofoto in arrivo',
+        evDrag:      'Trascina per confrontare',
+        evDetections:        'Mostra rilevazioni AI',
+        evDetectionsPending: 'Rilevazioni AI in arrivo',
+        evAerialBtn: '🛰 Ortofoto prima/dopo',
+      },
+    },
+
+    // Per-site captions for the aerial evidence cards, keyed by site code.
+    // tag = short story label; caption = one-line description of the change.
+    evidence: {
+      en: {
+        N193: { tag: 'Before → during', caption: 'An empty field in winter 2022; excavation and construction underway by summer 2025.' },
+        N031: { tag: 'During → finishing', caption: 'Under construction in 2022; the former flower market reaches completion by late 2025.' },
+        N049: { tag: 'Long build', caption: 'Early groundworks in 2022; the Parco della Salute hospital campus well advanced by 2025.' },
+      },
+      it: {
+        N193: { tag: 'Prima → durante', caption: 'Un campo vuoto nell’inverno 2022; scavi e cantiere avviati entro l’estate 2025.' },
+        N031: { tag: 'Durante → conclusione', caption: 'In cantiere nel 2022; l’ex mercato dei fiori raggiunge il completamento entro fine 2025.' },
+        N049: { tag: 'Cantiere lungo', caption: 'Primi scavi nel 2022; il campus ospedaliero Parco della Salute ben avanzato nel 2025.' },
       },
     },
 
@@ -277,17 +308,28 @@ const CONFIG = {
       's10.p1':   'L’ex mercato dei fiori (N031) è una delle 39 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e concluso entro fine 2025.',
       's10.link': 'Vedi su Visitul.it →',
 
-      // Step 11 — Monteverdi
-      's11.num': '11 — Una vicenda irrisolta',
+      // Step 11 — Mercato dei Fiori aerial pop-up
+      'saer.num': '11 — Dall’alto',
+      'saer.h2':  'Lo stesso isolato, a quattro anni di distanza',
+      'saer.p1':  'Inverno 2022, ancora un cantiere; estate 2025, completato. Trascina il cursore sull’immagine per rivelare il cambiamento.',
+
+      // Step 12 — Monteverdi
+      's11.num': '12 — Una vicenda irrisolta',
       's11.h2':  'Monteverdi',
       's11.p1':  'L’area N067 detiene il record: quattro cambi di stato in cinque anni. È passata da «in attesa» a «procedimento in corso», è retrocessa, è risalita — e ha chiuso il 2025 esattamente dov’era partita: in attesa.',
       's11.p2':  'Un ritratto in miniatura dell’incertezza burocratica.',
 
-      // Step 12 — explore
-      's12.num': '12 — Esplora',
+      // Step 13 — explore
+      's12.num': '13 — Esplora',
       's12.h2':  'Ogni area ha una storia',
       's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono da <em>Visitul.it</em>, un progetto civico che monitora la trasformazione urbana di Torino.',
       's12.p2':  '206 aree. Almeno altri quindici anni di cambiamenti davanti.',
+
+      // Aerial evidence section (14 — Seen from above)
+      'ev.num': '14 — Visto dall’alto',
+      'ev.h2':  'La prova dall’alto',
+      'ev.p1':  'La cronologia degli stati racconta <em>cosa</em> è cambiato. Le ortofoto mostrano <em>quanto</em>. Per alcuni cantieri, confronta l’inverno 2022 con l’estate 2025 — trascina la barra per rivelare la trasformazione.',
+      'ev.note': 'Presto: le rilevazioni di un modello di intelligenza artificiale (YOLO World) evidenzieranno gli oggetti da cantiere nell’immagine 2025, a conferma delle trasformazioni registrate.',
 
       // Timeline widget
       'tl.header':  'Stato delle aree nel tempo',
@@ -307,6 +349,43 @@ const CONFIG = {
       'footer.credits.map':  'Mappa: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a>',
     },
   },
+
+  // ── Aerial before/after evidence (closing "Seen from above" section) ─────────
+  // Curated per-site orthophoto comparison: winter 2022 vs summer 2025. Imagery is
+  // added later as small PNG crops under data/ortho/<code>/ ; until then `before`
+  // and `after` are null and the card renders a grey placeholder panel (scaffold).
+  //   bounds        — WGS84 [W, S, E, N] crop box (kept here so the later YOLO
+  //                   detection overlay can be aligned to real coordinates)
+  //   before/after  — image paths, or null while imagery is pending
+  //   hasDetections — gates the (currently inert) "show AI detections" toggle
+  // When real crops arrive this becomes a pure data swap: set before/after paths.
+  // Captions/labels are translated via CONFIG.i18n.evidence + CONFIG.i18n.uiText.
+  evidenceCases: [
+    {
+      code: 'N193',
+      name: 'Robaldo',
+      bounds: [7.641331, 45.007959, 7.649269, 45.010321],  // from data/ortho/N193/bounds.json
+      before: 'data/ortho/N193/2022_winter.jpg',
+      after:  'data/ortho/N193/2025_summer.jpg',
+      hasDetections: false,
+    },
+    {
+      code: 'N031',
+      name: 'Mercato dei Fiori',
+      bounds: [7.692691, 45.078869, 7.695629, 45.080641],  // from data/ortho/N031/bounds.json
+      before: 'data/ortho/N031/2022_winter.jpg',
+      after:  'data/ortho/N031/2025_summer.jpg',
+      hasDetections: false,
+    },
+    {
+      code: 'N049',
+      name: 'Parco della Salute',
+      bounds: [7.657451, 45.022089, 7.665859, 45.028341],  // from data/ortho/N049/bounds.json
+      before: 'data/ortho/N049/2022_winter.jpg',
+      after:  'data/ortho/N049/2025_summer.jpg',
+      hasDetections: false,
+    },
+  ],
 
   // Featured cases used in the narrative steps
   featuredCases: {
@@ -422,6 +501,18 @@ const CONFIG = {
       center:      [7.694159, 45.079755],
       zoom:        15,
       pitch:       40,
+      focusStatus: null,
+      highlight:   'N031',
+    },
+    {
+      // Inline aerial before/after pop-up for Mercato dei Fiori (N031).
+      // `aerial` = evidence code → applyStep() shows the swipe over the map.
+      id:          'mercato_aerial',
+      aerial:      'N031',
+      period:      'december_2025',
+      center:      [7.694159, 45.079755],
+      zoom:        15,
+      pitch:       0,
       focusStatus: null,
       highlight:   'N031',
     },
