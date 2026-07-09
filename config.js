@@ -321,8 +321,13 @@ const CONFIG = {
       's11.p1':  'L’area N067 detiene il record: quattro cambi di stato in cinque anni. È passata da «in attesa» a «procedimento in corso», è retrocessa, è risalita — e ha chiuso il 2025 esattamente dov’era partita: in attesa.',
       's11.p2':  'Un ritratto in miniatura dell’incertezza burocratica.',
 
-      // Step 13 — explore
-      's12.num': '13 — Esplora',
+      // Step 13 — Monteverdi aerial pop-up
+      'maer.num': '13 — Dall’alto',
+      'maer.h2':  'Congelata a metà',
+      'maer.p1':  'Inverno 2022, un cantiere attivo; estate 2025, lo stesso scheletro — ancora incompiuto, il terreno intorno tornato incolto. Trascina il cursore sull’immagine per confrontare.',
+
+      // Step 14 — explore
+      's12.num': '14 — Esplora',
       's12.h2':  'Ogni area ha una storia',
       's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono da <em>Visitul.it</em>, un progetto civico che monitora la trasformazione urbana di Torino.',
       's12.p2':  '206 aree. Almeno altri quindici anni di cambiamenti davanti.',
@@ -532,6 +537,17 @@ const CONFIG = {
       center:      [7.710751, 45.085401],
       zoom:        14.5,
       pitch:       30,
+      focusStatus: null,
+      highlight:   'N067',
+    },
+    {
+      // Inline aerial before/after pop-up for Monteverdi (N067) — mirrors mercato_aerial.
+      id:          'monteverdi_aerial',
+      aerial:      'N067',
+      period:      'december_2025',
+      center:      [7.710751, 45.085401],
+      zoom:        15,
+      pitch:       0,
       focusStatus: null,
       highlight:   'N067',
     },
