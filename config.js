@@ -487,6 +487,7 @@ const CONFIG = {
   steps: [
     {
       id:          'overview',
+      fit:         true,
       period:      'december_2025',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
@@ -496,6 +497,7 @@ const CONFIG = {
     },
     {
       id:          'status',
+      fit:         true,
       period:      'december_2025',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
@@ -505,6 +507,7 @@ const CONFIG = {
     },
     {
       id:          'on_hold',
+      fit:         true,
       period:      'december_2025',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
@@ -514,6 +517,7 @@ const CONFIG = {
     },
     {
       id:          'procedure',
+      fit:         true,
       period:      'december_2025',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
@@ -523,6 +527,7 @@ const CONFIG = {
     },
     {
       id:          'construction',
+      fit:         true,
       period:      'december_2025',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
@@ -532,6 +537,7 @@ const CONFIG = {
     },
     {
       id:          'completed',
+      fit:         true,
       period:      'december_2025',
       center:      [7.6715, 45.0636],
       zoom:        12,
@@ -541,6 +547,7 @@ const CONFIG = {
     },
     {
       id:          'time_2020',
+      fit:         true,
       period:      'july_2020',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
@@ -550,6 +557,7 @@ const CONFIG = {
     },
     {
       id:          'time_2022',
+      fit:         true,
       period:      'july_2022',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
@@ -559,6 +567,7 @@ const CONFIG = {
     },
     {
       id:          'time_2025',
+      fit:         true,
       period:      'december_2025',
       center:      [7.6715, 45.0636],
       zoom:        11.5,

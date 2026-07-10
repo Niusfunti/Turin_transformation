@@ -1324,7 +1324,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=a0b23f24"></script>
+<script src="config.js?v=c3ed068a"></script>
 <script>
 'use strict';
 
@@ -2026,6 +2026,12 @@ function initScrollama() {
 
 // ── Step transition logic ─────────────────────────────────────
 
+// City-boundary extent (Turin's outline + a small margin). Steps with `fit: true` fit
+// to this instead of a fixed center/zoom, so the whole city fills the frame on any
+// screen without the borders being clipped. Tightened to the boundary (not the full
+// scatter of outlying areas) so it doesn't read as too far away.
+const TURIN_BOUNDS = [[7.571, 45.002], [7.779, 45.144]];
+
 function applyStep(stepId) {
   const cfg = CONFIG.steps.find(s => s.id === stepId);
   if (!cfg) return;
@@ -2036,15 +2042,25 @@ function applyStep(stepId) {
 
   const { period, center, zoom, pitch, focusStatus, highlight } = cfg;
 
-  // Fly
-  map.flyTo({
-    center:   center || CONFIG.map.center,
-    zoom:     zoom   || CONFIG.map.zoom,
-    pitch:    pitch  || 0,
-    bearing:  0,
-    duration: 1400,
-    essential: true,
-  });
+  // Fly — or, on overview steps, fit the whole city flat so no borders get clipped
+  if (cfg.fit) {
+    map.fitBounds(TURIN_BOUNDS, {
+      padding:  { top: 40, bottom: 18, left: 18, right: 18 },
+      pitch:    0,
+      bearing:  0,
+      duration: 1400,
+      essential: true,
+    });
+  } else {
+    map.flyTo({
+      center:   center || CONFIG.map.center,
+      zoom:     zoom   || CONFIG.map.zoom,
+      pitch:    pitch  || 0,
+      bearing:  0,
+      duration: 1400,
+      essential: true,
+    });
+  }
 
   // Recolour layers
   if (map.getLayer('polygons-fill')) {
