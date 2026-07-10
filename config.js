@@ -308,6 +308,12 @@ const CONFIG = {
       's9.h2':  'La città oggi',
       's9.p1':  'A fine 2025 domina l’arancione — gru e ponteggi in tutta l’area metropolitana. Ma il grigio resta ostinatamente presente. Non tutte le aree hanno trovato il loro slancio.',
 
+      // Intro divider — Seen from above (before the deep-dives)
+      'ia.kicker': 'Visto dall’alto',
+      'ia.h2':     'Il dato messo alla prova del terreno',
+      'ia.p1':     'Le rilevazioni dicono qual è lo stato di ogni area sulla carta. Per le aree che seguono facciamo un passo in più — affianchiamo a quel percorso quinquennale la vista dall’alto, l’inverno 2022 a confronto con l’estate 2025, per vedere il cambiamento sul terreno stesso.',
+      'ia.note':   'Presto: le rilevazioni di un modello di intelligenza artificiale (YOLO World) evidenzieranno gli oggetti da cantiere nell’immagine 2025, a conferma delle trasformazioni registrate.',
+
       // Step 10 — Mercato dei Fiori
       's10.num':  '10 — Una storia di successo',
       's10.h2':   'Mercato dei Fiori',
@@ -370,11 +376,7 @@ const CONFIG = {
       's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono da <em>Visitul.it</em>, un progetto civico che monitora la trasformazione urbana di Torino.',
       's12.p2':  '206 aree. Almeno altri quindici anni di cambiamenti davanti.',
 
-      // Aerial evidence section (23 — Seen from above)
-      'ev.num': '23 — Visto dall’alto',
-      'ev.h2':  'La prova dall’alto',
-      'ev.p1':  'Lungo tutta questa storia, alcune aree hanno affiancato alla cronologia degli stati la vista dall’alto — l’inverno 2022 a confronto con l’estate 2025. Le fotografie confermano ciò che i dati dichiarano: terreni davvero smossi, edifici davvero completati.',
-      'ev.note': 'Presto: le rilevazioni di un modello di intelligenza artificiale (YOLO World) evidenzieranno gli oggetti da cantiere nell’immagine 2025, a conferma delle trasformazioni registrate.',
+      // (Aerial evidence closing section removed — intro moved to the ia.* divider above)
 
       // Timeline widget
       'tl.header':  'Stato delle aree nel tempo',
@@ -561,6 +563,18 @@ const CONFIG = {
       center:      [7.6715, 45.0636],
       zoom:        11.5,
       pitch:       30,
+      focusStatus: null,
+      highlight:   null,
+    },
+    {
+      // Section-divider card introducing the individual-site deep-dives (each pairs a
+      // status journey with an aerial before/after). Un-numbered on purpose — a "part
+      // break", so the numbered chapters (10 = Mercato …) don't need renumbering.
+      id:          'intro_aerial',
+      period:      'december_2025',
+      center:      [7.6715, 45.0636],
+      zoom:        11.5,
+      pitch:       25,
       focusStatus: null,
       highlight:   null,
     },

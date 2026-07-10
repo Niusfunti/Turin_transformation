@@ -782,7 +782,7 @@
     .evidence-intro { max-width: 620px; margin-bottom: 2.25rem; }
     .evidence-intro h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 0.7rem; }
     .evidence-intro p  { color: var(--muted); line-height: 1.7; }
-    .evidence-intro .ev-note {
+    .ev-note {
       margin-top: 0.9rem;
       font-family: var(--sans);
       font-size: 0.8rem;
@@ -1137,6 +1137,15 @@
       </div>
     </div>
 
+    <div class="step" data-step="intro_aerial">
+      <div class="step-card">
+        <div class="step-num" data-i18n="ia.kicker">Seen from above</div>
+        <h2 data-i18n="ia.h2">Checking the record against the ground</h2>
+        <p data-i18n="ia.p1">The survey tells us what each site's status is on paper. For the sites that follow, we go a step further — pairing that five-year record with the view from the sky, winter 2022 against summer 2025, to see the change on the ground itself.</p>
+        <p class="ev-note" data-i18n="ia.note">Coming soon: detections from an AI model (YOLO World) will highlight construction objects in the 2025 imagery, corroborating the recorded transformations.</p>
+      </div>
+    </div>
+
     <div class="step" data-step="featured_mercato">
       <div class="step-card">
         <div class="step-num" data-i18n="s10.num">10 — A Success Story</div>
@@ -1255,17 +1264,6 @@
   </div><!-- /article -->
 </section>
 
-<!-- ══════════════════════ AERIAL EVIDENCE (before/after) ══════════════════════ -->
-<section id="evidence">
-  <div class="evidence-intro">
-    <div class="step-num" data-i18n="ev.num">23 — Seen from above</div>
-    <h2 data-i18n="ev.h2">The proof from above</h2>
-    <p data-i18n="ev.p1">Throughout this story, a handful of sites paired their status timeline with the view from above — winter 2022 against summer 2025. The photographs confirm what the records claim: real ground broken, real buildings finished.</p>
-    <p class="ev-note" data-i18n="ev.note">Coming soon: detections from an AI model (YOLO World) will highlight construction objects in the 2025 image, corroborating the recorded transformations.</p>
-  </div>
-  <div id="evidence-cards"><!-- built by buildEvidenceCards() --></div>
-</section>
-
 <!-- ══════════════════════ OUTRO ══════════════════════ -->
 <div id="outro">
   <h2 data-i18n="outro.h2">Follow the transformation</h2>
@@ -1310,7 +1308,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=6c142483"></script>
+<script src="config.js?v=e0b59638"></script>
 <script>
 'use strict';
 
