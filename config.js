@@ -326,47 +326,47 @@ const CONFIG = {
       'saer.p1':  'Inverno 2022, ancora un cantiere; estate 2025, completato. Trascina il cursore sull’immagine per rivelare il cambiamento.',
 
       // Step 12 — Monteverdi
-      's11.num': '12 — Una vicenda irrisolta',
+      's11.num': '20 — Una vicenda irrisolta',
       's11.h2':  'Monteverdi',
       's11.p1':  'L’area N067 detiene il record: quattro cambi di stato in cinque anni. È passata da «in attesa» a «procedimento in corso», è retrocessa, è risalita — e ha chiuso il 2025 esattamente dov’era partita: in attesa.',
       's11.p2':  'Un ritratto in miniatura dell’incertezza burocratica.',
 
       // Step 13 — Monteverdi aerial pop-up
-      'maer.num': '13 — Dall’alto',
+      'maer.num': '21 — Dall’alto',
       'maer.h2':  'Congelata a metà',
       'maer.p1':  'Inverno 2022, un cantiere attivo; estate 2025, lo stesso scheletro — ancora incompiuto, il terreno intorno tornato incolto. Trascina il cursore sull’immagine per confrontare.',
 
       // Step 14/15 — Ex Lavazza (N181)
-      'lav.num':  '14 — Un altro completamento',
+      'lav.num':  '12 — Un altro completamento',
       'lav.h2':   'Ex Lavazza',
       'lav.p1':   'L’area N181 ha percorso l’intero iter in tempi record. Compare per la prima volta nel dicembre 2022, con la procedura appena avviata; nel 2024 è un cantiere attivo; entro inizio 2025 risulta completata — l’ex lotto Lavazza ricostruito in appena tre anni.',
-      'laer.num': '15 — Dall’alto',
+      'laer.num': '13 — Dall’alto',
       'laer.h2':  'Ricostruita da zero',
       'laer.p1':  'Inverno 2022 a confronto con l’estate 2025. Trascina il cursore per rivelare quanto è cambiato.',
 
       // Step 16/17 — CSEA (N059)
-      'cse.num':  '16 — Pazienza premiata',
+      'cse.num':  '14 — Pazienza premiata',
       'cse.h2':   'CSEA',
       'cse.p1':   'L’area CSEA ha passato anni in iter — bloccata nei permessi dalla primissima rilevazione del 2020 fino a fine 2022. Il cantiere è partito solo nel 2024, e a dicembre 2025 anch’essa risulta completata.',
-      'caer.num': '17 — Dall’alto',
+      'caer.num': '15 — Dall’alto',
       'caer.h2':  'Finalmente conclusa',
       'caer.p1':  'Inverno 2022 a confronto con l’estate 2025. Trascina il cursore per rivelare quanto è cambiato.',
 
       // Step 18/19 — Parco della Salute (N049)
-      'sal.num':  '18 — Il cantiere infinito',
+      'sal.num':  '16 — Il cantiere infinito',
       'sal.h2':   'Parco della Salute',
       'sal.p1':   'Il più grande progetto singolo di Torino. Il nuovo campus ospedaliero (N049) ha lasciato l’iter e aperto il cantiere già nel 2021 — e da allora è sempre in costruzione. Cinque anni, rilevazione dopo rilevazione, con lo stesso stato: ancora in cantiere.',
       'sal.link': 'Vedi su Visitul.it →',
-      'paer.num': '19 — Dall’alto',
+      'paer.num': '17 — Dall’alto',
       'paer.h2':  'Un campus prende forma',
       'paer.p1':  'Inverno 2022, i primi scavi; estate 2025, il campus ospedaliero ben avanzato. Trascina il cursore per confrontare.',
 
       // Step 20/21 — Robaldo (N193)
-      'rob.num':  '20 — Dal terreno nudo',
+      'rob.num':  '18 — Dal terreno nudo',
       'rob.h2':   'Robaldo',
       'rob.p1':   'Alcune aree semplicemente compaiono. Robaldo (N193) è assente dalle rilevazioni fino ad aprile 2024, quando appare già in costruzione — terreno nudo nell’immagine dell’inverno 2022, un cantiere attivo un anno dopo.',
       'rob.link': 'Vedi su Visitul.it →',
-      'raer.num': '21 — Dall’alto',
+      'raer.num': '19 — Dall’alto',
       'raer.h2':  'Terreno smosso',
       'raer.p1':  'Inverno 2022, un campo vuoto; estate 2025, scavi e cantiere. Trascina il cursore per rivelare il cambiamento.',
 
@@ -599,26 +599,6 @@ const CONFIG = {
       focusStatus: null,
       highlight:   'N031',
     },
-    {
-      id:          'featured_monteverdi',
-      period:      'december_2025',
-      center:      [7.710751, 45.085401],
-      zoom:        14.5,
-      pitch:       30,
-      focusStatus: null,
-      highlight:   'N067',
-    },
-    {
-      // Inline aerial before/after pop-up for Monteverdi (N067) — mirrors mercato_aerial.
-      id:          'monteverdi_aerial',
-      aerial:      'N067',
-      period:      'december_2025',
-      center:      [7.710751, 45.085401],
-      zoom:        15,
-      pitch:       0,
-      focusStatus: null,
-      highlight:   'N067',
-    },
 
     // ── Ex Lavazza (N181) — completed, full pipeline ──────────────────────────
     {
@@ -702,6 +682,28 @@ const CONFIG = {
       pitch:       0,
       focusStatus: null,
       highlight:   'N193',
+    },
+
+    // ── Monteverdi (N067) — the stalled exception, closes the deep-dives ───────
+    {
+      id:          'featured_monteverdi',
+      period:      'december_2025',
+      center:      [7.710751, 45.085401],
+      zoom:        14.5,
+      pitch:       30,
+      focusStatus: null,
+      highlight:   'N067',
+    },
+    {
+      // Inline aerial before/after pop-up for Monteverdi (N067) — mirrors mercato_aerial.
+      id:          'monteverdi_aerial',
+      aerial:      'N067',
+      period:      'december_2025',
+      center:      [7.710751, 45.085401],
+      zoom:        15,
+      pitch:       0,
+      focusStatus: null,
+      highlight:   'N067',
     },
 
     {
