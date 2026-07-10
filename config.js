@@ -184,12 +184,16 @@ const CONFIG = {
         N031: { tag: 'During → finishing', caption: 'Under construction in 2022; the former flower market reaches completion by late 2025.' },
         N049: { tag: 'Long build', caption: 'Early groundworks in 2022; the Parco della Salute hospital campus well advanced by 2025.' },
         N067: { tag: 'Stalled build', caption: 'A building shell under active construction in winter 2022; by summer 2025 it still stands unfinished — materials cleared and vegetation reclaiming the surrounding site.' },
+        N181: { tag: 'Full pipeline', caption: 'The former Lavazza plot: procedures opened in late 2022, an active build by 2024, recorded complete by early 2025.' },
+        N059: { tag: 'Full pipeline', caption: 'Years stuck in procedure through 2022; construction from 2024, and the CSEA site reached completion by the end of 2025.' },
       },
       it: {
         N193: { tag: 'Prima → durante', caption: 'Un campo vuoto nell’inverno 2022; scavi e cantiere avviati entro l’estate 2025.' },
         N031: { tag: 'Durante → conclusione', caption: 'In cantiere nel 2022; l’ex mercato dei fiori raggiunge il completamento entro fine 2025.' },
         N049: { tag: 'Cantiere lungo', caption: 'Primi scavi nel 2022; il campus ospedaliero Parco della Salute ben avanzato nel 2025.' },
         N067: { tag: 'Cantiere fermo', caption: 'Una struttura in costruzione nell’inverno 2022; entro l’estate 2025 resta incompiuta — materiali rimossi e vegetazione che riconquista l’area circostante.' },
+        N181: { tag: 'Percorso completo', caption: 'L’ex area Lavazza: iter avviato a fine 2022, cantiere attivo nel 2024, completamento registrato entro inizio 2025.' },
+        N059: { tag: 'Percorso completo', caption: 'Anni fermi in iter fino al 2022; cantiere dal 2024, e l’area CSEA raggiunge il completamento entro fine 2025.' },
       },
     },
 
@@ -326,16 +330,50 @@ const CONFIG = {
       'maer.h2':  'Congelata a metà',
       'maer.p1':  'Inverno 2022, un cantiere attivo; estate 2025, lo stesso scheletro — ancora incompiuto, il terreno intorno tornato incolto. Trascina il cursore sull’immagine per confrontare.',
 
-      // Step 14 — explore
-      's12.num': '14 — Esplora',
+      // Step 14/15 — Ex Lavazza (N181)
+      'lav.num':  '14 — Un altro completamento',
+      'lav.h2':   'Ex Lavazza',
+      'lav.p1':   'L’area N181 ha percorso l’intero iter in tempi record. Compare per la prima volta nel dicembre 2022, con la procedura appena avviata; nel 2024 è un cantiere attivo; entro inizio 2025 risulta completata — l’ex lotto Lavazza ricostruito in appena tre anni.',
+      'laer.num': '15 — Dall’alto',
+      'laer.h2':  'Ricostruita da zero',
+      'laer.p1':  'Inverno 2022 a confronto con l’estate 2025. Trascina il cursore per rivelare quanto è cambiato.',
+
+      // Step 16/17 — CSEA (N059)
+      'cse.num':  '16 — Pazienza premiata',
+      'cse.h2':   'CSEA',
+      'cse.p1':   'L’area CSEA ha passato anni in iter — bloccata nei permessi dalla primissima rilevazione del 2020 fino a fine 2022. Il cantiere è partito solo nel 2024, e a dicembre 2025 anch’essa risulta completata.',
+      'caer.num': '17 — Dall’alto',
+      'caer.h2':  'Finalmente conclusa',
+      'caer.p1':  'Inverno 2022 a confronto con l’estate 2025. Trascina il cursore per rivelare quanto è cambiato.',
+
+      // Step 18/19 — Parco della Salute (N049)
+      'sal.num':  '18 — Il cantiere infinito',
+      'sal.h2':   'Parco della Salute',
+      'sal.p1':   'Il più grande progetto singolo di Torino. Il nuovo campus ospedaliero (N049) ha lasciato l’iter e aperto il cantiere già nel 2021 — e da allora è sempre in costruzione. Cinque anni, rilevazione dopo rilevazione, con lo stesso stato: ancora in cantiere.',
+      'sal.link': 'Vedi su Visitul.it →',
+      'paer.num': '19 — Dall’alto',
+      'paer.h2':  'Un campus prende forma',
+      'paer.p1':  'Inverno 2022, i primi scavi; estate 2025, il campus ospedaliero ben avanzato. Trascina il cursore per confrontare.',
+
+      // Step 20/21 — Robaldo (N193)
+      'rob.num':  '20 — Dal terreno nudo',
+      'rob.h2':   'Robaldo',
+      'rob.p1':   'Alcune aree semplicemente compaiono. Robaldo (N193) è assente dalle rilevazioni fino ad aprile 2024, quando appare già in costruzione — terreno nudo nell’immagine dell’inverno 2022, un cantiere attivo un anno dopo.',
+      'rob.link': 'Vedi su Visitul.it →',
+      'raer.num': '21 — Dall’alto',
+      'raer.h2':  'Terreno smosso',
+      'raer.p1':  'Inverno 2022, un campo vuoto; estate 2025, scavi e cantiere. Trascina il cursore per rivelare il cambiamento.',
+
+      // Step 22 — explore
+      's12.num': '22 — Esplora',
       's12.h2':  'Ogni area ha una storia',
       's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono da <em>Visitul.it</em>, un progetto civico che monitora la trasformazione urbana di Torino.',
       's12.p2':  '206 aree. Almeno altri quindici anni di cambiamenti davanti.',
 
-      // Aerial evidence section (14 — Seen from above)
-      'ev.num': '14 — Visto dall’alto',
+      // Aerial evidence section (23 — Seen from above)
+      'ev.num': '23 — Visto dall’alto',
       'ev.h2':  'La prova dall’alto',
-      'ev.p1':  'La cronologia degli stati racconta <em>cosa</em> è cambiato. Le ortofoto mostrano <em>quanto</em>. Per alcuni cantieri, confronta l’inverno 2022 con l’estate 2025 — trascina la barra per rivelare la trasformazione.',
+      'ev.p1':  'Lungo tutta questa storia, alcune aree hanno affiancato alla cronologia degli stati la vista dall’alto — l’inverno 2022 a confronto con l’estate 2025. Le fotografie confermano ciò che i dati dichiarano: terreni davvero smossi, edifici davvero completati.',
       'ev.note': 'Presto: le rilevazioni di un modello di intelligenza artificiale (YOLO World) evidenzieranno gli oggetti da cantiere nell’immagine 2025, a conferma delle trasformazioni registrate.',
 
       // Timeline widget
@@ -398,6 +436,22 @@ const CONFIG = {
       bounds: [7.709065, 45.084284, 7.712437, 45.086518],  // from data/ortho/N067/bounds.json
       before: 'data/ortho/N067/2022_winter.jpg',
       after:  'data/ortho/N067/2025_summer.jpg',
+      hasDetections: false,
+    },
+    {
+      code: 'N181',
+      name: 'Ex Lavazza',
+      bounds: [7.696002, 45.083947, 7.698111, 45.085302],  // from data/ortho/N181/bounds.json
+      before: 'data/ortho/N181/2022_winter.jpg',
+      after:  'data/ortho/N181/2025_summer.jpg',
+      hasDetections: false,
+    },
+    {
+      code: 'N059',
+      name: 'CSEA',
+      bounds: [7.627744, 45.070620, 7.630168, 45.072481],  // from data/ortho/N059/bounds.json
+      before: 'data/ortho/N059/2022_winter.jpg',
+      after:  'data/ortho/N059/2025_summer.jpg',
       hasDetections: false,
     },
   ],
@@ -551,6 +605,91 @@ const CONFIG = {
       focusStatus: null,
       highlight:   'N067',
     },
+
+    // ── Ex Lavazza (N181) — completed, full pipeline ──────────────────────────
+    {
+      id:          'featured_lavazza',
+      period:      'december_2025',
+      center:      [7.697057, 45.084624],
+      zoom:        15,
+      pitch:       35,
+      focusStatus: null,
+      highlight:   'N181',
+    },
+    {
+      id:          'lavazza_aerial',
+      aerial:      'N181',
+      period:      'december_2025',
+      center:      [7.697057, 45.084624],
+      zoom:        15,
+      pitch:       0,
+      focusStatus: null,
+      highlight:   'N181',
+    },
+
+    // ── CSEA (N059) — completed, long procedure then build ────────────────────
+    {
+      id:          'featured_csea',
+      period:      'december_2025',
+      center:      [7.628956, 45.071551],
+      zoom:        15,
+      pitch:       35,
+      focusStatus: null,
+      highlight:   'N059',
+    },
+    {
+      id:          'csea_aerial',
+      aerial:      'N059',
+      period:      'december_2025',
+      center:      [7.628956, 45.071551],
+      zoom:        15,
+      pitch:       0,
+      focusStatus: null,
+      highlight:   'N059',
+    },
+
+    // ── Parco della Salute (N049) — the long build, still under construction ──
+    {
+      id:          'featured_salute',
+      period:      'december_2025',
+      center:      [7.661654, 45.025215],
+      zoom:        14.5,
+      pitch:       35,
+      focusStatus: null,
+      highlight:   'N049',
+    },
+    {
+      id:          'salute_aerial',
+      aerial:      'N049',
+      period:      'december_2025',
+      center:      [7.661654, 45.025215],
+      zoom:        14.5,
+      pitch:       0,
+      focusStatus: null,
+      highlight:   'N049',
+    },
+
+    // ── Robaldo (N193) — appears mid-story, empty field → active build ────────
+    {
+      id:          'featured_robaldo',
+      period:      'december_2025',
+      center:      [7.645300, 45.009141],
+      zoom:        15,
+      pitch:       35,
+      focusStatus: null,
+      highlight:   'N193',
+    },
+    {
+      id:          'robaldo_aerial',
+      aerial:      'N193',
+      period:      'december_2025',
+      center:      [7.645300, 45.009141],
+      zoom:        15,
+      pitch:       0,
+      focusStatus: null,
+      highlight:   'N193',
+    },
+
     {
       id:          'explore',
       period:      'december_2025',
