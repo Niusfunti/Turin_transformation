@@ -410,8 +410,15 @@
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
-      align-items: center;
+      align-items: flex-start;
       font-size: 0.72rem;
+    }
+
+    .traj-item {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
     }
 
     .traj-chip {
@@ -424,10 +431,19 @@
       white-space: nowrap;
     }
 
+    .traj-year {
+      font-family: var(--sans);
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
     .traj-arrow {
       color: var(--muted);
       opacity: 0.7;
       font-size: 0.85rem;
+      margin-top: 4px;
     }
 
     /* ── Timeline bar widget ────────────────────────────────── */
@@ -1869,14 +1885,28 @@ function buildTrajectory(elementId, code) {
   if (!feat) return;
   const p = feat.properties;
 
-  // Collect unique consecutive statuses (deduplicate runs)
-  const statuses = PERIODS.map(period => p[period.key]).filter(Boolean);
-  const deduped = statuses.filter((s, i) => i === 0 || s !== statuses[i - 1]);
+  // Walk snapshots, keep non-empty, dedupe consecutive runs — remembering the first
+  // survey each status run began in (year shown under the chip, full date on hover).
+  const seq = [];
+  PERIODS.forEach(period => {
+    const s = p[period.key];
+    if (!s) return;
+    if (!seq.length || seq[seq.length - 1].status !== s) seq.push({ status: s, period });
+  });
 
-  el.innerHTML = deduped.map((s, i) => {
-    const chip = `<span class="traj-chip" style="background:${statusColor(s)}" title="${s}">${shortStatus(s)}</span>`;
-    const arrow = i < deduped.length - 1 ? `<span class="traj-arrow">→</span>` : '';
-    return chip + arrow;
+  const yearOf = it => (periodLabel(it.period) || it.period.key).split(' ').pop();
+
+  el.innerHTML = seq.map((item, i) => {
+    const full   = periodLabel(item.period) || item.period.key;   // "December 2022"
+    const [mon = '', yr = ''] = full.split(' ');
+    // Year-only, unless a neighbour shares the year (two surveys in one year, e.g. Jul
+    // vs Dec 2022) — then add the month so the change is still legible.
+    const collide = (i > 0 && yearOf(seq[i - 1]) === yr) || (i < seq.length - 1 && yearOf(seq[i + 1]) === yr);
+    const date   = collide ? `${mon.slice(0, 3)} ${yr}` : yr;
+    const chip   = `<span class="traj-chip" style="background:${statusColor(item.status)}" title="${statusFull(item.status)} — ${full}">${shortStatus(item.status)}</span>`;
+    const cell   = `<span class="traj-item">${chip}<span class="traj-year">${date}</span></span>`;
+    const arrow  = i < seq.length - 1 ? `<span class="traj-arrow">→</span>` : '';
+    return cell + arrow;
   }).join('');
 }
 
