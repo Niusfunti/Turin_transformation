@@ -1324,7 +1324,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=c3ed068a"></script>
+<script src="config.js?v=6501a63a"></script>
 <script>
 'use strict';
 
@@ -1658,6 +1658,84 @@ coverMap.on('load', () => {
   startDrift();
 });
 
+// ── Basemap tuning (story map) ───────────────────────────────
+// The story map uses the same colourful base style as the cover hero, so green
+// space reads green and the Po/Dora read blue — much easier for a general
+// audience to place a site than a plain grey canvas. Everything that would
+// compete with the status colours is toned down first: the pink/yellow urban
+// land-use tints go neutral, the orange road ramp goes white on a pale casing,
+// and POI/road-shield labels are hidden. Water and vegetation keep their hue.
+// Layer ids below are the OpenFreeMap "bright" (OpenMapTiles) style ids — an id
+// that disappears upstream is simply skipped, it does not break the map.
+
+const BASEMAP_BUILT = '#f1ede6';   // neutral tint for built-up land use
+
+const BASEMAP_FILL_COLOR = {
+  'landuse-residential':  BASEMAP_BUILT,
+  'landuse-suburb':       BASEMAP_BUILT,
+  'landuse-commercial':   BASEMAP_BUILT,
+  'landuse-industrial':   BASEMAP_BUILT,
+  'landuse-railway':      BASEMAP_BUILT,
+  'landuse-hospital':     BASEMAP_BUILT,
+  'landuse-school':       BASEMAP_BUILT,
+  'landuse-cemetery':     '#dfe7d6',
+  'building':             '#e9e3db',
+  'building-top':         '#ede8e1',
+  'park':                 '#cbe3bd',
+  'landcover-grass':      '#d4e8c4',
+  'landcover-grass-park': '#d4e8c4',
+  'landcover-wood':       '#a9cf95',
+  'water':                '#a6cde4',
+};
+
+// Green space and water are held at partial opacity: solid enough to read as
+// "park" / "river" at a glance, light enough that the status colours on top
+// stay the strongest thing on the map. Raise these to make the basemap louder,
+// lower them to fade it further back.
+const BASEMAP_FILL_OPACITY = {
+  'park':                 0.38,
+  'landcover-grass':      0.55,
+  'landcover-grass-park': 0.48,
+  'landcover-wood':       0.24,
+  'water':                0.7,
+  'landcover-sand':       0.5,
+};
+
+const BASEMAP_HIDE = [
+  'poi_r20', 'poi_r7', 'poi_r1', 'poi_transit',
+  'highway-shield-non-us', 'highway-shield-us-interstate', 'road_shield_us',
+  'highway-name-path', 'road_oneway', 'road_oneway_opposite',
+];
+
+function tuneBasemap(m) {
+  m.getStyle().layers.forEach(layer => {
+    const id = layer.id;
+
+    if (BASEMAP_HIDE.includes(id)) {
+      m.setLayoutProperty(id, 'visibility', 'none');
+      return;
+    }
+
+    if (layer.type === 'fill') {
+      if (BASEMAP_FILL_COLOR[id])   m.setPaintProperty(id, 'fill-color',   BASEMAP_FILL_COLOR[id]);
+      if (BASEMAP_FILL_OPACITY[id]) m.setPaintProperty(id, 'fill-opacity', BASEMAP_FILL_OPACITY[id]);
+      return;
+    }
+
+    // Roads → white ribbons on a pale grey casing, replacing the style's
+    // orange/yellow ramp. Railways are left untouched.
+    if (layer.type === 'line' && /^(highway|bridge|tunnel)-/.test(id) && !/railway/.test(id)) {
+      m.setPaintProperty(id, 'line-color', id.endsWith('-casing') ? '#e3ded6' : '#ffffff');
+      return;
+    }
+
+    // Streams and canals drawn as lines — softened to match the water fills
+    if (layer.type === 'line' && /^waterway/.test(id)) {
+      m.setPaintProperty(id, 'line-opacity', 0.7);
+    }
+  });
+}
+
 // ── Main interactive map ─────────────────────────────────────
 
 const map = new maplibregl.Map({
@@ -1749,6 +1827,8 @@ function showDataError(err) {
 }
 
 map.on('load', async () => {
+  tuneBasemap(map);
+
   let polyGeo, pointGeo, lineGeo, adminGeo, boundaryGeo;
   try {
     // Fetch all data in parallel
@@ -1789,10 +1869,11 @@ map.on('load', async () => {
 
   // ── Layers in render order (bottom → top) ────────────────
 
-  // 1. Hillshade terrain shadow
+  // 1. Hillshade terrain shadow — kept light so it shades the relief without
+  //    greying out the green/blue basemap underneath
   map.addLayer({
     id: 'ctx-hillshade', type: 'raster', source: 'hillshade',
-    paint: { 'raster-opacity': 0.32, 'raster-resampling': 'linear' },
+    paint: { 'raster-opacity': 0.2, 'raster-resampling': 'linear' },
   });
 
   // 2. Municipality boundaries — dashed

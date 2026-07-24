@@ -3,7 +3,10 @@
 const CONFIG = {
 
   map: {
-    style:       'https://tiles.openfreemap.org/styles/positron',
+    // Both maps share the same base style so parks read green and rivers read
+    // blue throughout the story. index.html tones the style down for the story
+    // map (tuneBasemap) so the status colours stay the loudest thing on screen.
+    style:       'https://tiles.openfreemap.org/styles/bright',
     coverStyle:  'https://tiles.openfreemap.org/styles/bright',
     center: [7.6715, 45.0636],
     coverCenter: [7.47, 45.0636],  // 0.2° west of Turin center so city sits in the transparent right zone
