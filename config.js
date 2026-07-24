@@ -333,9 +333,9 @@ const CONFIG = {
       's7.p1':  'Nella prima rilevazione la mappa è quasi interamente grigia. L’anno della pandemia: quasi ogni area documentata, quasi nessuna in movimento. Torino aveva dato un nome ai suoi problemi; non aveva ancora iniziato a risolverli.',
 
       // Step 08 — July 2022
-      's8.num': '08 — Luglio 2022',
+      's8.num': '08 — Dicembre 2022',
       's8.h2':  'La svolta',
-      's8.p1':  'Due anni dopo, l’ambra inizia a diffondersi — iter avviati, permessi depositati. Qualche macchia arancione segnala cantieri davvero partiti. La ripresa post-pandemica ha portato nuova energia agli uffici di pianificazione.',
+      's8.p1':  'Due anni e mezzo dopo, l’oro inizia a diffondersi — iter avviati, permessi depositati. Qualche macchia arancione segnala cantieri davvero partiti. La ripresa post-pandemica ha portato nuova energia agli uffici di pianificazione.',
 
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
@@ -592,7 +592,7 @@ const CONFIG = {
     {
       id:          'time_2022',
       fit:         true,
-      period:      'july_2022',
+      period:      'december_2022',
       center:      [7.6715, 45.0636],
       zoom:        11.5,
       pitch:       30,

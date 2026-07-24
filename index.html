@@ -1139,9 +1139,9 @@
 
     <div class="step" data-step="time_2022">
       <div class="step-card">
-        <div class="step-num" data-i18n="s8.num">08 — July 2022</div>
+        <div class="step-num" data-i18n="s8.num">08 — December 2022</div>
         <h2 data-i18n="s8.h2">The tide turns</h2>
-        <p data-i18n="s8.p1">Two years later, amber starts to spread — procedures launched, permits filed. A handful of orange patches mark construction that has actually started. The post-pandemic recovery brought renewed energy to planning departments.</p>
+        <p data-i18n="s8.p1">Two and a half years later, gold starts to spread — procedures launched, permits filed. A handful of orange patches mark construction that has actually started. The post-pandemic recovery brought renewed energy to planning departments.</p>
       </div>
     </div>
 
@@ -1324,7 +1324,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=e4c2ece2"></script>
+<script src="config.js?v=5b65facb"></script>
 <script>
 'use strict';
 
@@ -2065,8 +2065,12 @@ function shortStatus(s) {
 
 // ── Timeline bar widget ───────────────────────────────────────
 
+// Stack order, bottom of the bar upward — .tl-col is `column-reverse`, so the
+// FIRST entry here is the BOTTOM segment. It must follow the pipeline order used
+// by CONFIG.legend and CONFIG.pipeline (on hold → procedure → construction →
+// completed), or the bar tells a different story than the legend beside it.
 const TL_ORDER = [
-  'procedure in progress', 'on hold', 'under construction',
+  'on hold', 'procedure in progress', 'under construction',
   'under construction (demolition started)', 'partially under construction',
   'partially under construction - partially completed', 'completed', 'removed',
 ];
