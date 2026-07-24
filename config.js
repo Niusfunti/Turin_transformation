@@ -330,7 +330,7 @@ const CONFIG = {
       // Step 07 — July 2020
       's7.num': '07 — Luglio 2020',
       's7.h2':  'Dove tutto è iniziato',
-      's7.p1':  'Nella prima rilevazione la mappa è quasi interamente grigia. L’anno della pandemia: quasi ogni area documentata, quasi nessuna in movimento. Torino aveva dato un nome ai suoi problemi; non aveva ancora iniziato a risolverli.',
+      's7.p1':  'Nella prima rilevazione la mappa è oro e bronzo — iter aperti, aree in attesa. Appena una macchia di arancione: su 164 aree, solo 21 avevano lavori in corso e nessuna era conclusa. L’anno della pandemia: quasi ogni area documentata, quasi nessuna in movimento. Torino aveva dato un nome ai suoi problemi; non aveva ancora iniziato a risolverli.',
 
       // Step 08 — July 2022
       's8.num': '08 — Dicembre 2022',
@@ -340,7 +340,7 @@ const CONFIG = {
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
       's9.h2':  'La città oggi',
-      's9.p1':  'A fine 2025 domina l’arancione — gru e ponteggi in tutta l’area metropolitana. Ma il grigio resta ostinatamente presente. Non tutte le aree hanno trovato il loro slancio.',
+      's9.p1':  'A fine 2025 guida l’arancione — 51 aree con gru e ponteggi, e 39 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 43 aree sono ancora in attesa. Non tutte le aree hanno trovato il loro slancio.',
 
       // Intro divider — Seen from above (before the deep-dives)
       'ia.kicker': 'Visto dall’alto',
