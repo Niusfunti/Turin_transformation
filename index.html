@@ -1365,6 +1365,12 @@ const OUTLINE_LIGHT = '#ffffff';
 const OUTLINE_DARK  = '#5a4a10';
 const DARK_OUTLINE_STATUSES = [];
 
+// The area footprint is a low plate; real building volumes (buildings.geojson,
+// OSM as of the December 2025 snapshot) carry the height, coloured by the same
+// status as their area so a resident can recognise the actual blocks involved.
+const AREA_PLATE_HEIGHT = 3;
+const BUILDINGS_MIN_ZOOM = 13.2;   // below this they are specks and just add noise
+
 function strokeExpr(periodKey) {
   if (!DARK_OUTLINE_STATUSES.length) return OUTLINE_LIGHT;
   const expr = ['match', ['get', periodKey]];
@@ -1892,6 +1898,15 @@ map.on('load', async () => {
     showDataError(err);
     return;
   }
+  // Optional layer: OSM building volumes inside the areas (buildings_in_areas.py).
+  // Fetched separately so a missing or still-unbuilt export never breaks the story.
+  let buildingGeo = null;
+  try {
+    buildingGeo = await fetchGeoJSON('./data/buildings.geojson');
+  } catch (err) {
+    console.info('buildings.geojson not available — 3D buildings layer skipped');
+  }
+
   polygonData = polyGeo;
   // Timeline bar counts every geometry type, not just polygons
   timelineData = { type: 'FeatureCollection',
@@ -1942,14 +1957,17 @@ map.on('load', async () => {
     paint: { 'line-color': '#0f172a', 'line-width': 2.2, 'line-opacity': 0.9 },
   });
 
-  // 4. Transformation polygon fill — extruded; height = 8m base + 18m per status change
+  // 4. Transformation polygon fill — a low plate the buildings rise out of.
+  //    (Height used to be 8m + 18m per status change: "how often this area
+  //    changed status" is not a quantity anyone can read as height, so it is a
+  //    flat constant now.)
   map.addLayer({
     id: 'polygons-fill', type: 'fill-extrusion', source: 'polygons',
     filter: visibleFilter(LAST),
     paint: {
       'fill-extrusion-color':   colorExpr(LAST),
       'fill-extrusion-opacity': 0.82,
-      'fill-extrusion-height':  ['+', 8, ['*', ['coalesce', ['get', 'status_change_count'], 0], 18]],
+      'fill-extrusion-height':  AREA_PLATE_HEIGHT,
       'fill-extrusion-base':    0,
     },
   });
@@ -1964,6 +1982,26 @@ map.on('load', async () => {
       'line-opacity': strokeOpacityExpr(LAST),
     },
   });
+
+  // 5b. Building volumes inside the areas — real OSM footprints as of the
+  //     December 2025 snapshot, carrying their area's status colour so the
+  //     blocks a resident recognises are the ones that read as transforming.
+  //     Note the heights are only 13% real (the rest default to 9 m), so the
+  //     massing is indicative; the colour is the reliable part.
+  //     Hidden when zoomed out, where they would be specks.
+  if (buildingGeo) {
+    map.addSource('buildings', { type: 'geojson', data: buildingGeo });
+    map.addLayer({
+      id: 'buildings-3d', type: 'fill-extrusion', source: 'buildings',
+      minzoom: BUILDINGS_MIN_ZOOM,
+      paint: {
+        'fill-extrusion-color':   colorExpr(LAST),
+        'fill-extrusion-height':  ['coalesce', ['get', 'height'], 9],
+        'fill-extrusion-base':    0,
+        'fill-extrusion-opacity': 0.95,
+      },
+    });
+  }
 
   // 6. Line transformation features, over a dark casing that only shows under
   //    the pale statuses (opacity 0 for the rest)
@@ -2150,6 +2188,8 @@ function recolorToPeriod(period) {
     map.setPaintProperty('lines-line', 'line-color',   colorExpr(period));
     map.setPaintProperty('lines-line', 'line-opacity', 0.85);
   }
+  if (map.getLayer('buildings-3d'))
+    map.setPaintProperty('buildings-3d', 'fill-extrusion-color', colorExpr(period));
   applyStrokes(period);
   ['polygons-fill', 'polygons-outline', 'lines-casing', 'lines-line', 'points-circle'].forEach(id => {
     if (map.getLayer(id)) map.setFilter(id, visibleFilter(period));
@@ -2237,6 +2277,14 @@ function applyStep(stepId) {
       focusStatus
         ? ['case', ['==', ['get', period], focusStatus], 0.9, 0.12]
         : 0.85);
+  }
+
+  if (map.getLayer('buildings-3d')) {
+    map.setPaintProperty('buildings-3d', 'fill-extrusion-color',
+      focusStatus
+        ? ['case', ['==', ['get', period], focusStatus], colorExpr(period), '#dde2e8']
+        : colorExpr(period)
+    );
   }
 
   // Outlines follow the same snapshot as the fills they edge. On a focused step
