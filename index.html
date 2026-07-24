@@ -1324,7 +1324,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=6501a63a"></script>
+<script src="config.js?v=e4c2ece2"></script>
 <script>
 'use strict';
 
@@ -1347,6 +1347,55 @@ function opacityExpr(periodKey, focusStatus) {
 
 function statusColor(s) {
   return CONFIG.statusColors[s] || '#e2e8f0';
+}
+
+// Same status, as drawn on the site's dark panels (legend, pills, chips,
+// timeline, popup). Falls back to the map colour when no dark variant is
+// declared, so the two tables can never drift out of sync.
+function statusColorUI(s) {
+  return (CONFIG.statusColorsOnDark && CONFIG.statusColorsOnDark[s]) || statusColor(s);
+}
+
+// Optional dark edge for fills too pale to hold their shape against a white
+// hairline on the cream basemap. Currently EMPTY: the yellow read as too heavy
+// with it — the outline turned "procedure in progress" into the loudest thing
+// on the map instead of a peer of the other three. Put a status back in this
+// list to re-enable its dark edge; the machinery below stays wired up either way.
+const OUTLINE_LIGHT = '#ffffff';
+const OUTLINE_DARK  = '#5a4a10';
+const DARK_OUTLINE_STATUSES = [];
+
+function strokeExpr(periodKey) {
+  if (!DARK_OUTLINE_STATUSES.length) return OUTLINE_LIGHT;
+  const expr = ['match', ['get', periodKey]];
+  for (const s of DARK_OUTLINE_STATUSES) expr.push(s, OUTLINE_DARK);
+  expr.push(OUTLINE_LIGHT);
+  return expr;
+}
+
+// The white edge stays a soft hairline (0.35 / 0.5px). Firmer was tried and
+// reverted: on the many small areas the edge ate the fill and the shape read
+// as a white blob. A dark edge, when enabled, has to be near-solid to work.
+function strokeOpacityExpr(periodKey, dark = 0.95, light = 0.35) {
+  if (!DARK_OUTLINE_STATUSES.length) return light;
+  const expr = ['match', ['get', periodKey]];
+  for (const s of DARK_OUTLINE_STATUSES) expr.push(s, dark);
+  expr.push(light);
+  return expr;
+}
+
+// Re-point every outline at the given snapshot. Called wherever the fills are
+// recoloured, so an edge never describes a different period than its fill.
+function applyStrokes(period) {
+  if (map.getLayer('polygons-outline')) {
+    map.setPaintProperty('polygons-outline', 'line-color',   strokeExpr(period));
+    map.setPaintProperty('polygons-outline', 'line-width',   strokeOpacityExpr(period, 1.1, 0.5));
+    map.setPaintProperty('polygons-outline', 'line-opacity', strokeOpacityExpr(period));
+  }
+  if (map.getLayer('points-circle'))
+    map.setPaintProperty('points-circle', 'circle-stroke-color', strokeExpr(period));
+  if (map.getLayer('lines-casing'))
+    map.setPaintProperty('lines-casing', 'line-opacity', strokeOpacityExpr(period, 0.9, 0));
 }
 
 const PERIODS = CONFIG.periods;
@@ -1525,7 +1574,7 @@ function buildLegend() {
   if (!el) return;
   const items = (CONFIG.legend || []).map(({ status }) => `
     <div class="legend-item" data-status="${escapeHtml(status)}">
-      <div class="legend-swatch" style="background:${statusColor(status)}"></div>${escapeHtml(statusLabel(status))}
+      <div class="legend-swatch" style="background:${statusColorUI(status)}"></div>${escapeHtml(statusLabel(status))}
     </div>`).join('');
   el.innerHTML = `<h4>${escapeHtml(uiText('legendTitle'))}</h4>` + items;
 }
@@ -1540,7 +1589,7 @@ function buildPipelinePills() {
   const el = document.getElementById('pipeline-pills');
   if (!el) return;
   el.innerHTML = (CONFIG.pipeline || []).map(status => `
-    <span class="pill"><span class="pill-dot" style="background:${statusColor(status)}"></span>${escapeHtml(statusLabel(status))}</span>
+    <span class="pill"><span class="pill-dot" style="background:${statusColorUI(status)}"></span>${escapeHtml(statusLabel(status))}</span>
   `).join('');
 }
 
@@ -1761,11 +1810,11 @@ const popup = new maplibregl.Popup({
 function showPopup(feat, lngLat) {
   const p      = feat.properties;
   const status = p[LAST] || 'unknown';
-  const color  = statusColor(status);
+  const color  = statusColorUI(status);
 
   const timelineHtml = PERIODS.map(period => {
     const s = p[period.key] || '';
-    return `<div class="popup-cell" style="background:${statusColor(s)}" title="${escapeHtml(periodLabel(period))}: ${escapeHtml(s ? statusFull(s) : '—')}"></div>`;
+    return `<div class="popup-cell" style="background:${statusColorUI(s)}" title="${escapeHtml(periodLabel(period))}: ${escapeHtml(s ? statusFull(s) : '—')}"></div>`;
   }).join('');
 
   const firstLabel = periodLabel(PERIODS[0]);
@@ -1905,14 +1954,29 @@ map.on('load', async () => {
     },
   });
 
-  // 5. Polygon outline
+  // 5. Polygon outline — white hairline, except on pale fills (see strokeExpr)
   map.addLayer({
     id: 'polygons-outline', type: 'line', source: 'polygons',
     filter: visibleFilter(LAST),
-    paint: { 'line-color': '#fff', 'line-width': 0.5, 'line-opacity': 0.35 },
+    paint: {
+      'line-color':   strokeExpr(LAST),
+      'line-width':   strokeOpacityExpr(LAST, 1.1, 0.5),
+      'line-opacity': strokeOpacityExpr(LAST),
+    },
   });
 
-  // 6. Line transformation features
+  // 6. Line transformation features, over a dark casing that only shows under
+  //    the pale statuses (opacity 0 for the rest)
+  map.addLayer({
+    id: 'lines-casing', type: 'line', source: 'lines',
+    filter: visibleFilter(LAST),
+    paint: {
+      'line-color':   OUTLINE_DARK,
+      'line-width':   7,
+      'line-opacity': strokeOpacityExpr(LAST, 0.9, 0),
+    },
+  });
+
   map.addLayer({
     id: 'lines-line', type: 'line', source: 'lines',
     filter: visibleFilter(LAST),
@@ -1926,7 +1990,7 @@ map.on('load', async () => {
     paint: {
       'circle-color':        colorExpr(LAST),
       'circle-radius':       6,
-      'circle-stroke-color': '#fff',
+      'circle-stroke-color': strokeExpr(LAST),
       'circle-stroke-width': 1,
       'circle-opacity':      0.85,
     },
@@ -1984,7 +2048,7 @@ function buildTrajectory(elementId, code) {
     // vs Dec 2022) — then add the month so the change is still legible.
     const collide = (i > 0 && yearOf(seq[i - 1]) === yr) || (i < seq.length - 1 && yearOf(seq[i + 1]) === yr);
     const date   = collide ? `${mon.slice(0, 3)} ${yr}` : yr;
-    const chip   = `<span class="traj-chip" style="background:${statusColor(item.status)}" title="${statusFull(item.status)} — ${full}">${shortStatus(item.status)}</span>`;
+    const chip   = `<span class="traj-chip" style="background:${statusColorUI(item.status)}" title="${statusFull(item.status)} — ${full}">${shortStatus(item.status)}</span>`;
     const cell   = `<span class="traj-item">${chip}<span class="traj-year">${date}</span></span>`;
     const arrow  = i < seq.length - 1 ? `<span class="traj-arrow">→</span>` : '';
     return cell + arrow;
@@ -2047,7 +2111,7 @@ function buildTimelineWidget(tlData) {
       if (t.counts[s]) {
         const seg = document.createElement('div');
         seg.className = 'tl-seg';
-        seg.style.background = statusColor(s);
+        seg.style.background = statusColorUI(s);
         seg.style.height = (t.counts[s] / tot * 100) + '%';
         col.appendChild(seg);
       }
@@ -2082,7 +2146,8 @@ function recolorToPeriod(period) {
     map.setPaintProperty('lines-line', 'line-color',   colorExpr(period));
     map.setPaintProperty('lines-line', 'line-opacity', 0.85);
   }
-  ['polygons-fill', 'polygons-outline', 'lines-line', 'points-circle'].forEach(id => {
+  applyStrokes(period);
+  ['polygons-fill', 'polygons-outline', 'lines-casing', 'lines-line', 'points-circle'].forEach(id => {
     if (map.getLayer(id)) map.setFilter(id, visibleFilter(period));
   });
   const badge = document.getElementById('period-badge');
@@ -2170,8 +2235,12 @@ function applyStep(stepId) {
         : 0.85);
   }
 
+  // Outlines follow the same snapshot as the fills they edge. On a focused step
+  // the dimmed marks keep their edge — it is the fill that recedes, not the shape.
+  applyStrokes(period);
+
   // Show each feature only from the period it first appears (hide leading empties)
-  ['polygons-fill', 'polygons-outline', 'lines-line', 'points-circle'].forEach(id => {
+  ['polygons-fill', 'polygons-outline', 'lines-casing', 'lines-line', 'points-circle'].forEach(id => {
     if (map.getLayer(id)) map.setFilter(id, visibleFilter(period));
   });
 
@@ -2226,13 +2295,13 @@ function applyStep(stepId) {
 // Chip colors are pulled from CONFIG.statusColors so they stay in sync with the palette.
 // labelKey resolves to a language-aware string via CONFIG.i18n.chipLabels in renderChips().
 const CHIP_MAP = {
-  overview:     [{ color: CONFIG.statusColors['under construction'],    count: CONFIG.stats.total,        labelKey: 'tracked'      }],
-  on_hold:      [{ color: statusColor('on hold'),                       count: CONFIG.stats.onHold,       labelKey: 'onHold'       }],
-  procedure:    [{ color: statusColor('procedure in progress'),         count: CONFIG.stats.procedure,    labelKey: 'procedure'    }],
-  construction: [{ color: statusColor('under construction'),            count: CONFIG.stats.construction, labelKey: 'construction' }],
+  overview:     [{ color: statusColorUI('under construction'),    count: CONFIG.stats.total,        labelKey: 'tracked'      }],
+  on_hold:      [{ color: statusColorUI('on hold'),                       count: CONFIG.stats.onHold,       labelKey: 'onHold'       }],
+  procedure:    [{ color: statusColorUI('procedure in progress'),         count: CONFIG.stats.procedure,    labelKey: 'procedure'    }],
+  construction: [{ color: statusColorUI('under construction'),            count: CONFIG.stats.construction, labelKey: 'construction' }],
   completed:    [
-    { color: statusColor('completed'), count: CONFIG.stats.completed, labelKey: 'completed' },
-    { color: statusColor('removed'),   count: CONFIG.stats.removed,   labelKey: 'removed'   },
+    { color: statusColorUI('completed'), count: CONFIG.stats.completed, labelKey: 'completed' },
+    { color: statusColorUI('removed'),   count: CONFIG.stats.removed,   labelKey: 'removed'   },
   ],
 };
 

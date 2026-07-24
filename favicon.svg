@@ -1,8 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
   <rect width="32" height="32" rx="7" fill="#00284b"/>
-  <!-- status bars echoing the timeline / palette -->
-  <rect x="6"  y="17" width="4" height="9"  rx="1" fill="#c98a2b"/>
-  <rect x="12" y="12" width="4" height="14" rx="1" fill="#3a7ca5"/>
-  <rect x="18" y="7"  width="4" height="19" rx="1" fill="#d9531e"/>
-  <rect x="24" y="14" width="4" height="12" rx="1" fill="#4a8c5a"/>
+  <!-- status bars echoing the timeline / palette; lightened where the palette
+       value itself is too dark to read at 32px on the navy tile -->
+  <rect x="6"  y="17" width="4" height="9"  rx="1" fill="#a9713f"/>
+  <rect x="12" y="12" width="4" height="14" rx="1" fill="#d8b021"/>
+  <rect x="18" y="7"  width="4" height="19" rx="1" fill="#e55900"/>
+  <rect x="24" y="14" width="4" height="12" rx="1" fill="#9a83e0"/>
 </svg>

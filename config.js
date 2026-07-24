@@ -16,17 +16,48 @@ const CONFIG = {
     coverZoom: 10.8
   },
 
-  // Status color palette — used both in the map layers and the legend
+  // Status color palette — used both in the map layers and the legend.
+  //
+  // Exactly FOUR colours, one per pipeline stage. The transitional variants
+  // (demolition started, and the two "partially" labels, which together cover
+  // three cells in the whole dataset) all take their parent stage's colour, so
+  // the reader never has to decode a fifth or sixth shade. Grey is not a status
+  // colour — it is the neutral for the two no-activity categories.
+  //
+  // Chosen against the natural basemap (green parks, blue water): no status
+  // sits in the basemap's hue bands, so a coloured area never reads as "a park"
+  // or "the river". Validated all-pairs against the beige map surface:
+  // colour-blind ΔE 11.3 (target 8), normal-vision ΔE 18.4 (floor 15). Green
+  // and blue are deliberately absent — keeping a green "completed" alongside
+  // the bronze/orange pair drops CVD ΔE to ~7.
+  //
+  // The gold is the one colour under the 3:1 map-contrast bar (1.8:1). It is
+  // shipped that way on purpose: the dark outline that would fix it made the
+  // status shout over the other three (see DARK_OUTLINE_STATUSES in index.html,
+  // currently empty). Large areas read fine; small points are the thing to
+  // watch if the palette is ever revisited.
   statusColors: {
-    'on hold':                                                '#c98a2b',
-    'procedure in progress':                                  '#3a7ca5',
-    'under construction':                                     '#d9531e',
-    'under construction (demolition started)':                '#d9531e',
-    'partially under construction':                           '#e8743b',
-    'partially under construction - partially completed':     '#a3c46d',
-    'completed':                                              '#4a8c5a',
-    'removed':                                                '#8a8377',
-    'unknown':                                                '#b8b0a5',
+    'on hold':                                                '#7a4208',  // bronze
+    'procedure in progress':                                  '#d8b021',  // gold
+    'under construction':                                     '#e55900',  // orange
+    'under construction (demolition started)':                '#e55900',
+    'partially under construction':                           '#e55900',
+    'partially under construction - partially completed':     '#e55900',
+    'completed':                                              '#7052c8',  // violet
+    'removed':                                                '#847f78',  // neutral, not a stage
+    'unknown':                                                '#b6afa6',  // neutral, not a stage
+  },
+
+  // The same statuses as they appear on the site's DARK panels — legend, pills,
+  // stat chips, trajectory chips, timeline bar, popup. statusColors above is
+  // tuned for the pale basemap, where dark values read best; on the navy UI
+  // those same values all but vanish (bronze is 1.9:1 on #00284b, violet
+  // 2.7:1). Only the colours that need it are listed — anything missing falls
+  // through to statusColors, so the two tables cannot drift apart. The gold
+  // needs no variant: it is the brightest thing on navy at 7.2:1.
+  statusColorsOnDark: {
+    'on hold':    '#a9713f',   // bronze is 1.9:1 on navy
+    'completed':  '#9a83e0',   // violet is 2.7:1 on navy
   },
 
   // Curated legend — which statuses appear in the on-map legend, and their labels.
