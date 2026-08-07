@@ -497,7 +497,17 @@
       transition: opacity 0.2s, transform 0.15s, box-shadow 0.15s;
     }
 
-    .tl-col.dim { opacity: 0.28; }
+    /* Inactive snapshots keep their real colours. Fading them to 0.28 over the
+       navy panel blended every warm hue toward olive, so six of the seven columns
+       read as a green ramp — the one hue the status palette deliberately avoids.
+       They now recede only slightly; the active column is marked by a ring and a
+       brighter label instead of by everything else disappearing. */
+    .tl-col.dim { opacity: 0.68; }
+
+    .tl-col.active {
+      outline: 2px solid rgba(241,245,249,0.85);
+      outline-offset: 1px;
+    }
 
     /* hover cue: lift + brighten so any bar (even a dimmed one) reads as clickable */
     .tl-col:hover { opacity: 1; transform: translateY(-4px); box-shadow: 0 4px 10px rgba(0,40,75,0.35); }
@@ -519,7 +529,10 @@
       color: var(--muted);
       white-space: nowrap;
       overflow: hidden;
+      transition: color 0.2s;
     }
+
+    .tl-labels span.active { color: var(--text); font-weight: 700; }
 
     .tl-caption {
       margin-top: 6px;
@@ -565,6 +578,41 @@
     .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
       margin-top: 0;
       margin-bottom: 8px;
+    }
+
+    /* MapLibre ships the attribution strip and the scale as white/near-white
+       boxes, which made them the brightest objects on an otherwise navy UI.
+       Restyle both to the same panel treatment as the legend and timeline.
+       The attribution text stays fully legible — the OpenFreeMap/OpenMapTiles/
+       OSM credit is a licence requirement, not decoration. */
+    .maplibregl-ctrl.maplibregl-ctrl-attrib,
+    .maplibregl-ctrl-attrib.maplibregl-compact {
+      background: rgba(0,40,75,0.92) !important;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.63rem;
+    }
+
+    .maplibregl-ctrl-attrib a          { color: var(--text); }
+    .maplibregl-ctrl-attrib a:hover    { color: var(--accent); }
+
+    /* the ⓘ glyph is a dark SVG on a white chip — flip it for the dark panel */
+    .maplibregl-ctrl-attrib-button {
+      background-color: transparent;
+      filter: invert(1) opacity(0.75);
+    }
+
+    .maplibregl-ctrl-scale {
+      background: rgba(0,40,75,0.92);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.62rem;
+      padding: 1px 5px;
     }
 
     .popup-code {
@@ -2183,8 +2231,14 @@ function buildTimelineWidget(tlData) {
 }
 
 function highlightTL(periodKey) {
-  document.querySelectorAll('.tl-col').forEach(c => {
-    c.classList.toggle('dim', c.dataset.period !== periodKey);
+  // #tl-labels spans are appended in the same order as the columns, so index maps
+  // one to one — the label brightens with its bar.
+  const labels = document.querySelectorAll('#tl-labels span');
+  document.querySelectorAll('.tl-col').forEach((c, i) => {
+    const on = c.dataset.period === periodKey;
+    c.classList.toggle('dim', !on);
+    c.classList.toggle('active', on);
+    if (labels[i]) labels[i].classList.toggle('active', on);
   });
 }
 
