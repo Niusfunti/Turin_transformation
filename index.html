@@ -193,10 +193,11 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* Legend */
+    /* Legend — `bottom` clears the scale bar + attribution stack below it
+       (top of the scale sits ~57px up), leaving a small gap above the scale. */
     #legend {
       position: absolute;
-      bottom: 92px;
+      bottom: 64px;
       right: 14px;
       background: rgba(0,40,75,0.93);
       border: 1px solid var(--border);
@@ -551,6 +552,19 @@
 
     .maplibregl-popup-tip {
       border-top-color: var(--surface) !important;
+    }
+
+    /* Bottom-right controls: tuck the scale bar close to the ⓘ attribution
+       button. Both the scale's own bottom margin and the attribution's top
+       margin (10px from .maplibregl-compact) contribute to the stack gap. */
+    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-scale {
+      margin-bottom: 3px;
+    }
+
+    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact,
+    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+      margin-top: 0;
+      margin-bottom: 8px;
     }
 
     .popup-code {
