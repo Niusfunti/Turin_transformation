@@ -86,13 +86,13 @@ const CONFIG = {
   // Aggregate statistics shown in the stat chips (derived from the data)
   stats: {
     total:        206,
-    polygons:     150,
-    points:        53,
+    polygons:     198,
+    points:         5,
     lines:          3,
-    onHold:        43,
+    onHold:        44,
     procedure:     48,
-    construction:  51,
-    completed:     39,
+    construction:  52,
+    completed:     40,
     removed:       20,
   },
 
@@ -426,7 +426,7 @@ const CONFIG = {
       'footer.sup':     'Supervisione del Prof. Piero Boccardo &middot; Gruppo di ricerca SDG11Lab',
       'footer.github':  'Geodatabase su GitHub',
       'footer.funding': 'Finanziato dall’Unione Europea – NextGenerationEU nell’ambito del PNRR — MUR DM 118/2023, CUP E14D23001910006',
-      'footer.credits.data': 'Dati: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; Catasto INSPIRE',
+      'footer.credits.data': 'Dati: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributori OpenStreetMap</a> &middot; ESA WorldCover 2021 &middot; Catasto INSPIRE',
       'footer.credits.map':  'Mappa: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a>',
     },
   },

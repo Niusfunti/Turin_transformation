@@ -1381,12 +1381,12 @@
   </div>
 
   <div class="footer-credits">
-    <div data-i18n="footer.credits.data">Data: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; OpenStreetMap &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
+    <div data-i18n="footer.credits.data">Data: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
     <div data-i18n="footer.credits.map">Map: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a></div>
   </div>
 </footer>
 
-<script src="config.js?v=4af14182"></script>
+<script src="config.js?v=1c614e47"></script>
 <script>
 'use strict';
 
@@ -1862,9 +1862,19 @@ const map = new maplibregl.Map({
   zoom:      CONFIG.map.zoom,
   minZoom:   CONFIG.map.minZoom,
   maxZoom:   CONFIG.map.maxZoom,
+  attributionControl: false,
 });
 
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+// The attribution is added by hand only to pin `compact: true`. MapLibre's own
+// default control expands the collapsed badge into a full text strip once the
+// map panel is wider than 640px, so it changed size between laptop and desktop.
+// Added before the scale so the bottom-right stack keeps the order the default
+// control gave it. The credit itself is a licence requirement — see the CSS
+// note above `.maplibregl-ctrl-attrib`; it stays on the map, not just in the
+// footer, because this map is interactive. (The cover map, decorative and
+// non-interactive, has no control at all and is covered by the footer credit.)
+map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right');
 
 // ── Popup ────────────────────────────────────────────────────
