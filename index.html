@@ -310,7 +310,9 @@
     /* Stats chips */
     #stats-chips {
       position: absolute;
-      top: 14px;
+      /* 56px, not 14: the fixed language pill owns the viewport's top-right
+         corner down to y=46. */
+      top: 56px;
       right: 46px;
       display: flex;
       flex-direction: column;
@@ -642,6 +644,12 @@
       border-top-color: var(--surface) !important;
     }
 
+    /* The map's top-right stack starts below the fixed language pill (which ends
+       at y=46) instead of underneath it. */
+    .maplibregl-ctrl-top-right .maplibregl-ctrl {
+      margin-top: 52px;
+    }
+
     /* Bottom-right controls sit as one row — ⓘ badge, then the scale bar in
        the corner — instead of MapLibre's two-row float stack. The container is
        anchored bottom-right with auto width, so the credit strip unfurls
@@ -880,10 +888,19 @@
     }
 
     /* ── Language switcher ──────────────────────────────────── */
-    /* Absolute (not fixed) so it sits at the top of the page and scrolls away
-       with the cover, rather than staying pinned over the map UI. */
+    /* Fixed, not absolute. It used to scroll away with the cover, so a reader ten
+       steps into the story had to scroll back to the top to change language — on
+       a page whose audience is largely Italian. It keeps its top-RIGHT corner, so
+       the cover looks exactly as designed; top-left was tried and put the pill
+       straight over the step cards' kicker line, which no offset fixes because
+       the cards scroll through that spot. Pinning it there instead means the
+       map's own top-right stack has to start below it — see the `margin-top` on
+       `.maplibregl-ctrl-top-right` and `#stats-chips`, both of which would
+       otherwise sit under the pill.
+       `#cover` has overflow:hidden but no transform/filter, so it does not
+       establish a containing block and the pill stays viewport-anchored. */
     #lang-switch {
-      position: absolute;
+      position: fixed;
       top: 14px;
       right: 14px;
       z-index: 1200;
@@ -960,7 +977,6 @@
         background: rgba(0,40,75,0.88);
       }
 
-      #evidence { padding: 3.5rem 1.2rem 1rem; }
       .ev-swipe { height: 58vw; max-height: 340px; }
       #aerial-overlay { padding: 0.8rem; }
       #aerial-overlay .ev-swipe { height: 30vh; }
@@ -984,16 +1000,9 @@
     }
 
     /* ── Aerial before/after evidence ───────────────────────── */
-    #evidence {
-      padding: 5rem 6vw 1rem;
-      border-top: 1px solid var(--border);
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .evidence-intro { max-width: 620px; margin-bottom: 2.25rem; }
-    .evidence-intro h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 0.7rem; }
-    .evidence-intro p  { color: var(--muted); line-height: 1.7; }
+    /* The closing #evidence gallery is gone — all six cases show inline over the
+       map, and its intro moved into the `intro_aerial` step. What remains here
+       dresses the card that showAerialOverlay() builds. */
     .ev-note {
       margin-top: 0.9rem;
       font-family: var(--sans);
@@ -1748,7 +1757,6 @@ function refreshDynamicLang() {
   buildTrajectory('csea-trajectory',       'N059');
   buildTrajectory('salute-trajectory',     'N049');
   buildTrajectory('robaldo-trajectory',    'N193');
-  buildEvidenceCards();
 
   const cfg = CONFIG.steps.find(s => s.id === currentStepId);
   // Rebuild the aerial pop-up in the new language if it's currently open
@@ -2092,7 +2100,7 @@ function showPopup(feat, lngLat) {
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
       ${landUse ? `<div class="popup-landuse">${escapeHtml(uiText('landUse'))}: <b>${escapeHtml(landUseLabel(landUse))}</b></div>` : ''}
       ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">${escapeHtml(uiText('visitulLink'))}</a>` : ''}
-      ${EVIDENCE_CODES.has(p.code) ? `<button type="button" class="popup-aerial-btn" onclick="scrollToEvidence('${escapeHtml(p.code)}')">${escapeHtml(uiText('evAerialBtn'))}</button>` : ''}
+      ${EVIDENCE_INLINE[p.code] ? `<button type="button" class="popup-aerial-btn" onclick="scrollToEvidence('${escapeHtml(p.code)}')">${escapeHtml(uiText('evAerialBtn'))}</button>` : ''}
     `)
     .addTo(map);
 }
@@ -2657,16 +2665,17 @@ function renderChips(stepId) {
 }
 
 // ── Aerial before/after evidence cards ────────────────────────
-// Scaffold: renders one draggable before/after "swipe" card per CONFIG.evidenceCases.
+// One draggable before/after "swipe" card, built on demand for the step being read.
 // While `before`/`after` are null the panels are grey placeholders; when real crop
 // paths are set they render as background images (a pure data swap — no code change).
 // The AI-detection toggle is present but inert until per-site detection GeoJSON exists.
 
 const EVIDENCE_CASES = CONFIG.evidenceCases || [];
-const EVIDENCE_CODES = new Set(EVIDENCE_CASES.map(c => c.code));
-
-// Sites whose comparison is shown inline in the story (as a map pop-up) instead of
-// in the closing gallery. Derived from any CONFIG.steps entry carrying `aerial: code`.
+// Sites whose comparison is shown inline in the story, as a pop-up over the map.
+// Derived from any CONFIG.steps entry carrying `aerial: code`. Since the closing
+// gallery was removed, this is also the set of cases the popup's aerial button can
+// reach: a case with no `aerial` step has nowhere to send the reader, so it gets
+// no button rather than a dead one.
 const EVIDENCE_INLINE = {};   // code -> step id
 (CONFIG.steps || []).forEach(s => { if (s.aerial) EVIDENCE_INLINE[s.aerial] = s.id; });
 
@@ -2677,7 +2686,8 @@ function evidenceText(code) {
 }
 
 // Inner markup of a swipe card (head + caption + swipe + toggle) — no outer .ev-card
-// wrapper, so it can be reused by both the closing gallery and the inline pop-up.
+// wrapper, so the caller supplies it. Only showAerialOverlay() calls this now that
+// the closing gallery is gone.
 function evidenceCardInner(c) {
   const t        = evidenceText(c.code);
   const hasImg   = !!(c.before && c.after);
@@ -2716,17 +2726,6 @@ function evidenceCardInner(c) {
     </div>`;
 }
 
-// Closing gallery — every evidence case except those shown inline in the story.
-function buildEvidenceCards() {
-  const wrap = document.getElementById('evidence-cards');
-  if (!wrap) return;
-  wrap.innerHTML = EVIDENCE_CASES
-    .filter(c => !EVIDENCE_INLINE[c.code])
-    .map(c => `<div class="ev-card" id="ev-card-${escapeHtml(c.code)}">${evidenceCardInner(c)}</div>`)
-    .join('');
-  wrap.querySelectorAll('.ev-swipe').forEach(initSwipe);
-}
-
 // Inline pop-up over the sticky map, shown on steps carrying an `aerial` code.
 function showAerialOverlay(code) {
   const ov    = document.getElementById('aerial-overlay');
@@ -2743,7 +2742,8 @@ function hideAerialOverlay() {
 }
 
 // Swipe drag state — one active swipe at a time, so window listeners attach once
-// (buildEvidenceCards can re-run on language switch without leaking listeners).
+// (the overlay card is rebuilt on every aerial step and on language switch, and
+// must not leak a listener each time).
 let evActiveSwipe = null;
 
 function setSwipePos(swipe, pct) {
@@ -2775,19 +2775,16 @@ window.addEventListener('pointermove', e => {
 }, { passive: false });
 window.addEventListener('pointerup', () => { evActiveSwipe = null; });
 
-// Called from the map popup's "aerial before/after" button. Sites shown inline scroll
-// to their story step (which triggers the pop-up); the rest scroll to the gallery card.
+// Called from the map popup's "aerial before/after" button: scroll to the case's
+// story step, which triggers the pop-up over the map. The button is only rendered
+// for codes in EVIDENCE_INLINE, so stepId is always set here.
 function scrollToEvidence(code) {
   const stepId = EVIDENCE_INLINE[code];
-  const el = stepId
-    ? document.querySelector(`#article .step[data-step="${stepId}"]`)
-    : document.getElementById('ev-card-' + code);
+  const el = stepId && document.querySelector(`#article .step[data-step="${stepId}"]`);
   if (el) el.scrollIntoView({ behavior: PREFERS_REDUCED_MOTION ? 'auto' : 'smooth', block: 'center' });
   if (typeof popup !== 'undefined' && popup) popup.remove();
 }
 
-// Build once on load (independent of the map); rebuilt on language switch.
-buildEvidenceCards();
 </script>
 </body>
 </html>
