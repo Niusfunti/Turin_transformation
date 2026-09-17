@@ -159,6 +159,71 @@
       height: 100%;
     }
 
+    /* Loading veil over the sticky map. The map needs the basemap style, its
+       tiles and ~1.2 MB of GeoJSON before it can draw anything, which on a cold
+       load is ten to twenty seconds of blank panel — the worst moment in the
+       piece, and previously unexplained. The veil is the basemap's own beige, so
+       when it fades there is no flash, just the city arriving.
+       z-index sits above #map-ui (10) and below #data-error (20), so a data
+       failure still wins. */
+    #map-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1ede6;
+      transition: opacity 0.45s;
+    }
+
+    #map-loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .map-loading-chip {
+      background: rgba(0,40,75,0.93);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1.1rem 0.85rem;
+      font-family: var(--sans);
+      font-size: 0.63rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Indeterminate bar: a faint full-width track with a highlight sliding
+       across it. The track is drawn separately from the animation so that under
+       `prefers-reduced-motion` — where the global rule collapses every animation
+       — what remains is a static track rather than a blank gap. */
+    .map-loading-track {
+      position: relative;
+      overflow: hidden;
+      width: 140px;
+      height: 2px;
+      margin: 0.6rem auto 0;
+      background: rgba(241,245,249,0.18);
+      border-radius: 2px;
+    }
+
+    .map-loading-track::after {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 45%;
+      border-radius: 2px;
+      background: var(--accent);
+      animation: mapLoadingSlide 1.3s ease-in-out infinite;
+    }
+
+    @keyframes mapLoadingSlide {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(240%); }
+    }
+
     /* Map overlays */
     #map-ui {
       position: absolute;
@@ -456,7 +521,13 @@
       position: absolute;
       left: 14px;
       bottom: 28px;
-      width: min(430px, calc(58vw - 28px));
+      /* 100% is the map panel (via #map-ui), not the viewport. The old
+         `58vw` hard-coded the desktop column split, so on a phone — where the
+         panel goes full width — the widget still took 58% of the screen and
+         squeezed seven columns into ~20px each, half what a finger needs, on
+         the one device where a finger is the only input. Panel-relative is
+         identical on desktop (the panel IS 58vw) and correct everywhere else. */
+      width: min(430px, calc(100% - 28px));
       background: rgba(0,40,75,0.88);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -893,6 +964,23 @@
       .ev-swipe { height: 58vw; max-height: 340px; }
       #aerial-overlay { padding: 0.8rem; }
       #aerial-overlay .ev-swipe { height: 30vh; }
+
+      /* The timeline now spans the panel, so the bottom-right corner is no
+         longer free: at 390px the widget reaches x=358 and the legend used to
+         start at x=229, landing on top of the chart. (The old `58vw` width kept
+         them apart here by accident, not by design.) Move the legend to the
+         top-left instead — below the period badge, clear of the zoom buttons
+         and the stat chips on the right — which is the emptiest part of the map
+         at these city-wide camera positions. */
+      #legend {
+        /* 58px clears the period badge (bottom edge ~49px) with room to spare —
+           the badge is centred and wide enough to overlap the legend's column,
+           so the gap is the only thing keeping them apart. */
+        top: 58px;
+        left: 14px;
+        right: auto;
+        bottom: auto;
+      }
     }
 
     /* ── Aerial before/after evidence ───────────────────────── */
@@ -1155,6 +1243,15 @@
   <!-- Sticky map -->
   <div id="map-panel">
     <div id="map"></div>
+
+    <!-- Loading veil: hidden by hideMapLoading() at the end of map.on('load') -->
+    <div id="map-loading" role="status" aria-live="polite">
+      <div class="map-loading-chip">
+        <span data-i18n="loading.map">Loading the map</span>
+        <div class="map-loading-track"></div>
+      </div>
+    </div>
+
     <div id="map-ui">
       <div id="period-badge"></div>
 
@@ -1432,7 +1529,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=1c614e47"></script>
+<script src="config.js?v=a4582a94"></script>
 <script>
 'use strict';
 
@@ -2012,8 +2109,23 @@ async function fetchGeoJSON(path) {
   return r.json();
 }
 
+// Lift the loading veil. Called once the map has its style, its data and its
+// layers — not on `styledata`, which fires while the panel is still empty — and
+// again from showDataError(), so a failure replaces the veil instead of
+// stacking on it. Safe to call twice.
+function hideMapLoading() {
+  document.getElementById('map-loading')?.classList.add('hidden');
+}
+
+// Safety net: if `load` never fires — a blocked basemap, an offline tile host —
+// the reader must not be left staring at a veil that never lifts. After 30s,
+// drop it and show whatever the map managed. That is today's behaviour on a
+// failed load, no worse, and the veil is never a trap.
+setTimeout(hideMapLoading, 30000);
+
 function showDataError(err) {
   console.error('Failed to load map data:', err);
+  hideMapLoading();
   const panel = document.getElementById('map-panel');
   if (!panel || document.getElementById('data-error')) return;
   const box = document.createElement('div');
@@ -2205,6 +2317,7 @@ map.on('load', async () => {
   buildTimelineWidget(buildTimelineData(timelineData));
 
   initScrollama();
+  hideMapLoading();
 });
 
 // ── Trajectory chips (featured site history) ─────────────────

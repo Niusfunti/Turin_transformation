@@ -412,6 +412,9 @@ const CONFIG = {
 
       // (Aerial evidence closing section removed — intro moved to the ia.* divider above)
 
+      // Loading veil over the map
+      'loading.map': 'Caricamento della mappa',
+
       // Timeline widget
       'tl.header':  'Stato delle aree nel tempo',
       'tl.caption': 'Numero di aree con uno stato registrato per rilevazione',
