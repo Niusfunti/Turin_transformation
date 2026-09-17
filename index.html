@@ -199,7 +199,10 @@
     #legend {
       position: absolute;
       bottom: 40px;
-      right: 14px;
+      /* 10px, not the 14px the other panels use: this is MapLibre's own control
+         inset, so the legend shares a right edge with the ⓘ + scale row below it
+         and the zoom buttons above. */
+      right: 10px;
       background: rgba(0,40,75,0.93);
       border: 1px solid var(--border);
       padding: 0.8rem 1rem;
