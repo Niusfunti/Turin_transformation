@@ -1875,6 +1875,30 @@ map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-ri
 // footer, because this map is interactive. (The cover map, decorative and
 // non-interactive, has no control at all and is covered by the footer credit.)
 map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+// …and start it collapsed to the bare ⓘ: MapLibre adds the compact badge
+// *open* (`maplibregl-compact-show` + `open` on its <details>) and only closes
+// it when the reader drags the map — which the story's own flyTo never does, so
+// the full credit strip sat over the map for the whole scroll. Clicking the ⓘ
+// opens it; clicking again closes it. Two things make the timing fiddly:
+//   • the badge is empty until the style's sources report their attribution, and
+//     MapLibre re-runs its own `_updateCompact` when they do — collapsing before
+//     that gets silently undone, hence the `styledata` wait;
+//   • the collapsed DOM state is class off *and* `open` off, which is exactly
+//     what a click produces, so MapLibre's own toggle stays in step.
+// Once `maplibregl-compact` is on the element MapLibre never re-opens it, so
+// later source loads and resizes leave this alone. The always-on footer credit
+// carries the attribution while the badge is closed.
+function collapseAttribution() {
+  const el = map.getContainer().querySelector('.maplibregl-ctrl-attrib');
+  if (!el || el.classList.contains('maplibregl-attrib-empty')) return false;
+  el.classList.remove('maplibregl-compact-show');
+  el.removeAttribute('open');
+  return true;
+}
+if (!collapseAttribution()) {
+  const collapseWhenFilled = () => { if (collapseAttribution()) map.off('styledata', collapseWhenFilled); };
+  map.on('styledata', collapseWhenFilled);
+}
 map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right');
 
 // ── Popup ────────────────────────────────────────────────────
