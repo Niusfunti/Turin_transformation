@@ -310,10 +310,12 @@
     /* Stats chips */
     #stats-chips {
       position: absolute;
-      /* 56px, not 14: the fixed language pill owns the viewport's top-right
-         corner down to y=46. */
-      top: 56px;
-      right: 46px;
+      /* Top-left of the map: the right corner is now the language pill plus the
+         zoom buttons, and the map's left edge is empty at every camera position
+         the story uses. 14px matches #timeline-bar's inset below it, and the
+         top edge lines up with the period badge. */
+      top: 14px;
+      left: 14px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -996,6 +998,15 @@
         left: 14px;
         right: auto;
         bottom: auto;
+      }
+
+      /* On phones the legend owns the top-left (the timeline takes the full
+         width along the bottom), so the chips stay on the right — below the
+         fixed language pill, which ends at y=46. */
+      #stats-chips {
+        top: 56px;
+        left: auto;
+        right: 46px;
       }
     }
 
