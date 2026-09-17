@@ -456,7 +456,7 @@
       position: absolute;
       left: 14px;
       bottom: 28px;
-      width: min(520px, calc(58vw - 28px));
+      width: min(430px, calc(58vw - 28px));
       background: rgba(0,40,75,0.88);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -487,7 +487,7 @@
       display: flex;
       align-items: flex-end;
       gap: 5px;
-      height: 60px;
+      height: 44px;
     }
 
     .tl-col {
@@ -1668,11 +1668,17 @@ function refreshDynamicLang() {
   // Re-render stat chips for the current step in the active language
   renderChips(currentStepId);
 
-  // Re-localise the timeline axis labels (month names differ per language)
+  // Re-localise the timeline axis labels (month names differ per language) —
+  // and each column's tooltip / accessible name, which carry the full label.
   document.querySelectorAll('#tl-labels span').forEach((sp, i) => {
     if (!PERIODS[i]) return;
-    const l = tlShortLabel(PERIODS[i].key);
-    sp.innerHTML = `${escapeHtml(l.mon)}<br>${escapeHtml(l.yr)}`;
+    sp.textContent = tlShortLabel(PERIODS[i].key);
+  });
+  document.querySelectorAll('.tl-col').forEach(col => {
+    const p = PERIODS.find(x => x.key === col.dataset.period);
+    if (!p) return;
+    col.title = periodLabel(p) || p.key;
+    col.setAttribute('aria-label', col.title);
   });
 }
 
@@ -2255,12 +2261,14 @@ const TL_ORDER = [
   'partially under construction - partially completed', 'completed', 'removed',
 ];
 
-// Two-line timeline axis label: abbreviated month over full year, language-aware.
+// Timeline axis label, language-aware: abbreviated month + apostrophe year on
+// ONE line ("Jul ’20"). It used to be two lines, month over full year; one line
+// halves the label strip, part of trimming the widget's footprint on the map.
 // Derived from CONFIG.periods (label / labelIt), so adding a period needs no map here.
 function tlShortLabel(periodKey) {
   const p = PERIODS.find(x => x.key === periodKey);
   const [mon = '', yr = ''] = (periodLabel(p) || periodKey).split(' ');
-  return { mon: mon.slice(0, 3), yr };
+  return `${mon.slice(0, 3)} ’${yr.slice(2)}`;
 }
 
 function buildTimelineData(geoData) {
@@ -2288,7 +2296,16 @@ function buildTimelineWidget(tlData) {
     col.className = 'tl-col';
     col.dataset.period = t.period;
     col.title = periodLabel(PERIODS.find(p => p.key === t.period)) || t.period;
-    col.addEventListener('click', () => recolorToPeriod(t.period));
+    // A column is a real control — it recolours the map to its snapshot — so it
+    // is focusable and answers Enter/Space, not just the mouse.
+    col.tabIndex = 0;
+    col.setAttribute('role', 'button');
+    col.setAttribute('aria-label', col.title);
+    const pick = () => recolorToPeriod(t.period);
+    col.addEventListener('click', pick);
+    col.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); }
+    });
     col.style.height = (tot / maxTot * 100) + '%';
 
     TL_ORDER.forEach(s => {
@@ -2304,8 +2321,7 @@ function buildTimelineWidget(tlData) {
     barsEl.appendChild(col);
 
     const sp = document.createElement('span');
-    const lbl = tlShortLabel(t.period);
-    sp.innerHTML = `${escapeHtml(lbl.mon)}<br>${escapeHtml(lbl.yr)}`;
+    sp.textContent = tlShortLabel(t.period);
     labsEl.appendChild(sp);
   });
 }
