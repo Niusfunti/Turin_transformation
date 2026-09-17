@@ -193,11 +193,12 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* Legend — `bottom` clears the scale bar + attribution stack below it
-       (top of the scale sits ~57px up), leaving a small gap above the scale. */
+    /* Legend — `bottom` clears the control row below it (scale + ⓘ badge, whose
+       top sits ~36px up), leaving a small gap above it. Re-tune this whenever
+       that row changes height: it was 64px while the two controls stacked. */
     #legend {
       position: absolute;
-      bottom: 64px;
+      bottom: 40px;
       right: 14px;
       background: rgba(0,40,75,0.93);
       border: 1px solid var(--border);
@@ -567,17 +568,59 @@
       border-top-color: var(--surface) !important;
     }
 
-    /* Bottom-right controls: tuck the scale bar close to the ⓘ attribution
-       button. Both the scale's own bottom margin and the attribution's top
-       margin (10px from .maplibregl-compact) contribute to the stack gap. */
-    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-scale {
-      margin-bottom: 3px;
+    /* Bottom-right controls sit as one row — ⓘ badge, then the scale bar in
+       the corner — instead of MapLibre's two-row float stack. The container is
+       anchored bottom-right with auto width, so the credit strip unfurls
+       leftwards when the ⓘ is opened and the scale never moves. Control
+       margins are zeroed and the 10px inset moved to the container, so the two
+       keep a single shared edge. See the narrow-screen override below: the
+       opened strip is ~300px and would clip beside the scale on a phone.
+       row-reverse, not row: MapLibre prepends controls to the bottom
+       containers, so the scale — added last — is the first child, and reversing
+       is what puts it back in the corner with the ⓘ to its left. */
+    .maplibregl-ctrl-bottom-right {
+      display: flex;
+      align-items: flex-end;
+      flex-direction: row-reverse;
+      gap: 6px;
+      padding: 0 10px 10px 0;
     }
 
-    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact,
-    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
-      margin-top: 0;
-      margin-bottom: 8px;
+    .maplibregl-ctrl-bottom-right .maplibregl-ctrl,
+    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact {
+      float: none;
+      margin: 0;
+    }
+
+    /* in the row the scale is a sibling chip of the ⓘ, not a tab hanging off
+       something above it — so it gets its top border and an even radius back
+       (the base rule below leaves both off for the stacked layout). */
+    .maplibregl-ctrl-bottom-right .maplibregl-ctrl-scale {
+      border-top: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    /* Under ~560px the opened credit plus the scale is wider than the map
+       panel, and the map's own overflow:hidden would cut the credit off — so
+       fall back to MapLibre's stack, scale above the ⓘ. */
+    @media (max-width: 560px) {
+      .maplibregl-ctrl-bottom-right {
+        display: block;
+        padding: 0;
+      }
+      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-scale {
+        margin: 0 10px 3px 0;
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+      }
+      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib,
+      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact {
+        margin: 0 10px 8px 0;
+      }
+
+      /* the stack is a row taller than the flex layout, so the legend needs
+         its old offset back or it sits on top of the scale bar */
+      #legend { bottom: 64px; }
     }
 
     /* MapLibre ships the attribution strip and the scale as white/near-white
