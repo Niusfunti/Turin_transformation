@@ -159,6 +159,44 @@
       height: 100%;
     }
 
+    /* MapLibre's own cooperative-gesture hint is a 40% black wash over the whole
+       map (inset:0, z-index 99999) and it comes back on *every* one-finger drag.
+       One of those is useful; the rest drop a grey veil over the story. Suppress
+       it entirely and say it once ourselves — #gesture-hint below. The handler is
+       untouched either way: this is its screen, not its behaviour. */
+    #map .maplibregl-cooperative-gesture-screen {
+      opacity: 0 !important;
+    }
+
+    /* Our replacement: said once, when the map first arrives, in the story's own
+       voice and language. pointer-events:none so it never eats the tap it is
+       telling you about; it sits above #map-ui (10) and below the loading veil
+       (15), so it cannot appear over a map that has not drawn yet. */
+    #gesture-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 88px;
+      transform: translateX(-50%);
+      z-index: 12;
+      max-width: calc(100% - 40px);
+      padding: 0.5rem 0.85rem;
+      border-radius: 20px;
+      background: rgba(0,40,75,0.92);
+      border: 1px solid var(--border);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      line-height: 1.3;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+
+    #gesture-hint.visible { opacity: 1; }
+
     /* Loading veil over the sticky map. The map needs the basemap style, its
        tiles and ~1.2 MB of GeoJSON before it can draw anything, which on a cold
        load is ten to twenty seconds of blank panel — the worst moment in the
@@ -1302,6 +1340,9 @@
   <div id="map-panel">
     <div id="map"></div>
 
+    <!-- Two-finger hint: shown once by showGestureHintOnce() on phones -->
+    <div id="gesture-hint" role="status" aria-live="polite"></div>
+
     <!-- Loading veil: hidden by hideMapLoading() at the end of map.on('load') -->
     <div id="map-loading" role="status" aria-live="polite">
       <div class="map-loading-chip">
@@ -1822,9 +1863,6 @@ function refreshDynamicLang() {
   // Re-render stat chips for the current step in the active language
   renderChips(currentStepId);
 
-  // MapLibre's two-finger hint (phones) — its own locale is construction-only
-  syncCoopHintLang();
-
   // Re-localise the timeline axis labels (month names differ per language) —
   // and each column's tooltip / accessible name, which carry the full label.
   document.querySelectorAll('#tl-labels span').forEach((sp, i) => {
@@ -2072,16 +2110,6 @@ const map = new maplibregl.Map({
   minZoom:   CONFIG.map.minZoom,
   maxZoom:   CONFIG.map.maxZoom,
   attributionControl: false,
-  // The cooperative-gesture hint is the one piece of MapLibre chrome the reader
-  // actually reads, so it has to speak the story's language. `locale` is only
-  // honoured at construction, which is why the runtime language switch patches
-  // the rendered node instead (see syncCoopHintLang).
-  // …and only when the string is really there: passing an empty one blanks
-  // MapLibre's own English hint instead of falling back to it, which is exactly
-  // what a reader holding a stale cached config.js would get.
-  ...(uiText('mapTwoFinger')
-    ? { locale: { 'CooperativeGesturesHandler.MobileHelpText': uiText('mapTwoFinger') } }
-    : {}),
 });
 
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
@@ -2108,17 +2136,32 @@ function syncTouchMode() {
   if (!map.cooperativeGestures) return;   // older MapLibre: leave gestures alone
   if (PHONE_MQ.matches) map.cooperativeGestures.enable();
   else                  map.cooperativeGestures.disable();
-  syncCoopHintLang();
 }
 
-// `locale` is read once at construction, so the language switch has to reach the
-// rendered hint itself. The node only exists while the handler is enabled, and
-// it is rebuilt on enable, so this runs after every enable and on every switch.
-function syncCoopHintLang() {
+// The two-finger hint, said once per page load. MapLibre's own version reappears
+// on every one-finger drag and dims the whole map to do it, which is a grey veil
+// over the story by the third time; its screen is suppressed in CSS and this
+// takes its place. Once, when the map first arrives: a reader going straight
+// through is told exactly once, and one returning days later is reminded once.
+let gestureHintShown = false;
+function showGestureHintOnce() {
+  if (gestureHintShown || !PHONE_MQ.matches) return;
+  // Two ways to be looking at something other than the map, and the hint is
+  // wasted on both: still on the cover (the story has not started), or the
+  // loading veil is still up. Neither sets the flag, so the next step tries
+  // again — which is why this is called from applyStep as well as from the
+  // veil lifting, whichever happens second.
+  if (!currentStepId) return;
+  const veil = document.getElementById('map-loading');
+  if (veil && !veil.classList.contains('hidden')) return;
+  const el = document.getElementById('gesture-hint');
   const text = uiText('mapTwoFinger');
-  if (!text) return;                      // leave MapLibre's own wording alone
-  const el = document.querySelector('.maplibregl-cooperative-gesture-screen .maplibregl-mobile-message');
-  if (el) el.textContent = text;
+  if (!el || !text) return;
+  gestureHintShown = true;
+  el.textContent = text;
+  el.classList.add('visible');
+  // Long enough to read a short line without sitting on the opening map.
+  setTimeout(() => el.classList.remove('visible'), 4500);
 }
 
 syncTouchMode();
@@ -2223,6 +2266,8 @@ async function fetchGeoJSON(path) {
 // stacking on it. Safe to call twice.
 function hideMapLoading() {
   document.getElementById('map-loading')?.classList.add('hidden');
+  // The veil is gone, so there is a map to pan: now the hint means something.
+  showGestureHintOnce();
 }
 
 // Safety net: if `load` never fires — a blocked basemap, an offline tile host —
@@ -2612,6 +2657,7 @@ function applyStep(stepId) {
   if (!cfg) return;
 
   currentStepId = stepId;
+  showGestureHintOnce();   // first step the reader reaches, if the map is ready
 
   if (!map.isStyleLoaded()) { map.once('idle', () => applyStep(stepId)); return; }
 
