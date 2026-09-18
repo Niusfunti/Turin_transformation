@@ -700,57 +700,35 @@
       border-radius: 4px;
     }
 
-    /* Under ~560px the opened credit plus the scale is wider than the map
-       panel, and the map's own overflow:hidden would cut the credit off — so
-       fall back to MapLibre's stack, scale above the ⓘ. */
-    @media (max-width: 560px) {
-      .maplibregl-ctrl-bottom-right {
-        display: block;
-        padding: 0;
-      }
-      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-scale {
-        margin: 0 10px 3px 0;
-        border-top: none;
-        border-radius: 0 0 4px 4px;
-      }
-      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib,
-      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact {
-        margin: 0 10px 8px 0;
-      }
+    /* Under ~560px the ⓘ and the scale used to fall back to MapLibre's stack,
+       one above the other, because an *opened* credit beside the scale was wider
+       than the map panel and the map's overflow:hidden cut it off. That stack is
+       60px tall, and on a phone the timeline bar spans the whole panel and ends
+       28px off the bottom — so the timeline landed on top of the ⓘ.
 
-      /* …and while it is collapsed, size it to its own glyph. MapLibre's own
-         width here is `auto` on a block, and the stack it sits in is a
-         shrink-to-fit absolutely-positioned box, so the ⓘ inherited the width of
-         the widest thing in the corner — the scale bar. That made it a 52px navy
-         slab with a 24px glyph adrift in it, reading as a second button instead
-         of a footnote. fit-content sizes it to the glyph (24px of reserved
-         padding, no content while collapsed); margin-left:auto keeps it flush
-         with the scale's right edge, and the round corner finishes the badge.
-         Only while collapsed — opened, it must still be free to grow to the full
-         credit, which is a licence requirement, not decoration. */
+       The stack is no longer needed: the opened credit is taken out of flow just
+       below, so its width no longer has anything to do with the row. Back on one
+       row, the corner is 26px tall and fits under the timeline (which is lifted
+       to clear it in the ≤800px block). Only the two width rules remain. */
+    @media (max-width: 560px) {
+      /* Collapsed, the ⓘ is its own glyph and nothing more — a round badge
+         against the scale's bar, not a second button beside it. */
       .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) {
         width: fit-content;
-        margin-left: auto;
         border-radius: 50%;
       }
 
-      /* Opened, it has to escape that corner entirely. The stack is a
-         shrink-to-fit box sized by the scale bar (~62px), and the credit is a
-         block inside it, so tapping the ⓘ wrapped "OpenFreeMap © OpenMapTiles
-         Data from OpenStreetMap" into a 15px-wide, 120px-tall ribbon — present,
-         but unreadable, and this text is a licence requirement. Taking it out of
-         flow lets it grow leftward from the corner instead of being trapped by
-         the scale's width. max-width keeps it inside the map, which clips. */
+      /* Opened, it leaves the row entirely. In flow it could only be as wide as
+         the corner allows, which wrapped "OpenFreeMap © OpenMapTiles Data from
+         OpenStreetMap" into an unreadable ribbon a few characters wide — and
+         that text is a licence requirement, not decoration. Out of flow it grows
+         leftward from the corner under an explicit width instead. */
       .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact.maplibregl-compact-show {
         position: absolute;
-        right: 0;                     /* the rule above still adds its 10px margin */
-        bottom: 8px;
+        right: 10px;               /* the row inset, so it lines up with the scale */
+        bottom: 10px;
         width: min(300px, calc(100vw - 40px));
       }
-
-      /* the stack is a row taller than the flex layout, so the legend needs
-         its old offset back or it sits on top of the scale bar */
-      #legend { bottom: 64px; }
     }
 
     /* MapLibre ships the attribution strip and the scale as white/near-white
@@ -1082,6 +1060,15 @@
         left: 14px;
         right: auto;
         bottom: auto;
+      }
+
+      /* The timeline spans the whole panel here, so it runs straight into the
+         scale and the ⓘ in the bottom-right corner — which the desktop layout
+         never does, the panel being 58% wide there with the widget capped at
+         430px. 44px clears the 26px control row and its 10px inset with room to
+         spare; at the shared 28px the widget's lower third sat on the ⓘ. */
+      #timeline-bar {
+        bottom: 44px;
       }
 
       /* On phones the legend owns the top-left (the timeline takes the full
