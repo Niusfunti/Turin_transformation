@@ -718,6 +718,36 @@
         margin: 0 10px 8px 0;
       }
 
+      /* …and while it is collapsed, size it to its own glyph. MapLibre's own
+         width here is `auto` on a block, and the stack it sits in is a
+         shrink-to-fit absolutely-positioned box, so the ⓘ inherited the width of
+         the widest thing in the corner — the scale bar. That made it a 52px navy
+         slab with a 24px glyph adrift in it, reading as a second button instead
+         of a footnote. fit-content sizes it to the glyph (24px of reserved
+         padding, no content while collapsed); margin-left:auto keeps it flush
+         with the scale's right edge, and the round corner finishes the badge.
+         Only while collapsed — opened, it must still be free to grow to the full
+         credit, which is a licence requirement, not decoration. */
+      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) {
+        width: fit-content;
+        margin-left: auto;
+        border-radius: 50%;
+      }
+
+      /* Opened, it has to escape that corner entirely. The stack is a
+         shrink-to-fit box sized by the scale bar (~62px), and the credit is a
+         block inside it, so tapping the ⓘ wrapped "OpenFreeMap © OpenMapTiles
+         Data from OpenStreetMap" into a 15px-wide, 120px-tall ribbon — present,
+         but unreadable, and this text is a licence requirement. Taking it out of
+         flow lets it grow leftward from the corner instead of being trapped by
+         the scale's width. max-width keeps it inside the map, which clips. */
+      .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib.maplibregl-compact.maplibregl-compact-show {
+        position: absolute;
+        right: 0;                     /* the rule above still adds its 10px margin */
+        bottom: 8px;
+        width: min(300px, calc(100vw - 40px));
+      }
+
       /* the stack is a row taller than the flex layout, so the legend needs
          its old offset back or it sits on top of the scale bar */
       #legend { bottom: 64px; }
