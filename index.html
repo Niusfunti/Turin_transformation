@@ -159,43 +159,21 @@
       height: 100%;
     }
 
-    /* MapLibre's own cooperative-gesture hint is a 40% black wash over the whole
-       map (inset:0, z-index 99999) and it comes back on *every* one-finger drag.
-       One of those is useful; the rest drop a grey veil over the story. Suppress
-       it entirely and say it once ourselves — #gesture-hint below. The handler is
-       untouched either way: this is its screen, not its behaviour. */
-    #map .maplibregl-cooperative-gesture-screen {
+    /* MapLibre's cooperative-gesture hint is a 40% black wash over the whole map
+       with the message centred in it (inset:0, z-index 99999). That presentation
+       is the point — it is big enough to actually be read, where a discreet pill
+       at the bottom of the map is thumb-height and easy to miss. What was wrong
+       with it was the repetition: it returns on *every* one-finger drag, and by
+       the third time it is a grey veil over the story.
+
+       So it is shown deliberately once (showGestureHintOnce, which reveals it
+       when the reader first reaches the map) and then silenced for the rest of
+       the page: `.coop-hint-done` lands after MapLibre's own fade-out has
+       finished, and every later reveal is invisible. The handler is untouched —
+       this is its screen, not its behaviour, so two fingers still pan. */
+    #map.coop-hint-done .maplibregl-cooperative-gesture-screen {
       opacity: 0 !important;
     }
-
-    /* Our replacement: said once, when the map first arrives, in the story's own
-       voice and language. pointer-events:none so it never eats the tap it is
-       telling you about; it sits above #map-ui (10) and below the loading veil
-       (15), so it cannot appear over a map that has not drawn yet. */
-    #gesture-hint {
-      position: absolute;
-      left: 50%;
-      bottom: 88px;
-      transform: translateX(-50%);
-      z-index: 12;
-      max-width: calc(100% - 40px);
-      padding: 0.5rem 0.85rem;
-      border-radius: 20px;
-      background: rgba(0,40,75,0.92);
-      border: 1px solid var(--border);
-      color: #fff;
-      font-family: var(--sans);
-      font-size: 0.78rem;
-      line-height: 1.3;
-      text-align: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.45s ease;
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
-    }
-
-    #gesture-hint.visible { opacity: 1; }
 
     /* Loading veil over the sticky map. The map needs the basemap style, its
        tiles and ~1.2 MB of GeoJSON before it can draw anything, which on a cold
@@ -1340,9 +1318,6 @@
   <div id="map-panel">
     <div id="map"></div>
 
-    <!-- Two-finger hint: shown once by showGestureHintOnce() on phones -->
-    <div id="gesture-hint" role="status" aria-live="polite"></div>
-
     <!-- Loading veil: hidden by hideMapLoading() at the end of map.on('load') -->
     <div id="map-loading" role="status" aria-live="polite">
       <div class="map-loading-chip">
@@ -2138,30 +2113,44 @@ function syncTouchMode() {
   else                  map.cooperativeGestures.disable();
 }
 
-// The two-finger hint, said once per page load. MapLibre's own version reappears
-// on every one-finger drag and dims the whole map to do it, which is a grey veil
-// over the story by the third time; its screen is suppressed in CSS and this
-// takes its place. Once, when the map first arrives: a reader going straight
-// through is told exactly once, and one returning days later is reminded once.
+// The two-finger hint, shown once per page load, in MapLibre's own full-screen
+// presentation — the wash and the centred message, which is what makes it get
+// read. It is shown here deliberately rather than waiting for the reader to make
+// the one-finger drag that would trigger it: waiting means the first thing the
+// map does is ignore them. Afterwards the screen is silenced for good, so the
+// wash never lands on the story again.
 let gestureHintShown = false;
 function showGestureHintOnce() {
   if (gestureHintShown || !PHONE_MQ.matches) return;
-  // Two ways to be looking at something other than the map, and the hint is
-  // wasted on both: still on the cover (the story has not started), or the
+  // Two ways to be looking at something other than the map, and the one showing
+  // is wasted on both: still on the cover (the story has not started), or the
   // loading veil is still up. Neither sets the flag, so the next step tries
-  // again — which is why this is called from applyStep as well as from the
-  // veil lifting, whichever happens second.
+  // again — which is why this is called from applyStep as well as from the veil
+  // lifting, whichever happens second. The map finishes loading long before the
+  // reader scrolls past the cover, so without this the hint fades unseen.
   if (!currentStepId) return;
   const veil = document.getElementById('map-loading');
   if (veil && !veil.classList.contains('hidden')) return;
-  const el = document.getElementById('gesture-hint');
-  const text = uiText('mapTwoFinger');
-  if (!el || !text) return;
+  const screen = document.querySelector('#map .maplibregl-cooperative-gesture-screen');
+  if (!screen) return;
   gestureHintShown = true;
-  el.textContent = text;
-  el.classList.add('visible');
-  // Long enough to read a short line without sitting on the opening map.
-  setTimeout(() => el.classList.remove('visible'), 4500);
+
+  // MapLibre fills both messages from its `locale` at construction and picks
+  // which to display by pointer type; the mobile one is what a phone shows.
+  const text = uiText('mapTwoFinger');
+  if (text) {
+    const msg = screen.querySelector('.maplibregl-mobile-message');
+    if (msg) msg.textContent = text;
+  }
+
+  screen.classList.add('maplibregl-show');
+  setTimeout(() => {
+    // Removing the class hands it back to MapLibre's own fade (a 1s hold, then a
+    // 1s transition); `.coop-hint-done` waits for that to finish, or it would cut
+    // the fade into a blink.
+    screen.classList.remove('maplibregl-show');
+    setTimeout(() => document.getElementById('map')?.classList.add('coop-hint-done'), 2300);
+  }, 2600);
 }
 
 syncTouchMode();
