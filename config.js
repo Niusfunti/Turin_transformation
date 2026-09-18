@@ -191,6 +191,9 @@ const CONFIG = {
         evDrag:      'Drag to compare',
         evDetections:        'Show AI detections',
         evDetectionsPending: 'AI detections coming soon',
+        // MapLibre's cooperative-gesture hint, shown when a one-finger drag lands
+        // on the map (phones only). Overrides the library's own English string.
+        mapTwoFinger: 'Use two fingers to move the map',
         evAerialBtn: '🛰 Aerial before/after',
       },
       it: {
@@ -206,6 +209,7 @@ const CONFIG = {
         evDrag:      'Trascina per confrontare',
         evDetections:        'Mostra rilevazioni AI',
         evDetectionsPending: 'Rilevazioni AI in arrivo',
+        mapTwoFinger: 'Usa due dita per spostare la mappa',
         evAerialBtn: '🛰 Ortofoto prima/dopo',
       },
     },

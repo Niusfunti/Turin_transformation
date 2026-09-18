@@ -1587,7 +1587,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=a4582a94"></script>
+<script src="config.js?v=b4820de6"></script>
 <script>
 'use strict';
 
@@ -1821,6 +1821,9 @@ function refreshDynamicLang() {
   }
   // Re-render stat chips for the current step in the active language
   renderChips(currentStepId);
+
+  // MapLibre's two-finger hint (phones) — its own locale is construction-only
+  syncCoopHintLang();
 
   // Re-localise the timeline axis labels (month names differ per language) —
   // and each column's tooltip / accessible name, which carry the full label.
@@ -2069,29 +2072,55 @@ const map = new maplibregl.Map({
   minZoom:   CONFIG.map.minZoom,
   maxZoom:   CONFIG.map.maxZoom,
   attributionControl: false,
+  // The cooperative-gesture hint is the one piece of MapLibre chrome the reader
+  // actually reads, so it has to speak the story's language. `locale` is only
+  // honoured at construction, which is why the runtime language switch patches
+  // the rendered node instead (see syncCoopHintLang).
+  // …and only when the string is really there: passing an empty one blanks
+  // MapLibre's own English hint instead of falling back to it, which is exactly
+  // what a reader holding a stale cached config.js would get.
+  ...(uiText('mapTwoFinger')
+    ? { locale: { 'CooperativeGesturesHandler.MobileHelpText': uiText('mapTwoFinger') } }
+    : {}),
 });
 
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
-// On phones the map fills the screen and the story scrolls over it, so a finger
-// drag has to move the page, not the map. MapLibre consumes every touchmove it
-// is given, and with a full-screen canvas that is the whole screen: the story
-// became unscrollable anywhere but on a card. Dragging and pinching go, and the
-// zoom buttons carry what is left — a tap still reaches the map, so the feature
-// popups work exactly as before. Desktop (and the ≤800px breakpoint's tablets in
-// landscape) keeps the full set, and the listener re-syncs on a rotation that
-// crosses the breakpoint rather than stranding the map in the wrong mode.
+// On phones the map fills the screen and the story scrolls over it, so one finger
+// cannot mean both things. MapLibre's cooperative-gesture handler is the split:
+// one finger scrolls the story, two fingers pan the map, pinch zooms. It was
+// briefly solved by disabling dragPan outright, which did keep the story
+// scrollable but left the reader unable to travel the map at all — the zoom
+// buttons moved in and out of a fixed centre and nothing reached the areas off
+// it. Enabling the handler restores panning and pinch-zoom without taking the
+// one-finger scroll back.
+//
+// Only on phones: at >800px the map has its own column, a one-finger drag is
+// unambiguous, and forcing ctrl+scroll there would be a regression. The listener
+// re-syncs on a rotation that crosses the breakpoint rather than stranding the
+// map in the wrong mode.
+//
+// Worth knowing when reading the story: panning here is temporary — the next
+// step's flyTo takes the camera back. Exploring that survives a scroll needs a
+// mode that pauses the story, which this is not.
 const PHONE_MQ = window.matchMedia('(max-width: 800px)');
 function syncTouchMode() {
-  if (PHONE_MQ.matches) {
-    map.dragPan.disable();
-    map.touchZoomRotate.disable();
-    if (map.touchPitch) map.touchPitch.disable();
-  } else {
-    map.dragPan.enable();
-    map.touchZoomRotate.enable();
-  }
+  if (!map.cooperativeGestures) return;   // older MapLibre: leave gestures alone
+  if (PHONE_MQ.matches) map.cooperativeGestures.enable();
+  else                  map.cooperativeGestures.disable();
+  syncCoopHintLang();
 }
+
+// `locale` is read once at construction, so the language switch has to reach the
+// rendered hint itself. The node only exists while the handler is enabled, and
+// it is rebuilt on enable, so this runs after every enable and on every switch.
+function syncCoopHintLang() {
+  const text = uiText('mapTwoFinger');
+  if (!text) return;                      // leave MapLibre's own wording alone
+  const el = document.querySelector('.maplibregl-cooperative-gesture-screen .maplibregl-mobile-message');
+  if (el) el.textContent = text;
+}
+
 syncTouchMode();
 PHONE_MQ.addEventListener('change', syncTouchMode);
 // The attribution is added by hand only to pin `compact: true`. MapLibre's own
