@@ -954,12 +954,23 @@
     @media (max-width: 800px) {
       #scrolly { flex-direction: column; }
 
+      /* The map must outrank the story text here. #article follows #map-panel
+         in the DOM and every .step-card is its own stacking context (it has a
+         backdrop-filter), so with the default z-index:auto the cards painted
+         *over* the sticky map: scrolling dragged paragraphs across the top half
+         of the screen and the map was only ever half-readable. z-index lifts the
+         panel above them, so the map owns its half outright and the text scrolls
+         strictly below it, sliding behind the panel edge instead of across it.
+         The beige is the basemap/veil colour, so nothing shows through before
+         the canvas paints. */
       #map-panel {
         position: sticky;
         top: 0;
         width: 100%;
         height: 50vh;
         order: 1;
+        z-index: 2;
+        background: #f1ede6;
       }
 
       #article {
@@ -968,12 +979,31 @@
         padding: 0 1.2rem;
       }
 
+      /* The text band below the map is only 50vh (~395px on a 390x790 phone)
+         and the cards are 260-410px tall, so a 2.5rem gap meant the tail of one
+         card and the head of the next were on screen together and the band was
+         never anything but text. 20vh each side (~315px between cards) leaves one
+         card clearly dominant: at the quietest scroll position the band is only
+         ~20% covered, against 48% at the old spacing, so there is a real pause
+         between paragraphs where the map is what there is to look at. The gap
+         cannot be made to empty the band completely without exceeding the band
+         itself (>25vh each side), which costs another third of the scroll length
+         for a strip of page background, not more map. Scrollama fires at a 0.5
+         offset, which sits exactly on the map/text seam, so the extra lead-in
+         also means the map has finished its fly-to by the time the card it
+         belongs to arrives. */
       .step {
         min-height: auto;
-        padding: 2.5rem 0;
+        padding: 20vh 0;
       }
 
       .step:first-child { padding-top: 2rem; }
+
+      /* Buys back ~11px of height so even the tallest card (the opening one, at
+         410px) comes close to fitting the band in one piece. */
+      .step-card {
+        padding: 1.4rem 1.25rem;
+      }
 
       #cover-gradient {
         background: rgba(0,40,75,0.88);
