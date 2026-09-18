@@ -954,55 +954,63 @@
     @media (max-width: 800px) {
       #scrolly { flex-direction: column; }
 
-      /* The map must outrank the story text here. #article follows #map-panel
-         in the DOM and every .step-card is its own stacking context (it has a
-         backdrop-filter), so with the default z-index:auto the cards painted
-         *over* the sticky map: scrolling dragged paragraphs across the top half
-         of the screen and the map was only ever half-readable. z-index lifts the
-         panel above them, so the map owns its half outright and the text scrolls
-         strictly below it, sliding behind the panel edge instead of across it.
+      /* Phones use the overlay layout: the map fills the screen and the story
+         floats over it. A half-height map read as small -- and the fly-to
+         framing was working with half a screen, so it showed half the city.
          The beige is the basemap/veil colour, so nothing shows through before
          the canvas paints. */
       #map-panel {
         position: sticky;
         top: 0;
         width: 100%;
-        height: 50vh;
+        height: 100vh;
         order: 1;
-        z-index: 2;
         background: #f1ede6;
       }
 
+      /* #article follows #map-panel in the DOM and every .step-card is its own
+         stacking context (backdrop-filter), so the cards already paint above the
+         sticky panel; the negative margin just pulls the column back up over the
+         map it would otherwise sit below.
+
+         pointer-events is what keeps the map usable underneath. The article is
+         now a full-screen sheet across it, so without this a tap anywhere but a
+         card would land on the text column and the map would never see it. Taps
+         fall through (popups still open) and the cards take their own back. */
       #article {
         width: 100%;
         order: 2;
         padding: 0 1.2rem;
+        margin-top: -100vh;
+        position: relative;
+        pointer-events: none;
       }
 
-      /* The text band below the map is only 50vh (~395px on a 390x790 phone)
-         and the cards are 260-410px tall, so a 2.5rem gap meant the tail of one
-         card and the head of the next were on screen together and the band was
-         never anything but text. 20vh each side (~315px between cards) leaves one
-         card clearly dominant: at the quietest scroll position the band is only
-         ~20% covered, against 48% at the old spacing, so there is a real pause
-         between paragraphs where the map is what there is to look at. The gap
-         cannot be made to empty the band completely without exceeding the band
-         itself (>25vh each side), which costs another third of the scroll length
-         for a strip of page background, not more map. Scrollama fires at a 0.5
-         offset, which sits exactly on the map/text seam, so the extra lead-in
-         also means the map has finished its fly-to by the time the card it
-         belongs to arrives. */
+      /* Now that a card floats over the map rather than sitting beside it, the
+         gap is the only thing that ever uncovers the map completely, and it has
+         to beat a whole viewport to do it: a card travels the full height of the
+         screen, so the clear stretch is (2 x padding) - 100vh. At 60vh a side
+         that leaves ~20vh of scroll with nothing over the map at all, which is
+         the pause the half-height layout could not buy at any price. It roughly
+         doubles the length of the story in scroll terms -- that is what the
+         clear view costs. */
       .step {
         min-height: auto;
-        padding: 20vh 0;
+        padding: 60vh 0;
       }
 
-      .step:first-child { padding-top: 2rem; }
+      /* The story opens on the map itself; 30vh is enough of it before the first
+         card climbs in. */
+      .step:first-child { padding-top: 30vh; }
+      .step:last-child  { padding-bottom: 60vh; }
 
-      /* Buys back ~11px of height so even the tallest card (the opening one, at
-         410px) comes close to fitting the band in one piece. */
+      /* pointer-events puts back what #article gave up, so the card is still
+         tappable (links, the trajectory chips). It also sits on live map rather
+         than flat page now, so it carries a little more body. */
       .step-card {
         padding: 1.4rem 1.25rem;
+        pointer-events: auto;
+        background: rgba(0,40,75,0.9);
       }
 
       #cover-gradient {
@@ -2064,6 +2072,28 @@ const map = new maplibregl.Map({
 });
 
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+// On phones the map fills the screen and the story scrolls over it, so a finger
+// drag has to move the page, not the map. MapLibre consumes every touchmove it
+// is given, and with a full-screen canvas that is the whole screen: the story
+// became unscrollable anywhere but on a card. Dragging and pinching go, and the
+// zoom buttons carry what is left — a tap still reaches the map, so the feature
+// popups work exactly as before. Desktop (and the ≤800px breakpoint's tablets in
+// landscape) keeps the full set, and the listener re-syncs on a rotation that
+// crosses the breakpoint rather than stranding the map in the wrong mode.
+const PHONE_MQ = window.matchMedia('(max-width: 800px)');
+function syncTouchMode() {
+  if (PHONE_MQ.matches) {
+    map.dragPan.disable();
+    map.touchZoomRotate.disable();
+    if (map.touchPitch) map.touchPitch.disable();
+  } else {
+    map.dragPan.enable();
+    map.touchZoomRotate.enable();
+  }
+}
+syncTouchMode();
+PHONE_MQ.addEventListener('change', syncTouchMode);
 // The attribution is added by hand only to pin `compact: true`. MapLibre's own
 // default control expands the collapsed badge into a full text strip once the
 // map panel is wider than 640px, so it changed size between laptop and desktop.
