@@ -2805,8 +2805,16 @@ function applyStep(stepId) {
     badge.classList.remove('visible');
   }
 
-  // Legend
-  const showLegend = ![].includes(stepId); // show on all steps
+  // Legend - hidden while the aerial before/after pop-up is up. #aerial-overlay is
+  // z-index 30 over #map-ui's 10, so its navy wash already paints over the legend;
+  // without this it sits under the wash as a dimmed remnant rather than vanishing.
+  // Its 0.35s fade runs against the overlay's 0.4s, so the two read as one motion.
+  //
+  // Derived from cfg.aerial - the same field showAerialOverlay() reads a few lines
+  // below - rather than a list of step ids, so the two conditions cannot drift apart
+  // and a seventh aerial case needs no edit here. (The neighbouring showBadge is
+  // still an explicit list: there is no field on the step config to derive it from.)
+  const showLegend = !cfg.aerial;
   document.getElementById('legend').classList.toggle('visible', showLegend);
 
   document.querySelectorAll('.legend-item').forEach(item => {
