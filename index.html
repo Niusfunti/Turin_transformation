@@ -564,6 +564,47 @@
       pointer-events: auto;
     }
 
+    /* Desktop only: the widget straddles the map's left edge, half of it over the
+       article column.
+
+       The three over-time steps are the only ones that show it, and they all fly
+       with `fit: true` -- a fitBounds of TURIN_BOUNDS with 18px of padding -- so
+       the city fills the panel and every corner is city. Measured against the 206
+       areas at that framing, this box sits on 12 of them at 1440x900 in its old
+       bottom-left home (9 at 1920, 15 at 1280).
+
+       Turin's built band runs NE-SW, which leaves the NW corner the emptiest:
+       top-left alone halves it to 6. Pushing half the widget off the map clears
+       the rest -- 0 areas covered at 1920, 1440 and 1280 wide.
+
+       Top, not bottom: #article follows #map-panel in the DOM and every
+       .step-card is its own stacking context (backdrop-filter), so a card paints
+       *over* this widget rather than under it. Cards are centred in a 100vh step,
+       so one would have to be ~870px tall to reach y=14. At the bottom the same
+       straddle would be a collision.
+
+       #stats-chips owns this corner too, but only on the five CHIP_MAP steps, and
+       those are disjoint from the timeline's three -- the two are never up at the
+       same time. The period badge is top-centre on the same three steps and
+       clears the widget's right edge by ~140px at 1440, ~96px at 1280. */
+    @media (min-width: 801px) {
+      #timeline-bar {
+        top: 14px;
+        bottom: auto;
+        /* translateX rather than a negative `left`, so the overhang follows the
+           width instead of hard-coding a pixel offset.
+
+           35%, not 50%: a straight half-and-half split covers 0 areas at every
+           width, and each 5% pulled back onto the map costs a few. 35% buys ~65px
+           of rightward shift for 2 areas at 1440 and 3 at 1280 (still 0 at 1920),
+           and leaves the right edge 87px clear of the period badge at 1440, 40px
+           at 1280 -- the badge is centred on these same three steps. This is the
+           practical limit: past 35% the cost climbs fast and the badge closes in. */
+        left: 0;
+        transform: translateX(-35%);
+      }
+    }
+
     .tl-header {
       font-family: var(--sans);
       font-size: 0.62rem;
@@ -622,7 +663,10 @@
       font-size: 0.58rem;
       line-height: 1.2;
       color: var(--muted);
-      white-space: nowrap;
+      /* pre-line, not nowrap: the label is month + newline + year, and the
+         newline is what puts the year on its own row. A month name has no break
+         opportunity inside it, so this cannot wrap mid-word. */
+      white-space: pre-line;
       overflow: hidden;
       transition: color 0.2s;
     }
@@ -1859,7 +1903,7 @@ function refreshDynamicLang() {
   // and each column's tooltip / accessible name, which carry the full label.
   document.querySelectorAll('#tl-labels span').forEach((sp, i) => {
     if (!PERIODS[i]) return;
-    sp.textContent = tlShortLabel(PERIODS[i].key);
+    sp.textContent = tlAxisLabel(PERIODS[i].key);
   });
   document.querySelectorAll('.tl-col').forEach(col => {
     const p = PERIODS.find(x => x.key === col.dataset.period);
@@ -2533,14 +2577,23 @@ const TL_ORDER = [
   'partially under construction - partially completed', 'completed', 'removed',
 ];
 
-// Timeline axis label, language-aware: abbreviated month + apostrophe year on
-// ONE line ("Jul ’20"). It used to be two lines, month over full year; one line
-// halves the label strip, part of trimming the widget's footprint on the map.
+// Timeline axis label, language-aware: the full month over the full year, on
+// two lines (December / 2025).
+//
+// It spent a while compressed to one abbreviated line, to halve the label strip
+// back when the widget sat bottom-left and every pixel of it was on top of the
+// city. It now straddles the map's top-left edge and covers no areas, so that
+// trade is no longer worth making and the space is there to spend.
+//
+// It fits: the column is 53px, and December -- the widest label in either
+// language -- measures 42px at this size (Italian Dicembre 39px), leaving ~11px
+// of slack. A month longer than December would need the font stepped down.
+// The newline is rendered by `white-space: pre-line` on .tl-labels span.
 // Derived from CONFIG.periods (label / labelIt), so adding a period needs no map here.
-function tlShortLabel(periodKey) {
+function tlAxisLabel(periodKey) {
   const p = PERIODS.find(x => x.key === periodKey);
   const [mon = '', yr = ''] = (periodLabel(p) || periodKey).split(' ');
-  return `${mon.slice(0, 3)} ’${yr.slice(2)}`;
+  return `${mon}\n${yr}`;
 }
 
 function buildTimelineData(geoData) {
@@ -2593,7 +2646,7 @@ function buildTimelineWidget(tlData) {
     barsEl.appendChild(col);
 
     const sp = document.createElement('span');
-    sp.textContent = tlShortLabel(t.period);
+    sp.textContent = tlAxisLabel(t.period);
     labsEl.appendChild(sp);
   });
 }
