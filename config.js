@@ -91,7 +91,7 @@ const CONFIG = {
     lines:          3,
     onHold:        44,
     procedure:     48,
-    construction:  52,
+    construction:  51,
     completed:     40,
     removed:       20,
   },
@@ -181,7 +181,7 @@ const CONFIG = {
       en: {
         legendTitle: 'Project status',
         unknownSite: 'Unknown site',
-        visitulLink: 'Visitul.it →',
+        visitulLink: 'Torino Urban Lab →',
         landUse:     'Land use',
         docTitle:    'Turin in Transformation — 2020–2025',
         // Aerial before/after evidence section
@@ -199,7 +199,7 @@ const CONFIG = {
       it: {
         legendTitle: 'Stato dei progetti',
         unknownSite: 'Area sconosciuta',
-        visitulLink: 'Visitul.it →',
+        visitulLink: 'Torino Urban Lab →',
         landUse:     'Uso del suolo',
         docTitle:    'Torino in trasformazione — 2020–2025',
         // Aerial before/after evidence section
@@ -298,7 +298,7 @@ const CONFIG = {
       // Step 01 — overview
       's1.num': '01 — Il dataset',
       's1.h2':  '206 aree, monitorate dal 2020',
-      's1.p1':  'Dal luglio 2020 il progetto <em>Visitul</em> documenta sistematicamente ogni grande area di trasformazione urbana di Torino — ex zone industriali, edifici storici, spazi pubblici in riconversione.',
+      's1.p1':  'Dal luglio 2020 <em>Torino Urban Lab</em> documenta sistematicamente ogni grande area di trasformazione urbana pubblica di Torino — ex zone industriali, edifici storici, spazi pubblici in riconversione.',
       's1.p2':  'In sette rilevazioni nell’arco di cinque anni, a ogni area è stato assegnato uno stato. Insieme compongono il ritratto di una città in lento e disomogeneo cambiamento.',
 
       // Step 02 — status
@@ -309,42 +309,42 @@ const CONFIG = {
 
       // Step 03 — on hold
       's3.num': '03 — L’attesa',
-      's3.h2':  '<span class="big-num">43</span> aree in attesa',
-      's3.p1':  'Circa un quinto delle aree monitorate resta «in attesa» a dicembre 2025 — bloccate tra pianificazione, contenziosi sulla proprietà o stallo politico.',
-      's3.p2':  'Alcune risultano ferme fin dalla primissima rilevazione del luglio 2020: cinque anni senza movimenti.',
+      's3.h2':  '<span class="big-num">44</span> aree in attesa',
+      's3.p1':  'Circa un quarto delle aree con uno stato a dicembre 2025 è «in attesa».',
+      's3.p2':  '27 di queste risultano in attesa in tutte e sette le rilevazioni dal luglio 2020.',
 
       // Step 04 — procedure
       's4.num': '04 — L’iter',
       's4.h2':  '<span class="big-num">48</span> nella macchina burocratica',
-      's4.p1':  'Un numero quasi pari sta attraversando iter burocratici — permessi, valutazioni ambientali, consultazioni pubbliche. Sono partite, ma nulla è ancora costruito.',
-      's4.p2':  'Nell’urbanistica italiana questa fase può durare anni. Alcune aree vi entrano ed escono ripetutamente.',
+      's4.p1':  'Un numero quasi pari sta attraversando un procedimento amministrativo. Sono partite, ma nulla è ancora costruito.',
+      's4.p2':  '19 di queste sono in procedimento in tutte le rilevazioni dal luglio 2020, e 7 aree ne sono uscite per poi rientrarvi.',
 
       // Step 05 — construction
       's5.num': '05 — Il cantiere',
       's5.h2':  '<span class="big-num">51</span> in cantiere',
       's5.p1':  'Il gruppo più numeroso a dicembre 2025: aree dove i lavori sono fisicamente iniziati — gru, ponteggi, scavi in tutta la città.',
-      's5.p2':  'È il numero di cantieri più alto fra tutte e sette le rilevazioni: un’impennata tardiva dopo anni di ritardi procedurali.',
+      's5.p2':  'È il numero di cantieri più alto fra tutte e sette le rilevazioni.',
 
       // Step 06 — completed
       's6.num': '06 — Il traguardo',
-      's6.h2':  'Solo <span class="big-num">39</span> completate',
-      's6.p1':  'In cinque anni e 206 aree monitorate, solo 39 hanno raggiunto il completamento. La trasformazione urbana, si scopre, è un esercizio di pazienza.',
-      's6.p2':  'Altre venti aree sono state rimosse dal monitoraggio — demolite, riconvertite o con la trasformazione abbandonata.',
+      's6.h2':  'Solo <span class="big-num">40</span> completate',
+      's6.p1':  'In cinque anni e 206 aree monitorate, solo 40 hanno raggiunto il completamento.',
+      's6.p2':  'Altre venti aree sono state rimosse dalle rilevazioni lungo il percorso.',
 
       // Step 07 — July 2020
       's7.num': '07 — Luglio 2020',
       's7.h2':  'Dove tutto è iniziato',
-      's7.p1':  'Nella prima rilevazione la mappa è oro e bronzo — iter aperti, aree in attesa. Appena una macchia di arancione: su 164 aree, solo 21 avevano lavori in corso e nessuna era conclusa. L’anno della pandemia: quasi ogni area documentata, quasi nessuna in movimento. Torino aveva dato un nome ai suoi problemi; non aveva ancora iniziato a risolverli.',
+      's7.p1':  'Nella prima rilevazione la mappa è oro e bronzo — iter aperti, aree in attesa. Appena una macchia di arancione: su 164 aree, solo 21 avevano lavori in corso e nessuna era conclusa.',
 
       // Step 08 — July 2022
       's8.num': '08 — Dicembre 2022',
       's8.h2':  'La svolta',
-      's8.p1':  'Due anni e mezzo dopo, l’oro inizia a diffondersi — iter avviati, permessi depositati. Qualche macchia arancione segnala cantieri davvero partiti. La ripresa post-pandemica ha portato nuova energia agli uffici di pianificazione.',
+      's8.p1':  'Due anni e mezzo dopo, l’arancione è quasi raddoppiato — 38 aree in cantiere, contro 21 — e 16 aree sono ormai viola, concluse.',
 
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
       's9.h2':  'La città oggi',
-      's9.p1':  'A fine 2025 guida l’arancione — 51 aree con gru e ponteggi, e 39 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 43 aree sono ancora in attesa. Non tutte le aree hanno trovato il loro slancio.',
+      's9.p1':  'A fine 2025 guida l’arancione — 51 aree con gru e ponteggi, e 40 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 44 aree sono ancora in attesa. 27 sono in attesa in tutte e sette le rilevazioni.',
 
       // Intro divider — Seen from above (before the deep-dives)
       'ia.kicker': 'Visto dall’alto',
@@ -355,8 +355,8 @@ const CONFIG = {
       // Step 10 — Mercato dei Fiori
       's10.num':  '10 — Una storia di successo',
       's10.h2':   'Mercato dei Fiori',
-      's10.p1':   'L’ex mercato dei fiori (N031) è una delle 39 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e concluso entro fine 2025.',
-      's10.link': 'Vedi su Visitul.it →',
+      's10.p1':   'L’ex mercato dei fiori (N031) è una delle 40 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e concluso entro fine 2025.',
+      's10.link': 'Vedi su Torino Urban Lab →',
 
       // Step 11 — Mercato dei Fiori aerial pop-up
       'saer.num': '11 — Dall’alto',
@@ -367,7 +367,7 @@ const CONFIG = {
       's11.num': '20 — Una vicenda irrisolta',
       's11.h2':  'Monteverdi',
       's11.p1':  'L’area N067 detiene il record: quattro cambi di stato in cinque anni. È passata da «in attesa» a «procedimento in corso», è retrocessa, è risalita — e ha chiuso il 2025 esattamente dov’era partita: in attesa.',
-      's11.p2':  'Un ritratto in miniatura dell’incertezza burocratica.',
+      's11.p2':  'Nessun’altra area delle rilevazioni ha cambiato stato più di tre volte.',
 
       // Step 13 — Monteverdi aerial pop-up
       'maer.num': '21 — Dall’alto',
@@ -377,7 +377,7 @@ const CONFIG = {
       // Step 14/15 — Ex Lavazza (N181)
       'lav.num':  '12 — Un altro completamento',
       'lav.h2':   'Ex Lavazza',
-      'lav.p1':   'L’area N181 ha percorso l’intero iter in tempi record. Compare per la prima volta nel dicembre 2022, con la procedura appena avviata; nel 2024 è un cantiere attivo; entro inizio 2025 risulta completata — l’ex lotto Lavazza ricostruito in appena tre anni.',
+      'lav.p1':   'L’area N181, l’ex lotto Lavazza, compare per la prima volta nelle rilevazioni nel dicembre 2022, con un procedimento in corso. Ad aprile 2024 è in cantiere, e a febbraio 2025 risulta completata.',
       'laer.num': '13 — Dall’alto',
       'laer.h2':  'Ricostruita da zero',
       'laer.p1':  'Inverno 2022 a confronto con l’estate 2025. Trascina il cursore per rivelare quanto è cambiato.',
@@ -393,8 +393,8 @@ const CONFIG = {
       // Step 18/19 — Parco della Salute (N049)
       'sal.num':  '16 — Il cantiere infinito',
       'sal.h2':   'Parco della Salute',
-      'sal.p1':   'Il più grande progetto singolo di Torino. Il nuovo campus ospedaliero (N049) ha lasciato l’iter e aperto il cantiere già nel 2021 — e da allora è sempre in costruzione. Cinque anni, rilevazione dopo rilevazione, con lo stesso stato: ancora in cantiere.',
-      'sal.link': 'Vedi su Visitul.it →',
+      'sal.p1':   'Il nuovo campus ospedaliero (N049) è passato dal procedimento al cantiere entro ottobre 2021 — e da allora è sempre in costruzione: sei rilevazioni consecutive, tutte con lo stesso stato.',
+      'sal.link': 'Vedi su Torino Urban Lab →',
       'paer.num': '17 — Dall’alto',
       'paer.h2':  'Un campus prende forma',
       'paer.p1':  'Inverno 2022, i primi scavi; estate 2025, il campus ospedaliero ben avanzato. Trascina il cursore per confrontare.',
@@ -403,7 +403,7 @@ const CONFIG = {
       'rob.num':  '18 — Dal terreno nudo',
       'rob.h2':   'Robaldo',
       'rob.p1':   'Alcune aree semplicemente compaiono. Robaldo (N193) è assente dalle rilevazioni fino ad aprile 2024, quando appare già in costruzione — terreno nudo nell’immagine dell’inverno 2022, un cantiere attivo un anno dopo.',
-      'rob.link': 'Vedi su Visitul.it →',
+      'rob.link': 'Vedi su Torino Urban Lab →',
       'raer.num': '19 — Dall’alto',
       'raer.h2':  'Terreno smosso',
       'raer.p1':  'Inverno 2022, un campo vuoto; estate 2025, scavi e cantiere. Trascina il cursore per rivelare il cambiamento.',
@@ -411,8 +411,8 @@ const CONFIG = {
       // Step 22 — explore
       's12.num': '22 — Esplora',
       's12.h2':  'Ogni area ha una storia',
-      's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono da <em>Visitul.it</em>, un progetto civico che monitora la trasformazione urbana di Torino.',
-      's12.p2':  '206 aree. Almeno altri quindici anni di cambiamenti davanti.',
+      's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono dalle rilevazioni delle aree di trasformazione di <em>Torino Urban Lab</em>.',
+      's12.p2':  '206 aree, sette rilevazioni.',
 
       // (Aerial evidence closing section removed — intro moved to the ia.* divider above)
 
@@ -425,7 +425,7 @@ const CONFIG = {
 
       // Outro
       'outro.h2': 'Segui la trasformazione',
-      'outro.p':  'I dati alla base di questa storia sono raccolti da <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a>, un progetto indipendente di monitoraggio civico. Nuove rilevazioni vengono aggiunte periodicamente, man mano che il paesaggio urbano di Torino continua a cambiare.',
+      'outro.p':  'I dati alla base di questa storia sono raccolti da <a href="https://www.urbanlabtorino.it" target="_blank" rel="noopener">Torino Urban Lab</a>. Nuove rilevazioni vengono aggiunte periodicamente, man mano che il paesaggio urbano di Torino continua a cambiare.',
 
       // Footer
       'footer.author':  'Una data story di <strong>Neus Fontanet Garcia</strong>',
@@ -433,7 +433,7 @@ const CONFIG = {
       'footer.sup':     'Supervisione del Prof. Piero Boccardo &middot; Gruppo di ricerca SDG11Lab',
       'footer.github':  'Geodatabase su GitHub',
       'footer.funding': 'Finanziato dall’Unione Europea – NextGenerationEU nell’ambito del PNRR — MUR DM 118/2023, CUP E14D23001910006',
-      'footer.credits.data': 'Dati: <a href="https://visitul.it" target="_blank" rel="noopener">Visitul.it</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributori OpenStreetMap</a> &middot; ESA WorldCover 2021 &middot; Catasto INSPIRE',
+      'footer.credits.data': 'Dati: <a href="https://www.urbanlabtorino.it" target="_blank" rel="noopener">Torino Urban Lab</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributori OpenStreetMap</a> &middot; ESA WorldCover 2021 &middot; Catasto INSPIRE',
       'footer.credits.map':  'Mappa: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a>',
     },
   },
