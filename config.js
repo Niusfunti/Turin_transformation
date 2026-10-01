@@ -183,6 +183,9 @@ const CONFIG = {
         unknownSite: 'Unknown site',
         visitulLink: 'Torino Urban Lab →',
         landUse:     'Land use',
+        // Popup status line: how long the area has held its status ({p} = short period, "Jul 2022")
+        statusSince:      'since {p}',
+        statusUntil:      'until {p}',
         docTitle:    'Turin in Transformation — 2020–2025',
         // Aerial before/after evidence section
         evYear2022:  'Winter 2022',
@@ -201,6 +204,8 @@ const CONFIG = {
         unknownSite: 'Area sconosciuta',
         visitulLink: 'Torino Urban Lab →',
         landUse:     'Uso del suolo',
+        statusSince:      'da {p}',
+        statusUntil:      'fino a {p}',
         docTitle:    'Torino in trasformazione — 2020–2025',
         // Aerial before/after evidence section
         evYear2022:  'Inverno 2022',

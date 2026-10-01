@@ -691,7 +691,10 @@
       padding: 1rem !important;
       font-family: var(--sans);
       font-size: 0.83rem;
-      max-width: 270px;
+      /* one fixed width for every area, so popups don't change size with their content */
+      width: 300px;
+      max-width: calc(100vw - 32px);
+      box-sizing: border-box;
       pointer-events: auto;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
     }
@@ -832,6 +835,11 @@
       gap: 0.35rem;
       font-size: 0.78rem;
       margin-bottom: 0.6rem;
+    }
+
+    .popup-status-since {
+      opacity: 0.65;
+      white-space: nowrap;
     }
 
     .popup-status-dot {
@@ -1664,7 +1672,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=fa351926"></script>
+<script src="config.js?v=63b70ef4"></script>
 <script>
 'use strict';
 
@@ -2257,12 +2265,34 @@ map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right');
 const popup = new maplibregl.Popup({
   closeButton:  true,
   closeOnClick: false,
-  maxWidth:     '290px',
+  maxWidth:     'none',   // width is fixed in .maplibregl-popup-content
 });
+
+// The area's latest recorded status and since which survey it has held it.
+// An area with no December 2025 status shows its last known one ("until Apr 2024")
+// instead of "unknown"; `removed` is an end state, so it reads "since".
+// Surveys are snapshots, so "since Jul 2022" means first seen in that survey.
+// Months are abbreviated so the line fits beside the status in the popup.
+function statusSinceText(p) {
+  const recorded = PERIODS.filter(pr => (p[pr.key] || '').trim());
+  if (!recorded.length) return { status: 'unknown', note: '' };
+  const last   = recorded[recorded.length - 1];
+  const status = p[last.key];
+  let start = PERIODS.indexOf(last);
+  while (start > 0 && p[PERIODS[start - 1].key] === status) start--;
+  const until = last.key !== LAST && status !== 'removed';
+  const pr    = until ? last : PERIODS[start];
+  // "July 2022" -> "Jul 2022"; Italian lower-case mid-sentence ("lug 2022")
+  const [month, year] = periodLabel(pr).split(' ');
+  const short = LANG === 'it' ? `${month.slice(0, 3).toLowerCase()} ${year}` : `${month.slice(0, 3)} ${year}`;
+  let tmpl = uiText(until ? 'statusUntil' : 'statusSince');
+  if (LANG === 'it' && /^[aeiou]/.test(short)) tmpl = tmpl.replace(/\ba \{p\}/, 'ad {p}');  // "fino ad apr 2024"
+  return { status, note: tmpl.replace('{p}', short) };
+}
 
 function showPopup(feat, lngLat) {
   const p      = feat.properties;
-  const status = p[LAST] || 'unknown';
+  const { status, note } = statusSinceText(p);
   const color  = statusColorUI(status);
 
   const timelineHtml = PERIODS.map(period => {
@@ -2288,7 +2318,7 @@ function showPopup(feat, lngLat) {
       <div class="popup-name">${escapeHtml(p.name || uiText('unknownSite'))}</div>
       <div class="popup-status-row">
         <div class="popup-status-dot" style="background:${color}"></div>
-        ${escapeHtml(statusFull(status))}
+        <span>${escapeHtml(statusFull(status))}${note ? ` <span class="popup-status-since">· ${escapeHtml(note)}</span>` : ''}</span>
       </div>
       <div class="popup-timeline">${timelineHtml}</div>
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
