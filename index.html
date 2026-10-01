@@ -1710,6 +1710,7 @@ const DARK_OUTLINE_STATUSES = [];
 // status as their area so a resident can recognise the actual blocks involved.
 const AREA_PLATE_HEIGHT = 3;
 const BUILDINGS_MIN_ZOOM = 13.2;   // below this they are specks and just add noise
+const LINE_HIT_WIDTH = 20;         // px — click/hover target around each 4px line area
 
 function strokeExpr(periodKey) {
   if (!DARK_OUTLINE_STATUSES.length) return OUTLINE_LIGHT;
@@ -2484,6 +2485,16 @@ map.on('load', async () => {
     paint: { 'line-color': colorExpr(LAST), 'line-width': 4, 'line-opacity': 0.85 },
   });
 
+  // 6b. Invisible hit area for the lines — a 4px line is too thin to click, so
+  //     this wide transparent copy takes the clicks and hover (MapLibre still
+  //     hit-tests a layer at opacity 0). Shares the visibility filter so a line
+  //     not yet recorded cannot be clicked.
+  map.addLayer({
+    id: 'lines-hit', type: 'line', source: 'lines',
+    filter: visibleFilter(LAST),
+    paint: { 'line-color': '#000', 'line-width': LINE_HIT_WIDTH, 'line-opacity': 0 },
+  });
+
   // 7. Point transformation features
   map.addLayer({
     id: 'points-circle', type: 'circle', source: 'points',
@@ -2505,9 +2516,21 @@ map.on('load', async () => {
   });
 
   // ── Interactions ─────────────────────────────────────────
-  map.on('click', ['polygons-fill', 'points-circle'], e => showPopup(e.features[0], e.lngLat));
-  map.on('mouseenter', ['polygons-fill', 'points-circle'], () => { map.getCanvas().style.cursor = 'pointer'; });
-  map.on('mouseleave', ['polygons-fill', 'points-circle'], () => { map.getCanvas().style.cursor = ''; });
+  const CLICKABLE = ['polygons-fill', 'lines-hit', 'points-circle'];
+  map.on('click', CLICKABLE, e => showPopup(e.features[0], e.lngLat));
+  map.on('mouseenter', CLICKABLE, () => { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', CLICKABLE, () => { map.getCanvas().style.cursor = ''; });
+
+  // Hovering a line thickens it, so the reader sees which one they are on
+  // before clicking (lines are the only marks too thin to read as a target).
+  map.on('mousemove', 'lines-hit', e => {
+    const code = e.features[0] && e.features[0].properties.code;
+    map.setPaintProperty('lines-line', 'line-width',
+      ['case', ['==', ['get', 'code'], code || ''], 7, 4]);
+  });
+  map.on('mouseleave', 'lines-hit', () => {
+    map.setPaintProperty('lines-line', 'line-width', 4);
+  });
 
   buildLegend();
   buildPipelinePills();
@@ -2680,7 +2703,7 @@ function recolorToPeriod(period) {
   if (map.getLayer('buildings-3d'))
     map.setPaintProperty('buildings-3d', 'fill-extrusion-color', colorExpr(period));
   applyStrokes(period);
-  ['polygons-fill', 'polygons-outline', 'lines-casing', 'lines-line', 'points-circle'].forEach(id => {
+  ['polygons-fill', 'polygons-outline', 'lines-casing', 'lines-line', 'lines-hit', 'points-circle'].forEach(id => {
     if (map.getLayer(id)) map.setFilter(id, visibleFilter(period));
   });
   const badge = document.getElementById('period-badge');
@@ -2782,7 +2805,7 @@ function applyStep(stepId) {
   applyStrokes(period);
 
   // Show each feature only from the period it first appears (hide leading empties)
-  ['polygons-fill', 'polygons-outline', 'lines-casing', 'lines-line', 'points-circle'].forEach(id => {
+  ['polygons-fill', 'polygons-outline', 'lines-casing', 'lines-line', 'lines-hit', 'points-circle'].forEach(id => {
     if (map.getLayer(id)) map.setFilter(id, visibleFilter(period));
   });
 
