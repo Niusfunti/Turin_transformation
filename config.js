@@ -181,8 +181,13 @@ const CONFIG = {
       en: {
         legendTitle: 'Project status',
         unknownSite: 'Unknown site',
-        visitulLink: 'Torino Urban Lab →',
         landUse:     'Land use',
+        // Popup project information ({s} / {e} = works start / end)
+        readMore:    'Read more ▾',
+        readLess:    'Show less ▴',
+        worksBoth:   'Works: {s} → {e}',
+        worksStart:  'Works start: {s}',
+        worksEnd:    'Works end: {e}',
         // Popup status line: how long the area has held its status ({p} = short period, "Jul 2022")
         statusSince:      'since {p}',
         statusUntil:      'until {p}',
@@ -202,8 +207,12 @@ const CONFIG = {
       it: {
         legendTitle: 'Stato dei progetti',
         unknownSite: 'Area sconosciuta',
-        visitulLink: 'Torino Urban Lab →',
         landUse:     'Uso del suolo',
+        readMore:    'Leggi tutto ▾',
+        readLess:    'Mostra meno ▴',
+        worksBoth:   'Lavori: {s} → {e}',
+        worksStart:  'Inizio lavori: {s}',
+        worksEnd:    'Fine lavori: {e}',
         statusSince:      'da {p}',
         statusUntil:      'fino a {p}',
         docTitle:    'Torino in trasformazione — 2020–2025',

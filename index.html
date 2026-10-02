@@ -813,19 +813,28 @@
       padding: 1px 5px;
     }
 
+    /* name is the title; the register code sits small beside it (it is for
+       citing the area, not for reading). Right padding clears the close ×. */
+    .popup-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-right: 1.1rem;
+      margin-bottom: 0.45rem;
+    }
+
     .popup-code {
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.2rem;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      flex-shrink: 0;
     }
 
     .popup-name {
       font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 0.45rem;
       line-height: 1.2;
     }
 
@@ -868,12 +877,52 @@
       margin-bottom: 0.5rem;
     }
 
-    .popup-landuse {
-      font-size: 0.7rem;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
+    /* project information (data/area_info.json) */
+    .popup-facts {
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 0.15rem;
     }
-    .popup-landuse b { color: var(--text); font-weight: 600; }
+
+    .popup-works {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
+
+    /* description: three lines, then "Read more" opens the rest in place,
+       capped so a long text scrolls inside the popup instead of pushing it
+       off the screen */
+    .popup-desc {
+      font-size: 0.74rem;
+      line-height: 1.45;
+      white-space: pre-line;
+      margin-top: 0.35rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .popup-desc.expanded {
+      display: block;
+      -webkit-line-clamp: unset;
+      max-height: 38vh;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .popup-more {
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0.2rem 0 0.4rem;
+      color: var(--accent);
+      font: inherit;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+    .popup-more[hidden] { display: none; }
 
     /* ── Outro ──────────────────────────────────────────────── */
     #outro {
@@ -1672,7 +1721,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=63b70ef4"></script>
+<script src="config.js?v=11015fda"></script>
 <script>
 'use strict';
 
@@ -1896,6 +1945,8 @@ function refreshDynamicLang() {
   const cfg = CONFIG.steps.find(s => s.id === currentStepId);
   // Rebuild the aerial pop-up in the new language if it's currently open
   if (cfg?.aerial) showAerialOverlay(cfg.aerial);
+  // ...and the area popup
+  if (typeof popup !== 'undefined' && popup.isOpen() && popupFeature) showPopup(popupFeature, popupLngLat);
   // Re-apply the current step's legend dimming
   document.querySelectorAll('.legend-item').forEach(item => {
     item.classList.toggle('dimmed', !!cfg?.focusStatus && item.dataset.status !== cfg.focusStatus);
@@ -2290,7 +2341,22 @@ function statusSinceText(p) {
   return { status, note: tmpl.replace('{p}', short) };
 }
 
-function showPopup(feat, lngLat) {
+// Project descriptions for the popup (python_analysis/export_area_info_web.py).
+// Fetched in the background so they never delay the map; if the file is
+// missing the popup simply shows the status without them.
+let AREA_INFO = {};
+const areaInfoReady = fetch('./data/area_info.json')
+  .then(r => (r.ok ? r.json() : {}))
+  .then(d => { AREA_INFO = d || {}; })
+  .catch(() => console.info('area_info.json not available — popups show status only'));
+
+// Last popup shown, so a language switch can re-render it in place
+let popupFeature = null, popupLngLat = null;
+
+async function showPopup(feat, lngLat) {
+  popupFeature = feat; popupLngLat = lngLat;
+  await areaInfoReady;                       // instant after the first load
+  if (popupFeature !== feat) return;         // a newer click won the race
   const p      = feat.properties;
   const { status, note } = statusSinceText(p);
   const color  = statusColorUI(status);
@@ -2302,31 +2368,57 @@ function showPopup(feat, lngLat) {
 
   const firstLabel = periodLabel(PERIODS[0]);
   const lastLabel  = periodLabel(PERIODS[PERIODS.length - 1]);
-  // Prefer the Italian link (Torino Urban Lab’s Visitul pages) when the page is in Italian, else English.
-  const rawLink    = (LANG === 'it' && p.link_ita) ? p.link_ita : p.link_eng;
-  const safeLink   = (rawLink && /^https?:\/\//i.test(rawLink)) ? rawLink : null;
 
-  // Land use: prefer the full OSM tag list, fall back to the single primary
-  // class, then to the WorldCover label when OSM mapped no land use here.
-  const nonEmpty = v => (typeof v === 'string' && v.trim()) ? v.trim() : '';
-  const landUse  = nonEmpty(p.osm_class) || nonEmpty(p.primary_class) || nonEmpty(p.worldcover_label);
+  // Project information: what the transformation is (no source line or link —
+  // the site's credits name Torino Urban Lab). Land use is no longer shown:
+  // the description says what the site was and becomes, which the raw OSM
+  // tags only hinted at (landUseLabel / landUseTerms are kept for later use).
+  const entry = AREA_INFO[p.code] || {};
+  const info  = entry[LANG] || entry.it || {};
+  const facts = [info.p, info.i].filter(Boolean).join(' · ');
+  const works = info.ws && info.we ? uiText('worksBoth').replace('{s}', info.ws).replace('{e}', info.we)
+              : info.ws ? uiText('worksStart').replace('{s}', info.ws)
+              : info.we ? uiText('worksEnd').replace('{e}', info.we) : '';
 
   popup
     .setLngLat(lngLat)
     .setHTML(`
-      <div class="popup-code">${escapeHtml(p.code || '')}</div>
-      <div class="popup-name">${escapeHtml(p.name || uiText('unknownSite'))}</div>
+      <div class="popup-head">
+        <div class="popup-name">${escapeHtml(p.name || uiText('unknownSite'))}</div>
+        <div class="popup-code">${escapeHtml(p.code || '')}</div>
+      </div>
       <div class="popup-status-row">
         <div class="popup-status-dot" style="background:${color}"></div>
         <span>${escapeHtml(statusFull(status))}${note ? ` <span class="popup-status-since">· ${escapeHtml(note)}</span>` : ''}</span>
       </div>
       <div class="popup-timeline">${timelineHtml}</div>
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
-      ${landUse ? `<div class="popup-landuse">${escapeHtml(uiText('landUse'))}: <b>${escapeHtml(landUseLabel(landUse))}</b></div>` : ''}
-      ${safeLink ? `<a href="${escapeHtml(safeLink)}" target="_blank" rel="noopener" style="font-size:0.74rem">${escapeHtml(uiText('visitulLink'))}</a>` : ''}
+      ${facts ? `<div class="popup-facts">${escapeHtml(facts)}</div>` : ''}
+      ${works ? `<div class="popup-works">${escapeHtml(works)}</div>` : ''}
+      ${info.d ? `<div class="popup-desc">${escapeHtml(info.d)}</div>
+        <button type="button" class="popup-more" hidden>${escapeHtml(uiText('readMore'))}</button>` : ''}
       ${EVIDENCE_INLINE[p.code] ? `<button type="button" class="popup-aerial-btn" onclick="scrollToEvidence('${escapeHtml(p.code)}')">${escapeHtml(uiText('evAerialBtn'))}</button>` : ''}
     `)
     .addTo(map);
+
+  // "Read more" only when the text is actually cut at three lines
+  const el   = popup.getElement();
+  const desc = el && el.querySelector('.popup-desc');
+  const more = el && el.querySelector('.popup-more');
+  if (desc && more && desc.scrollHeight > desc.clientHeight + 2) {
+    more.hidden = false;
+    more.addEventListener('click', () => {
+      const open = desc.classList.toggle('expanded');
+      more.textContent = uiText(open ? 'readLess' : 'readMore');
+      // The popup grows upward from its point and can leave the panel: shift
+      // the map just enough to keep the whole popup inside it.
+      if (open) {
+        const top = el.getBoundingClientRect().top;
+        const min = map.getContainer().getBoundingClientRect().top + 12;
+        if (top < min) map.panBy([0, top - min], { duration: 300 });
+      }
+    });
+  }
 }
 
 // ── Load data and build layers ───────────────────────────────
