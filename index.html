@@ -912,6 +912,16 @@
       padding-right: 4px;
     }
 
+    /* plain-language summary (area_summaries.csv), always shown in full;
+       its "Read more" opens the detail text, hidden until then */
+    .popup-summary {
+      font-size: 0.76rem;
+      line-height: 1.45;
+      margin-top: 0.35rem;
+    }
+    .popup-desc.popup-detail { display: none; color: var(--muted); }
+    .popup-desc.popup-detail.expanded { display: block; }
+
     .popup-more {
       background: none;
       border: 0;
@@ -2395,17 +2405,19 @@ async function showPopup(feat, lngLat) {
       <div class="popup-axis"><span>${escapeHtml(firstLabel)}</span><span>${escapeHtml(lastLabel)}</span></div>
       ${facts ? `<div class="popup-facts">${escapeHtml(facts)}</div>` : ''}
       ${works ? `<div class="popup-works">${escapeHtml(works)}</div>` : ''}
-      ${info.d ? `<div class="popup-desc">${escapeHtml(info.d)}</div>
+      ${info.s ? `<div class="popup-summary">${escapeHtml(info.s)}</div>` : ''}
+      ${info.d ? `<div class="popup-desc${info.s ? ' popup-detail' : ''}">${escapeHtml(info.d)}</div>
         <button type="button" class="popup-more" hidden>${escapeHtml(uiText('readMore'))}</button>` : ''}
       ${EVIDENCE_INLINE[p.code] ? `<button type="button" class="popup-aerial-btn" onclick="scrollToEvidence('${escapeHtml(p.code)}')">${escapeHtml(uiText('evAerialBtn'))}</button>` : ''}
     `)
     .addTo(map);
 
-  // "Read more" only when the text is actually cut at three lines
+  // "Read more": with a summary it opens the (hidden) detail text; without
+  // one, only when the original description is actually cut at three lines
   const el   = popup.getElement();
   const desc = el && el.querySelector('.popup-desc');
   const more = el && el.querySelector('.popup-more');
-  if (desc && more && desc.scrollHeight > desc.clientHeight + 2) {
+  if (desc && more && (desc.classList.contains('popup-detail') || desc.scrollHeight > desc.clientHeight + 2)) {
     more.hidden = false;
     more.addEventListener('click', () => {
       const open = desc.classList.toggle('expanded');
