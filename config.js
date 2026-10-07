@@ -193,8 +193,7 @@ const CONFIG = {
         statusUntil:      'until {p}',
         docTitle:    'Turin in Transformation — 2020–2025',
         // Aerial before/after evidence section
-        evYear2022:  'Winter 2022',
-        evYear2025:  'Summer 2025',
+        evYearPick:  'Choose the year shown on this side',
         evPending:   'Aerial imagery pending',
         evDrag:      'Drag to compare',
         evDetections:        'Show AI detections',
@@ -217,8 +216,7 @@ const CONFIG = {
         statusUntil:      'fino a {p}',
         docTitle:    'Torino in trasformazione — 2020–2025',
         // Aerial before/after evidence section
-        evYear2022:  'Inverno 2022',
-        evYear2025:  'Estate 2025',
+        evYearPick:  'Scegli l’anno mostrato su questo lato',
         evPending:   'Ortofoto in arrivo',
         evDrag:      'Trascina per confrontare',
         evDetections:        'Mostra rilevazioni AI',
@@ -447,18 +445,34 @@ const CONFIG = {
       'footer.sup':     'Supervisione del Prof. Piero Boccardo &middot; Gruppo di ricerca SDG11Lab',
       'footer.github':  'Geodatabase su GitHub',
       'footer.funding': 'Finanziato dall’Unione Europea – NextGenerationEU nell’ambito del PNRR — MUR DM 118/2023, CUP E14D23001910006',
-      'footer.credits.data': 'Dati: <a href="https://www.urbanlabtorino.it" target="_blank" rel="noopener">Torino Urban Lab</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributori OpenStreetMap</a> &middot; ESA WorldCover 2021 &middot; Catasto INSPIRE',
+      'footer.credits.data': 'Dati: <a href="https://www.urbanlabtorino.it" target="_blank" rel="noopener">Torino Urban Lab</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributori OpenStreetMap</a> &middot; ESA WorldCover 2021 &middot; Catasto INSPIRE &middot; Ortofoto 2021, 2024: AGEA / Regione Piemonte; 2023: Città di Torino (servizi CSI Piemonte)',
       'footer.credits.map':  'Mappa: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a>',
     },
   },
 
+  // ── Aerial imagery years ─────────────────────────────────────────────────────
+  // Every year an evidence site has a crop for, oldest first. The swipe's two year
+  // badges are pickers over this list; a case's crops live at
+  // data/ortho/<code>/<key>.jpg (cut by make_ortho_crops.py, all on one shared grid
+  // so any two years register). 2022 and 2025 are local TIFs; 2021/2023/2024 come
+  // from public CSI Piemonte WMS (make_ortho_crops.py WMS_YEARS).
+  aerialYears: [
+    { key: '2021_summer', label: 'Summer 2021', labelIt: 'Estate 2021' },   // AGEA / Regione Piemonte
+    { key: '2022_winter', label: 'Winter 2022', labelIt: 'Inverno 2022' },
+    { key: '2023_winter', label: 'Winter 2023', labelIt: 'Inverno 2023' },  // Città di Torino
+    { key: '2024_summer', label: 'Summer 2024', labelIt: 'Estate 2024' },   // AGEA / Regione Piemonte
+    { key: '2025_summer', label: 'Summer 2025', labelIt: 'Estate 2025' },
+  ],
+
   // ── Aerial before/after evidence (closing "Seen from above" section) ─────────
-  // Curated per-site orthophoto comparison: winter 2022 vs summer 2025. Imagery is
+  // Curated per-site orthophoto comparison, opening on winter 2022 vs summer 2025;
+  // the reader can switch either side to any of CONFIG.aerialYears. Imagery is
   // added later as small PNG crops under data/ortho/<code>/ ; until then `before`
   // and `after` are null and the card renders a grey placeholder panel (scaffold).
   //   bounds        — WGS84 [W, S, E, N] crop box (kept here so the later YOLO
   //                   detection overlay can be aligned to real coordinates)
-  //   before/after  — image paths, or null while imagery is pending
+  //   before/after  — the default pair's image paths, or null while imagery is
+  //                   pending (the other years are found by aerialYears key)
   //   hasDetections — gates the (currently inert) "show AI detections" toggle
   // When real crops arrive this becomes a pure data swap: set before/after paths.
   // Captions/labels are translated via CONFIG.i18n.evidence + CONFIG.i18n.uiText.

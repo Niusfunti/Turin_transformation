@@ -1310,6 +1310,23 @@
       pointer-events: none;
     }
     .ev-year.left  { left: 0.6rem; }
+    /* the badge as a year picker: same pill, plus a caret and a pointer */
+    select.ev-year-pick {
+      pointer-events: auto;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.35);
+      -webkit-appearance: none;
+      appearance: none;
+      padding-right: 1.3rem;
+      background-image: linear-gradient(45deg, transparent 50%, #fff 50%),
+                        linear-gradient(135deg, #fff 50%, transparent 50%);
+      background-position: right 0.55rem center, right 0.35rem center;
+      background-size: 0.2rem 0.2rem;
+      background-repeat: no-repeat;
+    }
+    select.ev-year-pick:hover { background-color: rgba(0,0,0,0.75); }
+    select.ev-year-pick:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+    select.ev-year-pick option { color: #111; background: #fff; text-transform: none; }
     .ev-year.right { right: 0.6rem; }
 
     /* divider handle */
@@ -1726,12 +1743,12 @@
   </div>
 
   <div class="footer-credits">
-    <div data-i18n="footer.credits.data">Data: <a href="https://www.urbanlabtorino.it" target="_blank" rel="noopener">Torino Urban Lab</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre</div>
+    <div data-i18n="footer.credits.data">Data: <a href="https://www.urbanlabtorino.it" target="_blank" rel="noopener">Torino Urban Lab</a> &middot; &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> &middot; ESA WorldCover 2021 &middot; INSPIRE Cadastre &middot; Orthophotos 2021, 2024: AGEA / Regione Piemonte; 2023: Città di Torino (CSI Piemonte services)</div>
     <div data-i18n="footer.credits.map">Map: <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &middot; <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a></div>
   </div>
 </footer>
 
-<script src="config.js?v=11015fda"></script>
+<script src="config.js?v=84271e74"></script>
 <script>
 'use strict';
 
@@ -3055,14 +3072,52 @@ function evidenceText(code) {
   return dict[code] || (I18N.evidence?.en || {})[code] || { tag: '', caption: '' };
 }
 
+// Which two years each case's swipe compares, keyed by code. Kept outside the card
+// so a language switch (which rebuilds the card) does not reset the reader's pick.
+// Defaults come from the case's before/after paths (…/2022_winter.jpg → '2022_winter').
+const AERIAL_YEARS = CONFIG.aerialYears || [];
+const evPairs = {};
+function evYearKey(path) { return (path || '').split('/').pop().replace(/\.[a-z]+$/i, ''); }
+function evPair(c) {
+  return evPairs[c.code] || (evPairs[c.code] = { before: evYearKey(c.before), after: evYearKey(c.after) });
+}
+function evYearSrc(c, key) { return `data/ortho/${c.code}/${key}.jpg`; }
+function evYearLabel(key) {
+  const y = AERIAL_YEARS.find(y => y.key === key);
+  return y ? ((LANG === 'it' && y.labelIt) || y.label) : key;
+}
+// A year badge: a picker over CONFIG.aerialYears once the case has imagery, a plain
+// label while it is still a placeholder.
+function evYearBadge(c, side, pos) {
+  const cur = evPair(c)[side];
+  if (!(c.before && c.after) || AERIAL_YEARS.length < 2)
+    return `<div class="ev-year ${pos}">${escapeHtml(evYearLabel(cur))}</div>`;
+  const opts = AERIAL_YEARS.map(y =>
+    `<option value="${escapeHtml(y.key)}"${y.key === cur ? ' selected' : ''}>${escapeHtml(evYearLabel(y.key))}</option>`).join('');
+  return `<select class="ev-year ev-year-pick ${pos}" data-side="${side}" aria-label="${escapeHtml(uiText('evYearPick'))}">${opts}</select>`;
+}
+function initYearPickers(swipe, c) {
+  swipe.querySelectorAll('.ev-year-pick').forEach(sel => {
+    // The swipe drags on pointerdown anywhere inside it — not on the picker
+    sel.addEventListener('pointerdown', e => e.stopPropagation());
+    sel.addEventListener('change', () => {
+      const side = sel.dataset.side;
+      evPair(c)[side] = sel.value;
+      const layer = swipe.querySelector(side === 'before' ? '.ev-before' : '.ev-after');
+      if (layer) layer.style.backgroundImage = `url('${evYearSrc(c, sel.value)}')`;
+    });
+  });
+}
+
 // Inner markup of a swipe card (head + caption + swipe + toggle) — no outer .ev-card
 // wrapper, so the caller supplies it. Only showAerialOverlay() calls this now that
 // the closing gallery is gone.
 function evidenceCardInner(c) {
   const t        = evidenceText(c.code);
   const hasImg   = !!(c.before && c.after);
-  const beforeBg = hasImg ? `style="background-image:url('${escapeHtml(c.before)}')"` : '';
-  const afterBg  = hasImg ? `style="background-image:url('${escapeHtml(c.after)}')"`  : '';
+  const pair     = evPair(c);
+  const beforeBg = hasImg ? `style="background-image:url('${escapeHtml(evYearSrc(c, pair.before))}')"` : '';
+  const afterBg  = hasImg ? `style="background-image:url('${escapeHtml(evYearSrc(c, pair.after))}')"`  : '';
   const phClass  = hasImg ? '' : ' placeholder';
   // One centred "imagery pending" overlay (not clipped by the swipe), placeholder only
   const phOverlay = hasImg ? '' :
@@ -3083,8 +3138,8 @@ function evidenceCardInner(c) {
       <div class="ev-layer ev-before${phClass}" ${beforeBg}></div>
       <div class="ev-layer ev-after${phClass}" ${afterBg}></div>
       ${phOverlay}
-      <div class="ev-year left">${escapeHtml(uiText('evYear2022'))}</div>
-      <div class="ev-year right">${escapeHtml(uiText('evYear2025'))}</div>
+      ${evYearBadge(c, 'before', 'left')}
+      ${evYearBadge(c, 'after', 'right')}
       <div class="ev-divider"></div>
       <div class="ev-drag-hint">${escapeHtml(uiText('evDrag'))}</div>
     </div>
@@ -3103,7 +3158,7 @@ function showAerialOverlay(code) {
   const c     = EVIDENCE_CASES.find(x => x.code === code);
   if (!ov || !inner || !c) return;
   inner.innerHTML = `<div class="ev-card">${evidenceCardInner(c)}</div>`;
-  inner.querySelectorAll('.ev-swipe').forEach(initSwipe);
+  inner.querySelectorAll('.ev-swipe').forEach(sw => { initSwipe(sw); initYearPickers(sw, c); });
   ov.classList.add('visible');
 }
 function hideAerialOverlay() {
