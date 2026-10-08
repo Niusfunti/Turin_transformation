@@ -230,7 +230,7 @@ const CONFIG = {
     // tag = short story label; caption = one-line description of the change.
     evidence: {
       en: {
-        N193: { tag: 'Before → during', caption: 'An empty field in winter 2022; excavation and construction underway by summer 2025.' },
+        N193: { tag: 'Before → nearly done', caption: 'Overgrown field through winter 2023; graded for construction by summer 2024; by summer 2025 four new pitches are laid out, with the club buildings still being built.' },
         N031: { tag: 'During → finishing', caption: 'Under construction in 2022; the former flower market reaches completion by late 2025.' },
         N049: { tag: 'Long build', caption: 'Early groundworks in 2022; the Parco della Salute hospital campus well advanced by 2025.' },
         N067: { tag: 'Stalled build', caption: 'A building shell under active construction in winter 2022; by summer 2025 it still stands unfinished — materials cleared and vegetation reclaiming the surrounding site.' },
@@ -238,7 +238,7 @@ const CONFIG = {
         N059: { tag: 'Full pipeline', caption: 'Years stuck in procedure through 2022; construction from 2024, and the CSEA site reached completion by the end of 2025.' },
       },
       it: {
-        N193: { tag: 'Prima → durante', caption: 'Un campo vuoto nell’inverno 2022; scavi e cantiere avviati entro l’estate 2025.' },
+        N193: { tag: 'Prima → quasi concluso', caption: 'Campo incolto fino all’inverno 2023; sbancato per il cantiere nell’estate 2024; nell’estate 2025 quattro nuovi campi sono tracciati, con gli edifici del centro ancora in costruzione.' },
         N031: { tag: 'Durante → conclusione', caption: 'In cantiere nel 2022; l’ex mercato dei fiori raggiunge il completamento entro fine 2025.' },
         N049: { tag: 'Cantiere lungo', caption: 'Primi scavi nel 2022; il campus ospedaliero Parco della Salute ben avanzato nel 2025.' },
         N067: { tag: 'Cantiere fermo', caption: 'Una struttura in costruzione nell’inverno 2022; entro l’estate 2025 resta incompiuta — materiali rimossi e vegetazione che riconquista l’area circostante.' },
@@ -414,7 +414,7 @@ const CONFIG = {
       // Step 20/21 — Robaldo (N193)
       'rob.num':  '18 — Dal terreno nudo',
       'rob.h2':   'Robaldo',
-      'rob.p1':   'Alcune aree semplicemente compaiono. Robaldo (N193) è assente dalle rilevazioni fino ad aprile 2024, quando appare già in costruzione — terreno nudo nell’immagine dell’inverno 2022, un cantiere attivo un anno dopo.',
+      'rob.p1':   'Alcune aree semplicemente compaiono. Robaldo (N193) è assente dalle rilevazioni fino ad aprile 2024, quando appare già in costruzione. Le ortofoto mostrano un campo incolto fino al 2023 e un cantiere attivo nel 2024.',
       'rob.link': 'Vedi su Torino Urban Lab →',
       'raer.num': '19 — Dall’alto',
       'raer.h2':  'Terreno smosso',
@@ -457,10 +457,10 @@ const CONFIG = {
   // so any two years register). 2022 and 2025 are local TIFs; 2021/2023/2024 come
   // from public CSI Piemonte WMS (make_ortho_crops.py WMS_YEARS).
   aerialYears: [
-    { key: '2021_summer', label: 'Summer 2021', labelIt: 'Estate 2021' },   // AGEA / Regione Piemonte
+    { key: '2021_summer', label: 'Summer 2021', labelIt: 'Estate 2021' },   // AGEA / Regione Piemonte, summer 2021, 30 cm
     { key: '2022_winter', label: 'Winter 2022', labelIt: 'Inverno 2022' },
-    { key: '2023_winter', label: 'Winter 2023', labelIt: 'Inverno 2023' },  // Città di Torino
-    { key: '2024_summer', label: 'Summer 2024', labelIt: 'Estate 2024' },   // AGEA / Regione Piemonte
+    { key: '2023_winter', label: 'Winter 2023', labelIt: 'Inverno 2023' },  // Comune di Torino, flown 3–5 March 2023
+    { key: '2024_summer', label: 'Summer 2024', labelIt: 'Estate 2024' },   // AGEA / Regione Piemonte, 2024 (season read from the imagery: in full leaf)
     { key: '2025_summer', label: 'Summer 2025', labelIt: 'Estate 2025' },
   ],
 
@@ -481,7 +481,7 @@ const CONFIG = {
       code: 'N193',
       name: 'Robaldo',
       bounds: [7.641331, 45.007959, 7.649269, 45.010321],  // from data/ortho/N193/bounds.json
-      before: 'data/ortho/N193/2022_winter.jpg',
+      before: 'data/ortho/N193/2021_summer.jpg',   // opens on 2021: 2021 → 2025 shows the whole build
       after:  'data/ortho/N193/2025_summer.jpg',
       hasDetections: false,
     },
