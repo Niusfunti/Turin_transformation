@@ -228,22 +228,39 @@ const CONFIG = {
 
     // Per-site captions for the aerial evidence cards, keyed by site code.
     // tag = short story label; caption = one-line description of the change.
+    // One-line meaning of each pipeline status, shown beside its pill on card 02.
+    // The survey itself defines none of them: this is the story's own wording.
+    statusDef: {
+      en: {
+        'on hold':               'identified for transformation, but nothing is moving yet',
+        'procedure in progress': 'a plan, permit or agreement is going through the administrative process',
+        'under construction':    'works have started on site',
+        'completed':             'the works are finished',
+      },
+      it: {
+        'on hold':               'individuata per la trasformazione, ma nulla è ancora in movimento',
+        'procedure in progress': 'un piano, un permesso o un accordo sta seguendo l’iter amministrativo',
+        'under construction':    'i lavori sono iniziati',
+        'completed':             'i lavori sono conclusi',
+      },
+    },
+
     evidence: {
       en: {
         N193: { tag: 'Before → nearly done', caption: 'Overgrown field through winter 2023; graded for construction by summer 2024; by summer 2025 four new pitches are laid out, with the club buildings still being built.' },
         N031: { tag: 'During → finishing', caption: 'Under construction in 2022; the former flower market reaches completion by late 2025.' },
-        N049: { tag: 'Long build', caption: 'Early groundworks in 2022; the Parco della Salute hospital campus well advanced by 2025.' },
-        N067: { tag: 'Stalled build', caption: 'A building shell under active construction in winter 2022; by summer 2025 it still stands unfinished — materials cleared and vegetation reclaiming the surrounding site.' },
-        N181: { tag: 'Full pipeline', caption: 'The former Lavazza plot: procedures opened in late 2022, an active build by 2024, recorded complete by early 2025.' },
-        N059: { tag: 'Full pipeline', caption: 'Years stuck in procedure through 2022; construction from 2024, and the CSEA site reached completion by the end of 2025.' },
+        N049: { tag: 'Long build', caption: 'Cleared and excavated from 2022; still earthworks in summer 2025, with the hospital works scheduled for 2026–2032.' },
+        N067: { tag: 'Cleared, then left', caption: 'The disused building stands unchanged from 2021 to 2025; its yard is cleared in winter 2022 and is growing back over by 2025.' },
+        N181: { tag: 'Conversion', caption: 'The former Lavazza head office keeps its footprint: works inside in 2022, a new roof by 2024, solar panels and a courtyard garden by 2025.' },
+        N059: { tag: 'Record vs ground', caption: 'A building already rising in 2021–2022, while the survey listed the site as in procedure; finished, with a landscaped plot, by summer 2025.' },
       },
       it: {
         N193: { tag: 'Prima → quasi concluso', caption: 'Campo incolto fino all’inverno 2023; sbancato per il cantiere nell’estate 2024; nell’estate 2025 quattro nuovi campi sono tracciati, con gli edifici del centro ancora in costruzione.' },
         N031: { tag: 'Durante → conclusione', caption: 'In cantiere nel 2022; l’ex mercato dei fiori raggiunge il completamento entro fine 2025.' },
-        N049: { tag: 'Cantiere lungo', caption: 'Primi scavi nel 2022; il campus ospedaliero Parco della Salute ben avanzato nel 2025.' },
-        N067: { tag: 'Cantiere fermo', caption: 'Una struttura in costruzione nell’inverno 2022; entro l’estate 2025 resta incompiuta — materiali rimossi e vegetazione che riconquista l’area circostante.' },
-        N181: { tag: 'Percorso completo', caption: 'L’ex area Lavazza: iter avviato a fine 2022, cantiere attivo nel 2024, completamento registrato entro inizio 2025.' },
-        N059: { tag: 'Percorso completo', caption: 'Anni fermi in iter fino al 2022; cantiere dal 2024, e l’area CSEA raggiunge il completamento entro fine 2025.' },
+        N049: { tag: 'Cantiere lungo', caption: 'Sgomberata e scavata dal 2022; ancora movimento terra nell’estate 2025, con i lavori dell’ospedale previsti dal 2026 al 2032.' },
+        N067: { tag: 'Sgomberata, poi abbandonata', caption: 'L’edificio dismesso resta invariato dal 2021 al 2025; il piazzale viene sgomberato nell’inverno 2022 e nel 2025 la vegetazione sta tornando.' },
+        N181: { tag: 'Conversione', caption: 'L’ex sede Lavazza mantiene la sua impronta: lavori all’interno nel 2022, tetto nuovo nel 2024, pannelli solari e giardino nel cortile nel 2025.' },
+        N059: { tag: 'Dato e terreno', caption: 'Un edificio già in costruzione nel 2021–2022, mentre le rilevazioni indicavano un procedimento in corso; finito, con il lotto sistemato a verde, nell’estate 2025.' },
       },
     },
 
@@ -311,12 +328,12 @@ const CONFIG = {
       's1.num': '01 — Il dataset',
       's1.h2':  '206 aree, monitorate dal 2020',
       's1.p1':  'Dal luglio 2020 <em>Torino Urban Lab</em> documenta sistematicamente ogni grande area di trasformazione urbana pubblica di Torino — ex zone industriali, edifici storici, spazi pubblici in riconversione.',
-      's1.p2':  'In sette rilevazioni nell’arco di cinque anni, a ogni area è stato assegnato uno stato. Insieme compongono il ritratto di una città in lento e disomogeneo cambiamento.',
+      's1.p2':  'In sette rilevazioni nell’arco di cinque anni, a ogni area è stato assegnato uno stato. Insieme compongono il ritratto di una città in lento e disomogeneo cambiamento. Le rilevazioni distano mesi l’una dall’altra: una data in questa storia indica la prima rilevazione che registra un cambiamento, non il giorno in cui è avvenuto.',
 
       // Step 02 — status
       's2.num': '02 — I colori',
       's2.h2':  'Quattro fasi del cambiamento',
-      's2.p1':  'Ogni area attraversa — o no — un percorso:',
+      's2.p1':  'Ogni area attraversa — o no — quattro fasi:',
       's2.p2':  'La mappa mostra lo stato di ogni area monitorata a dicembre 2025. Gran parte della città è ancora in attesa.',
 
       // Step 03 — on hold
@@ -361,69 +378,66 @@ const CONFIG = {
       // Intro divider — Seen from above (before the deep-dives)
       'ia.kicker': 'Visto dall’alto',
       'ia.h2':     'Il dato messo alla prova del terreno',
-      'ia.p1':     'Le rilevazioni dicono qual è lo stato di ogni area sulla carta. Per le aree che seguono facciamo un passo in più — affianchiamo a quel percorso quinquennale la vista dall’alto, l’inverno 2022 a confronto con l’estate 2025, per vedere il cambiamento sul terreno stesso.',
+      'ia.p1':     'Le rilevazioni dicono qual è lo stato di ogni area sulla carta. Per le aree che seguono facciamo un passo in più — affianchiamo a quel percorso le ortofoto di cinque anni, dall’estate 2021 all’estate 2025, per vedere il cambiamento sul terreno stesso. Ogni immagine si apre su due anni: scegli un’altra coppia dalle etichette degli anni sull’immagine e trascina il cursore per confrontare.',
       'ia.note':   'Presto: le rilevazioni di un modello di intelligenza artificiale (YOLO World) evidenzieranno gli oggetti da cantiere nell’immagine 2025, a conferma delle trasformazioni registrate.',
 
       // Step 10 — Mercato dei Fiori
       's10.num':  '10 — Una storia di successo',
       's10.h2':   'Mercato dei Fiori',
-      's10.p1':   'L’ex mercato dei fiori (N031) è una delle 40 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e concluso entro fine 2025.',
-      's10.link': 'Vedi su Torino Urban Lab →',
+      's10.p1':   'L’ex mercato dei fiori (N031) è una delle 40 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e a fine 2025 riaperto come centro fitness e wellness, con piscine e palestra.',
 
       // Step 11 — Mercato dei Fiori aerial pop-up
       'saer.num': '11 — Dall’alto',
-      'saer.h2':  'Lo stesso isolato, a quattro anni di distanza',
-      'saer.p1':  'Inverno 2022, ancora un cantiere; estate 2025, completato. Trascina il cursore sull’immagine per rivelare il cambiamento.',
+      'saer.h2':  'Lo stesso isolato, anno dopo anno',
+      'saer.p1':  'Le vecchie coperture del mercato nel 2021; il centro dell’isolato aperto dal 2022; nell’estate 2025, un nuovo edificio con il tetto fotovoltaico. Cambia gli anni sull’immagine per seguire ogni passaggio.',
 
       // Step 12 — Monteverdi
       's11.num': '20 — Una vicenda irrisolta',
       's11.h2':  'Monteverdi',
-      's11.p1':  'L’area N067 detiene il record: quattro cambi di stato in cinque anni. È passata da «in attesa» a «procedimento in corso», è retrocessa, è risalita — e ha chiuso il 2025 esattamente dov’era partita: in attesa.',
+      's11.p1':  'L’area N067, un ex centro di smistamento postale dismesso, detiene il record: quattro cambi di stato in cinque anni. È passata da «in attesa» a «procedimento in corso», è retrocessa, è risalita — e ha chiuso il 2025 esattamente dov’era partita: in attesa.',
       's11.p2':  'Nessun’altra area delle rilevazioni ha cambiato stato più di tre volte.',
 
       // Step 13 — Monteverdi aerial pop-up
       'maer.num': '21 — Dall’alto',
-      'maer.h2':  'Congelata a metà',
-      'maer.p1':  'Inverno 2022, un cantiere attivo; estate 2025, lo stesso scheletro — ancora incompiuto, il terreno intorno tornato incolto. Trascina il cursore sull’immagine per confrontare.',
+      'maer.h2':  'Sgomberata, poi abbandonata',
+      'maer.p1':  'Nel 2021 l’edificio è già lì, vuoto tra gli alberi. Nell’inverno 2022 il piazzale viene sgomberato e davanti all’edificio compaiono materiali accatastati; nel 2023 non ci sono più, e nell’estate 2025 la vegetazione sta tornando. L’edificio in sé non cambia mai.',
 
       // Step 14/15 — Ex Lavazza (N181)
       'lav.num':  '12 — Un altro completamento',
       'lav.h2':   'Ex Lavazza',
-      'lav.p1':   'L’area N181, l’ex lotto Lavazza, compare per la prima volta nelle rilevazioni nel dicembre 2022, con un procedimento in corso. Ad aprile 2024 è in cantiere, e a febbraio 2025 risulta completata.',
+      'lav.p1':   'L’area N181, l’ex sede direzionale Lavazza, è stata convertita in residenza universitaria. Compare per la prima volta nelle rilevazioni nel dicembre 2022, con un procedimento in corso; ad aprile 2024 è in cantiere, e a febbraio 2025 risulta completata.',
       'laer.num': '13 — Dall’alto',
-      'laer.h2':  'Ricostruita da zero',
-      'laer.p1':  'Inverno 2022 a confronto con l’estate 2025. Trascina il cursore per rivelare quanto è cambiato.',
+      'laer.h2':  'Stessi muri, nuovo uso',
+      'laer.p1':  'L’impronta dell’edificio non cambia mai — il lavoro avviene all’interno. Nell’inverno 2022 il cortile è pieno di macerie, nel 2024 c’è un tetto nuovo, e nell’estate 2025 compaiono i pannelli solari e un giardino nel cortile. Poiché nell’estate 2024 non ci sono ancora, i lavori si sono conclusi tra allora e febbraio 2025, quando le rilevazioni registrano per la prima volta l’area come completata.',
 
       // Step 16/17 — CSEA (N059)
-      'cse.num':  '14 — Pazienza premiata',
+      'cse.num':  '14 — Sulla carta',
       'cse.h2':   'CSEA',
-      'cse.p1':   'L’area CSEA ha passato anni in iter — bloccata nei permessi dalla primissima rilevazione del 2020 fino a fine 2022. Il cantiere è partito solo nel 2024, e a dicembre 2025 anch’essa risulta completata.',
+      'cse.p1':   'L’ex centro di formazione CSEA (N059) lascia il posto a un complesso residenziale. Le rilevazioni lo registrano con un procedimento in corso in ogni rilevazione da luglio 2020 a dicembre 2022, in cantiere da aprile 2024 e completato entro dicembre 2025.',
       'caer.num': '15 — Dall’alto',
-      'caer.h2':  'Finalmente conclusa',
-      'caer.p1':  'Inverno 2022 a confronto con l’estate 2025. Trascina il cursore per rivelare quanto è cambiato.',
+      'caer.h2':  'Più avanti del dato',
+      'caer.p1':  'Le fotografie raccontano un’altra storia: qui un edificio è già in costruzione nell’estate 2021 e nell’inverno 2022, mentre le rilevazioni indicano ancora un procedimento in corso. Nel 2025 l’edificio è finito e il resto del lotto è sistemato con percorsi e verde. Dato e terreno non sempre coincidono — ed è per questo che guardiamo.',
 
       // Step 18/19 — Parco della Salute (N049)
       'sal.num':  '16 — Il cantiere infinito',
       'sal.h2':   'Parco della Salute',
-      'sal.p1':   'Il nuovo campus ospedaliero (N049) è passato dal procedimento al cantiere entro ottobre 2021 — e da allora è sempre in costruzione: sei rilevazioni consecutive, tutte con lo stesso stato.',
-      'sal.link': 'Vedi su Torino Urban Lab →',
+      'sal.p1':   'Il nuovo campus ospedaliero (N049) è passato dal procedimento al cantiere entro ottobre 2021 — e da allora è sempre in costruzione: sei rilevazioni consecutive, tutte con lo stesso stato. I lavori dell’ospedale vero e proprio sono previsti dal 2026 al 2032.',
       'paer.num': '17 — Dall’alto',
-      'paer.h2':  'Un campus prende forma',
-      'paer.p1':  'Inverno 2022, i primi scavi; estate 2025, il campus ospedaliero ben avanzato. Trascina il cursore per confrontare.',
+      'paer.h2':  'Scavi, non ancora un ospedale',
+      'paer.p1':  'Sgomberata e scavata dal 2022; nell’estate 2025 l’area è ancora un cantiere di movimento terra, e nessun edificio dell’ospedale è ancora sorto. Trascina il cursore per confrontare.',
 
       // Step 20/21 — Robaldo (N193)
       'rob.num':  '18 — Dal terreno nudo',
       'rob.h2':   'Robaldo',
-      'rob.p1':   'Alcune aree semplicemente compaiono. Robaldo (N193) è assente dalle rilevazioni fino ad aprile 2024, quando appare già in costruzione. Le ortofoto mostrano un campo incolto fino al 2023 e un cantiere attivo nel 2024.',
-      'rob.link': 'Vedi su Torino Urban Lab →',
+      'rob.p1':   'Alcune aree semplicemente compaiono. Robaldo (N193), un nuovo centro di allenamento del Torino F.C. con quattro campi, è assente dalle rilevazioni fino ad aprile 2024, quando appare già in costruzione. Le ortofoto mostrano un campo incolto fino al 2023 e un cantiere attivo nel 2024.',
       'raer.num': '19 — Dall’alto',
-      'raer.h2':  'Terreno smosso',
-      'raer.p1':  'Inverno 2022, un campo vuoto; estate 2025, scavi e cantiere. Trascina il cursore per rivelare il cambiamento.',
+      'raer.h2':  'Dal campo incolto ai campi da gioco',
+      'raer.p1':  'Un campo incolto fino al 2023, sbancato nel 2024, e quattro nuovi campi tracciati nell’estate 2025, con gli edifici del centro ancora in costruzione. Trascina il cursore per confrontare.',
 
       // Step 22 — explore
       's12.num': '22 — Esplora',
       's12.h2':  'Ogni area ha una storia',
-      's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale e storia quinquennale. I dati provengono dalle rilevazioni delle aree di trasformazione di <em>Torino Urban Lab</em>.',
+      's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale, di che progetto si tratta e storia quinquennale. I dati provengono dalle rilevazioni delle aree di trasformazione di <em>Torino Urban Lab</em>.',
       's12.p2':  '206 aree, sette rilevazioni.',
 
       // (Aerial evidence closing section removed — intro moved to the ia.* divider above)

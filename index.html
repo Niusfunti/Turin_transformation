@@ -451,6 +451,24 @@
       border-radius: 50%;
     }
 
+    /* Card 02: each status pill with its meaning underneath. Stacked, not side
+       by side: the pills differ in width, so a beside-layout starts every
+       definition at a different x. */
+    .pill-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.15rem;
+      margin: 0 0 0.55rem;
+    }
+    .pill-row .pill { margin: 0; }
+    .pill-def {
+      padding-left: 0.6rem;
+      font-size: 0.86rem;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
     /* History track (timeline sparkline in featured panels) */
     .history-wrap {
       margin: 0.9rem 0 0.5rem;
@@ -1503,7 +1521,7 @@
         <div class="step-num" data-i18n="s1.num">01 — The Dataset</div>
         <h2 data-i18n="s1.h2">206 sites, tracked since 2020</h2>
         <p data-i18n="s1.p1">Since July 2020, <em>Torino Urban Lab</em> has systematically documented every major public urban transformation site in Turin — former industrial zones, historic buildings, public spaces under conversion.</p>
-        <p data-i18n="s1.p2">Across seven snapshots over five years, each site was assigned a status. Together, they form a data portrait of a city in slow, uneven change.</p>
+        <p data-i18n="s1.p2">Across seven snapshots over five years, each site was assigned a status. Together, they form a data portrait of a city in slow, uneven change. The snapshots are months apart, so a date in this story marks the first survey to record a change, not the day it happened.</p>
       </div>
     </div>
 
@@ -1511,7 +1529,7 @@
       <div class="step-card">
         <div class="step-num" data-i18n="s2.num">02 — The Colours</div>
         <h2 data-i18n="s2.h2">Four stages of change</h2>
-        <p data-i18n="s2.p1">Every site moves — or doesn't — through a pipeline:</p>
+        <p data-i18n="s2.p1">Every site moves — or doesn’t — through four stages:</p>
         <p id="pipeline-pills"><!-- pills injected from CONFIG.pipeline by buildPipelinePills() --></p>
         <p data-i18n="s2.p2">The map shows where every tracked site stood in December 2025. Most of the city is still waiting.</p>
       </div>
@@ -1581,7 +1599,7 @@
       <div class="step-card">
         <div class="step-num" data-i18n="ia.kicker">Seen from above</div>
         <h2 data-i18n="ia.h2">Checking the record against the ground</h2>
-        <p data-i18n="ia.p1">The survey tells us what each site's status is on paper. For the sites that follow, we go a step further — pairing that five-year record with the view from the sky, winter 2022 against summer 2025, to see the change on the ground itself.</p>
+        <p data-i18n="ia.p1">The survey tells us what each site’s status is on paper. For the sites that follow, we go a step further — pairing that record with aerial photographs from five years, summer 2021 to summer 2025, to see the change on the ground itself. Each image opens on two years: choose any other pair from the year labels on the image, and drag the slider to compare.</p>
         <p class="ev-note" data-i18n="ia.note">Coming soon: detections from an AI model (YOLO World) will highlight construction objects in the 2025 imagery, corroborating the recorded transformations.</p>
       </div>
     </div>
@@ -1590,17 +1608,16 @@
       <div class="step-card">
         <div class="step-num" data-i18n="s10.num">10 — A Success Story</div>
         <h2 data-i18n="s10.h2">Mercato dei Fiori</h2>
-        <p data-i18n="s10.p1">The former flower market (N031) is one of 40 sites to make it all the way through the pipeline. On hold in 2020, procedures began in late 2021, construction started in December 2022 — and by late 2025, it was done.</p>
+        <p data-i18n="s10.p1">The former flower market (N031) is one of 40 sites to make it all the way through the pipeline. On hold in 2020, procedures began in late 2021, construction started in December 2022 — and by late 2025 it had reopened as a fitness and wellness centre, with pools and a gym.</p>
         <div class="trajectory" id="mercato-trajectory"></div>
-        <p><a href="https://visitul.it/en/now/n031-mercato-fiori/" target="_blank" rel="noopener" data-i18n="s10.link">View on Torino Urban Lab →</a></p>
       </div>
     </div>
 
     <div class="step" data-step="mercato_aerial">
       <div class="step-card">
         <div class="step-num" data-i18n="saer.num">11 — From above</div>
-        <h2 data-i18n="saer.h2">The same block, four years apart</h2>
-        <p data-i18n="saer.p1">Winter 2022, still a working site; summer 2025, complete. Drag the slider on the image to reveal the change.</p>
+        <h2 data-i18n="saer.h2">The same block, year by year</h2>
+        <p data-i18n="saer.p1">The old market roofs in 2021; the middle of the block opened up from 2022; by summer 2025, a new building with a solar roof. Change the years on the image to follow each step.</p>
       </div>
     </div>
 
@@ -1608,7 +1625,7 @@
       <div class="step-card">
         <div class="step-num" data-i18n="lav.num">12 — Another completion</div>
         <h2 data-i18n="lav.h2">Ex Lavazza</h2>
-        <p data-i18n="lav.p1">Site N181, the former Lavazza plot, first appears in the survey in December 2022 with a procedure in progress. It is under construction by April 2024, and recorded as completed in February 2025.</p>
+        <p data-i18n="lav.p1">Site N181, the former Lavazza head office, has been converted into a student residence. It first appears in the survey in December 2022 with a procedure in progress, is under construction by April 2024, and is recorded as completed in February 2025.</p>
         <div class="trajectory" id="lavazza-trajectory"></div>
       </div>
     </div>
@@ -1616,16 +1633,16 @@
     <div class="step" data-step="lavazza_aerial">
       <div class="step-card">
         <div class="step-num" data-i18n="laer.num">13 — From above</div>
-        <h2 data-i18n="laer.h2">Rebuilt from the ground up</h2>
-        <p data-i18n="laer.p1">Winter 2022 against summer 2025. Drag the slider to reveal how much changed.</p>
+        <h2 data-i18n="laer.h2">Same walls, new use</h2>
+        <p data-i18n="laer.p1">The building’s footprint never changes — the work happens inside. Debris fills the courtyard in winter 2022, a new roof is in place by 2024, and by summer 2025 there are solar panels and a courtyard garden. Since those are not yet there in summer 2024, the works finished between then and February 2025, when the survey first records the site as completed.</p>
       </div>
     </div>
 
     <div class="step" data-step="featured_csea">
       <div class="step-card">
-        <div class="step-num" data-i18n="cse.num">14 — Patience rewarded</div>
+        <div class="step-num" data-i18n="cse.num">14 — On paper</div>
         <h2 data-i18n="cse.h2">CSEA</h2>
-        <p data-i18n="cse.p1">The CSEA site spent years in procedure — stuck in permitting from the very first survey in 2020 through the end of 2022. Construction only began in 2024, and by December 2025 it too was complete.</p>
+        <p data-i18n="cse.p1">The former CSEA training centre (N059) is being replaced by a residential complex. The survey lists it as procedure in progress in every snapshot from July 2020 to December 2022, under construction from April 2024, and completed by December 2025.</p>
         <div class="trajectory" id="csea-trajectory"></div>
       </div>
     </div>
@@ -1633,8 +1650,8 @@
     <div class="step" data-step="csea_aerial">
       <div class="step-card">
         <div class="step-num" data-i18n="caer.num">15 — From above</div>
-        <h2 data-i18n="caer.h2">Finished at last</h2>
-        <p data-i18n="caer.p1">Winter 2022 against summer 2025. Drag the slider to reveal how much changed.</p>
+        <h2 data-i18n="caer.h2">Ahead of the record</h2>
+        <p data-i18n="caer.p1">The photographs tell a different story: a building is already going up here in summer 2021 and winter 2022, while the survey still lists the site as in procedure. By 2025 the building is finished and the rest of the plot is laid out with paths and planting. Record and ground do not always agree — which is why we look.</p>
       </div>
     </div>
 
@@ -1642,17 +1659,16 @@
       <div class="step-card">
         <div class="step-num" data-i18n="sal.num">16 — The endless build</div>
         <h2 data-i18n="sal.h2">Parco della Salute</h2>
-        <p data-i18n="sal.p1">The new hospital campus (N049) moved from procedure to construction by October 2021 — and has been under construction ever since: six consecutive snapshots, all reading the same status.</p>
+        <p data-i18n="sal.p1">The new hospital campus (N049) moved from procedure to construction by October 2021 — and has been under construction ever since: six consecutive snapshots, all reading the same status. The hospital works themselves are scheduled for 2026 to 2032.</p>
         <div class="trajectory" id="salute-trajectory"></div>
-        <p><a href="https://visitul.it/en/now/n049-parco-salute/" target="_blank" rel="noopener" data-i18n="sal.link">View on Torino Urban Lab →</a></p>
       </div>
     </div>
 
     <div class="step" data-step="salute_aerial">
       <div class="step-card">
         <div class="step-num" data-i18n="paer.num">17 — From above</div>
-        <h2 data-i18n="paer.h2">A campus takes shape</h2>
-        <p data-i18n="paer.p1">Winter 2022, the first excavations; summer 2025, the hospital campus well advanced. Drag the slider to compare.</p>
+        <h2 data-i18n="paer.h2">Groundwork, not yet a hospital</h2>
+        <p data-i18n="paer.p1">Cleared and excavated from 2022; by summer 2025 the site is still earthworks, and no hospital building has risen yet. Drag the slider to compare.</p>
       </div>
     </div>
 
@@ -1660,17 +1676,16 @@
       <div class="step-card">
         <div class="step-num" data-i18n="rob.num">18 — From bare ground</div>
         <h2 data-i18n="rob.h2">Robaldo</h2>
-        <p data-i18n="rob.p1">Some sites simply appear. Robaldo (N193) is absent from the survey until April 2024, when it turns up already under construction. The aerial images show an overgrown field until 2023 and an active build in 2024.</p>
+        <p data-i18n="rob.p1">Some sites simply appear. Robaldo (N193), a new training centre for Torino F.C. with four pitches, is absent from the survey until April 2024, when it turns up already under construction. The aerial images show an overgrown field until 2023 and an active build in 2024.</p>
         <div class="trajectory" id="robaldo-trajectory"></div>
-        <p><a href="https://visitul.it/en/now/n193-robaldo/" target="_blank" rel="noopener" data-i18n="rob.link">View on Torino Urban Lab →</a></p>
       </div>
     </div>
 
     <div class="step" data-step="robaldo_aerial">
       <div class="step-card">
         <div class="step-num" data-i18n="raer.num">19 — From above</div>
-        <h2 data-i18n="raer.h2">Ground broken</h2>
-        <p data-i18n="raer.p1">Winter 2022, an empty field; summer 2025, excavation and construction. Drag the slider to reveal the change.</p>
+        <h2 data-i18n="raer.h2">From field to pitches</h2>
+        <p data-i18n="raer.p1">An overgrown field until 2023, graded bare in 2024, and four new pitches laid out by summer 2025, with the club buildings still going up. Drag the slider to compare.</p>
       </div>
     </div>
 
@@ -1678,7 +1693,7 @@
       <div class="step-card">
         <div class="step-num" data-i18n="s11.num">20 — An Unresolved Saga</div>
         <h2 data-i18n="s11.h2">Monteverdi</h2>
-        <p data-i18n="s11.p1">Site N067 holds the record: four status changes across five years. It climbed from "on hold" to "procedure in progress," fell back, rose again — and ended 2025 exactly where it started: on hold.</p>
+        <p data-i18n="s11.p1">Site N067, a disused former postal sorting centre, holds the record: four status changes across five years. It climbed from "on hold" to "procedure in progress," fell back, rose again — and ended 2025 exactly where it started: on hold.</p>
         <p data-i18n="s11.p2">No other area in the survey has changed status more than three times.</p>
         <div class="trajectory" id="monteverdi-trajectory"></div>
       </div>
@@ -1687,8 +1702,8 @@
     <div class="step" data-step="monteverdi_aerial">
       <div class="step-card">
         <div class="step-num" data-i18n="maer.num">21 — From above</div>
-        <h2 data-i18n="maer.h2">Frozen mid-build</h2>
-        <p data-i18n="maer.p1">Winter 2022, an active building site; summer 2025, the same shell — still unfinished, the ground around it gone to scrub. Drag the slider on the image to compare.</p>
+        <h2 data-i18n="maer.h2">Cleared, then left</h2>
+        <p data-i18n="maer.p1">The building already stands empty among the trees in 2021. In winter 2022 the yard is cleared and materials are stacked in front of it; by 2023 they are gone, and by summer 2025 vegetation is closing in again. The building itself never changes.</p>
       </div>
     </div>
 
@@ -1696,7 +1711,7 @@
       <div class="step-card">
         <div class="step-num" data-i18n="s12.num">22 — Explore</div>
         <h2 data-i18n="s12.h2">Every site has a story</h2>
-        <p data-i18n="s12.p1">Click any area on the map to see its name, current status, and five-year history. The data comes from <em>Torino Urban Lab</em>’s survey of the city’s transformation areas.</p>
+        <p data-i18n="s12.p1">Click any area on the map to see its name, current status, what the project is, and its five-year history. The data comes from <em>Torino Urban Lab</em>’s survey of the city’s transformation areas.</p>
         <p data-i18n="s12.p2">206 sites, seven snapshots.</p>
       </div>
     </div>
@@ -1748,7 +1763,7 @@
   </div>
 </footer>
 
-<script src="config.js?v=07280757"></script>
+<script src="config.js?v=a20e54ee"></script>
 <script>
 'use strict';
 
@@ -2026,8 +2041,10 @@ function statusLabel(status) {
 function buildPipelinePills() {
   const el = document.getElementById('pipeline-pills');
   if (!el) return;
+  // Each pill sits on its own row with the status's one-line meaning beside it
+  const defs = (I18N.statusDef?.[LANG]) || (I18N.statusDef?.en) || {};
   el.innerHTML = (CONFIG.pipeline || []).map(status => `
-    <span class="pill"><span class="pill-dot" style="background:${statusColorUI(status)}"></span>${escapeHtml(statusLabel(status))}</span>
+    <span class="pill-row"><span class="pill"><span class="pill-dot" style="background:${statusColorUI(status)}"></span>${escapeHtml(statusLabel(status))}</span>${defs[status] ? `<span class="pill-def">${escapeHtml(defs[status])}</span>` : ''}</span>
   `).join('');
 }
 
