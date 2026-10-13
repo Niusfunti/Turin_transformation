@@ -85,15 +85,14 @@ const CONFIG = {
 
   // Aggregate statistics shown in the stat chips (derived from the data)
   stats: {
-    total:        206,
-    polygons:     198,
+    total:        182,
+    polygons:     174,
     points:         5,
     lines:          3,
-    onHold:        44,
-    procedure:     48,
+    onHold:        41,
+    procedure:     47,
     construction:  51,
     completed:     40,
-    removed:       20,
   },
 
   // ── Internationalisation (English ⇄ Italian) ──────────────────────────────
@@ -321,12 +320,12 @@ const CONFIG = {
       // Cover
       'cover.kicker': 'Dati urbani · Torino, Italia · 2020 – 2025',
       'cover.h1':     'Torino in<br>trasformazione',
-      'cover.lead':   '206 progetti urbani. Una città monitorata, area per area, mentre tenta di reinventarsi.',
+      'cover.lead':   '182 progetti urbani. Una città monitorata, area per area, mentre tenta di reinventarsi.',
       'cover.scroll': 'Scorri per esplorare',
 
       // Step 01 — overview
       's1.num': '01 — Il dataset',
-      's1.h2':  '206 aree, monitorate dal 2020',
+      's1.h2':  '182 aree, monitorate dal 2020',
       's1.p1':  'Dal luglio 2020 <em>Torino Urban Lab</em> documenta sistematicamente ogni grande area di trasformazione urbana pubblica di Torino — ex zone industriali, edifici storici, spazi pubblici in riconversione.',
       's1.p2':  'In sette rilevazioni nell’arco di cinque anni, a ogni area è stato assegnato uno stato. Insieme compongono il ritratto di una città in lento e disomogeneo cambiamento. Le rilevazioni distano mesi l’una dall’altra: una data in questa storia indica la prima rilevazione che registra un cambiamento, non il giorno in cui è avvenuto.',
 
@@ -338,13 +337,13 @@ const CONFIG = {
 
       // Step 03 — on hold
       's3.num': '03 — L’attesa',
-      's3.h2':  '<span class="big-num">44</span> aree in attesa',
+      's3.h2':  '<span class="big-num">41</span> aree in attesa',
       's3.p1':  'Circa un quarto delle aree con uno stato a dicembre 2025 è «in attesa».',
-      's3.p2':  '27 di queste risultano in attesa in tutte e sette le rilevazioni dal luglio 2020.',
+      's3.p2':  '25 di queste risultano in attesa in tutte e sette le rilevazioni dal luglio 2020.',
 
       // Step 04 — procedure
       's4.num': '04 — L’iter',
-      's4.h2':  '<span class="big-num">48</span> nella macchina burocratica',
+      's4.h2':  '<span class="big-num">47</span> nella macchina burocratica',
       's4.p1':  'Un numero quasi pari sta attraversando un procedimento amministrativo. Sono partite, ma nulla è ancora costruito.',
       's4.p2':  '19 di queste sono in procedimento in tutte le rilevazioni dal luglio 2020, e 7 aree ne sono uscite per poi rientrarvi.',
 
@@ -357,23 +356,23 @@ const CONFIG = {
       // Step 06 — completed
       's6.num': '06 — Il traguardo',
       's6.h2':  'Solo <span class="big-num">40</span> completate',
-      's6.p1':  'In cinque anni e 206 aree monitorate, solo 40 hanno raggiunto il completamento.',
-      's6.p2':  'Altre venti aree sono state rimosse dalle rilevazioni lungo il percorso.',
+      's6.p1':  'In cinque anni e 182 aree monitorate, solo 40 hanno raggiunto il completamento.',
+      's6.p2':  'Le aree poi rimosse dal registro del Torino Urban Lab non sono mostrate qui.',
 
       // Step 07 — July 2020
       's7.num': '07 — Luglio 2020',
       's7.h2':  'Dove tutto è iniziato',
-      's7.p1':  'Nella prima rilevazione la mappa è oro e bronzo — iter aperti, aree in attesa. Appena una macchia di arancione: su 164 aree, solo 21 avevano lavori in corso e nessuna era conclusa.',
+      's7.p1':  'Nella prima rilevazione la mappa è oro e bronzo — iter aperti, aree in attesa. Appena una macchia di arancione: su 142 aree, solo 20 avevano lavori in corso e nessuna era conclusa.',
 
       // Step 08 — July 2022
       's8.num': '08 — Dicembre 2022',
       's8.h2':  'La svolta',
-      's8.p1':  'Due anni e mezzo dopo, l’arancione è quasi raddoppiato — 38 aree in cantiere, contro 21 — e 16 aree sono ormai viola, concluse.',
+      's8.p1':  'Due anni e mezzo dopo, l’arancione è quasi raddoppiato — 36 aree in cantiere, contro 20 — e 16 aree sono ormai viola, concluse.',
 
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
       's9.h2':  'La città oggi',
-      's9.p1':  'A fine 2025 guida l’arancione — 51 aree con gru e ponteggi, e 40 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 44 aree sono ancora in attesa. 27 sono in attesa in tutte e sette le rilevazioni.',
+      's9.p1':  'A fine 2025 guida l’arancione — 51 aree con gru e ponteggi, e 40 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 41 aree sono ancora in attesa. 25 sono in attesa in tutte e sette le rilevazioni.',
 
       // Intro divider — Seen from above (before the deep-dives)
       'ia.kicker': 'Visto dall’alto',
@@ -438,7 +437,7 @@ const CONFIG = {
       's12.num': '22 — Esplora',
       's12.h2':  'Ogni area ha una storia',
       's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale, di che progetto si tratta e storia quinquennale. I dati provengono dalle rilevazioni delle aree di trasformazione di <em>Torino Urban Lab</em>.',
-      's12.p2':  '206 aree, sette rilevazioni.',
+      's12.p2':  '182 aree, sette rilevazioni.',
 
       // (Aerial evidence closing section removed — intro moved to the ia.* divider above)
 
