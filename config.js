@@ -85,13 +85,13 @@ const CONFIG = {
 
   // Aggregate statistics shown in the stat chips (derived from the data)
   stats: {
-    total:        182,
-    polygons:     174,
+    total:        181,
+    polygons:     173,
     points:         5,
     lines:          3,
     onHold:        41,
-    procedure:     47,
-    construction:  51,
+    procedure:     46,
+    construction:  52,
     completed:     40,
   },
 
@@ -320,12 +320,12 @@ const CONFIG = {
       // Cover
       'cover.kicker': 'Dati urbani · Torino, Italia · 2020 – 2025',
       'cover.h1':     'Torino in<br>trasformazione',
-      'cover.lead':   '182 progetti urbani. Una città monitorata, area per area, mentre tenta di reinventarsi.',
+      'cover.lead':   '181 progetti urbani. Una città monitorata, area per area, mentre tenta di reinventarsi.',
       'cover.scroll': 'Scorri per esplorare',
 
       // Step 01 — overview
       's1.num': '01 — Il dataset',
-      's1.h2':  '182 aree, monitorate dal 2020',
+      's1.h2':  '181 aree, monitorate dal 2020',
       's1.p1':  'Dal luglio 2020 <em>Torino Urban Lab</em> documenta sistematicamente ogni grande area di trasformazione urbana pubblica di Torino — ex zone industriali, edifici storici, spazi pubblici in riconversione.',
       's1.p2':  'In sette rilevazioni nell’arco di cinque anni, a ogni area è stato assegnato uno stato. Insieme compongono il ritratto di una città in lento e disomogeneo cambiamento. Le rilevazioni distano mesi l’una dall’altra: una data in questa storia indica la prima rilevazione che registra un cambiamento, non il giorno in cui è avvenuto.',
 
@@ -343,20 +343,20 @@ const CONFIG = {
 
       // Step 04 — procedure
       's4.num': '04 — L’iter',
-      's4.h2':  '<span class="big-num">47</span> nella macchina burocratica',
+      's4.h2':  '<span class="big-num">46</span> nella macchina burocratica',
       's4.p1':  'Un numero quasi pari sta attraversando un procedimento amministrativo. Sono partite, ma nulla è ancora costruito.',
       's4.p2':  '19 di queste sono in procedimento in tutte le rilevazioni dal luglio 2020, e 7 aree ne sono uscite per poi rientrarvi.',
 
       // Step 05 — construction
       's5.num': '05 — Il cantiere',
-      's5.h2':  '<span class="big-num">51</span> in cantiere',
+      's5.h2':  '<span class="big-num">52</span> in cantiere',
       's5.p1':  'Il gruppo più numeroso a dicembre 2025: aree dove i lavori sono fisicamente iniziati — gru, ponteggi, scavi in tutta la città.',
       's5.p2':  'È il numero di cantieri più alto fra tutte e sette le rilevazioni.',
 
       // Step 06 — completed
       's6.num': '06 — Il traguardo',
       's6.h2':  'Solo <span class="big-num">40</span> completate',
-      's6.p1':  'In cinque anni e 182 aree monitorate, solo 40 hanno raggiunto il completamento.',
+      's6.p1':  'In cinque anni e 181 aree monitorate, solo 40 hanno raggiunto il completamento.',
       's6.p2':  'Le aree poi rimosse dal registro del Torino Urban Lab non sono mostrate qui.',
 
       // Step 07 — July 2020
@@ -372,7 +372,7 @@ const CONFIG = {
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
       's9.h2':  'La città oggi',
-      's9.p1':  'A fine 2025 guida l’arancione — 51 aree con gru e ponteggi, e 40 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 41 aree sono ancora in attesa. 25 sono in attesa in tutte e sette le rilevazioni.',
+      's9.p1':  'A fine 2025 guida l’arancione — 52 aree con gru e ponteggi, e 40 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 41 aree sono ancora in attesa. 25 sono in attesa in tutte e sette le rilevazioni.',
 
       // Intro divider — Seen from above (before the deep-dives)
       'ia.kicker': 'Visto dall’alto',
@@ -437,7 +437,7 @@ const CONFIG = {
       's12.num': '22 — Esplora',
       's12.h2':  'Ogni area ha una storia',
       's12.p1':  'Clicca una qualsiasi area sulla mappa per vederne nome, stato attuale, di che progetto si tratta e storia quinquennale. I dati provengono dalle rilevazioni delle aree di trasformazione di <em>Torino Urban Lab</em>.',
-      's12.p2':  '182 aree, sette rilevazioni.',
+      's12.p2':  '181 aree, sette rilevazioni.',
 
       // (Aerial evidence closing section removed — intro moved to the ia.* divider above)
 
