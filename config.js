@@ -91,7 +91,7 @@ const CONFIG = {
     lines:          3,
     onHold:        40,
     procedure:     45,
-    construction:  52,
+    construction:  54,
     completed:     45,
   },
 
@@ -349,7 +349,7 @@ const CONFIG = {
 
       // Step 05 — construction
       's5.num': '05 — Il cantiere',
-      's5.h2':  '<span class="big-num">52</span> in cantiere',
+      's5.h2':  '<span class="big-num">54</span> in cantiere',
       's5.p1':  'Il gruppo più numeroso a dicembre 2025: aree dove i lavori sono fisicamente iniziati — gru, ponteggi, scavi in tutta la città.',
       's5.p2':  'È il numero di cantieri più alto fra tutte e sette le rilevazioni.',
 
@@ -372,7 +372,7 @@ const CONFIG = {
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
       's9.h2':  'La città oggi',
-      's9.p1':  'A fine 2025 guida l’arancione — 52 aree con gru e ponteggi, e 45 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 40 aree sono ancora in attesa. 25 sono in attesa in tutte e sette le rilevazioni.',
+      's9.p1':  'A fine 2025 guida l’arancione — 54 aree con gru e ponteggi, e 45 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 40 aree sono ancora in attesa. 25 sono in attesa in tutte e sette le rilevazioni.',
 
       // Intro divider — Seen from above (before the deep-dives)
       'ia.kicker': 'Visto dall’alto',
