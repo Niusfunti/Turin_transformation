@@ -89,10 +89,10 @@ const CONFIG = {
     polygons:     176,
     points:         5,
     lines:          3,
-    onHold:        41,
+    onHold:        40,
     procedure:     45,
     construction:  52,
-    completed:     44,
+    completed:     45,
   },
 
   // ── Internationalisation (English ⇄ Italian) ──────────────────────────────
@@ -337,7 +337,7 @@ const CONFIG = {
 
       // Step 03 — on hold
       's3.num': '03 — L’attesa',
-      's3.h2':  '<span class="big-num">41</span> aree in attesa',
+      's3.h2':  '<span class="big-num">40</span> aree in attesa',
       's3.p1':  'Circa un quarto delle aree con uno stato a dicembre 2025 è «in attesa».',
       's3.p2':  '25 di queste risultano in attesa in tutte e sette le rilevazioni dal luglio 2020.',
 
@@ -345,7 +345,7 @@ const CONFIG = {
       's4.num': '04 — L’iter',
       's4.h2':  '<span class="big-num">45</span> nella macchina burocratica',
       's4.p1':  'Un numero quasi pari sta attraversando un procedimento amministrativo. Sono partite, ma nulla è ancora costruito.',
-      's4.p2':  '19 di queste sono in procedimento in tutte le rilevazioni dal luglio 2020, e 6 aree ne sono uscite per poi rientrarvi.',
+      's4.p2':  '20 di queste sono in procedimento in tutte le rilevazioni dal luglio 2020, e 5 aree ne sono uscite per poi rientrarvi.',
 
       // Step 05 — construction
       's5.num': '05 — Il cantiere',
@@ -355,8 +355,8 @@ const CONFIG = {
 
       // Step 06 — completed
       's6.num': '06 — Il traguardo',
-      's6.h2':  'Solo <span class="big-num">44</span> completate',
-      's6.p1':  'In cinque anni e 184 aree monitorate, solo 44 hanno raggiunto il completamento.',
+      's6.h2':  'Solo <span class="big-num">45</span> completate',
+      's6.p1':  'In cinque anni e 184 aree monitorate, solo 45 hanno raggiunto il completamento.',
       's6.p2':  'Le aree poi rimosse dal registro del Torino Urban Lab non sono mostrate qui.',
 
       // Step 07 — July 2020
@@ -367,12 +367,12 @@ const CONFIG = {
       // Step 08 — July 2022
       's8.num': '08 — Dicembre 2022',
       's8.h2':  'La svolta',
-      's8.p1':  'Due anni e mezzo dopo, l’arancione è più che raddoppiato — 39 aree in cantiere, contro 19 — e 16 aree sono ormai viola, concluse.',
+      's8.p1':  'Due anni e mezzo dopo, l’arancione è più che raddoppiato — 39 aree in cantiere, contro 19 — e 15 aree sono ormai viola, concluse.',
 
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
       's9.h2':  'La città oggi',
-      's9.p1':  'A fine 2025 guida l’arancione — 52 aree con gru e ponteggi, e 44 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 41 aree sono ancora in attesa. 25 sono in attesa in tutte e sette le rilevazioni.',
+      's9.p1':  'A fine 2025 guida l’arancione — 52 aree con gru e ponteggi, e 45 ormai viola, concluse. Ma il bronzo resta ostinatamente presente: 40 aree sono ancora in attesa. 25 sono in attesa in tutte e sette le rilevazioni.',
 
       // Intro divider — Seen from above (before the deep-dives)
       'ia.kicker': 'Visto dall’alto',
@@ -383,7 +383,7 @@ const CONFIG = {
       // Step 10 — Mercato dei Fiori
       's10.num':  '10 — Una storia di successo',
       's10.h2':   'Mercato dei Fiori',
-      's10.p1':   'L’ex mercato dei fiori (N031) è una delle 44 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e a fine 2025 riaperto come centro fitness e wellness, con piscine e palestra.',
+      's10.p1':   'L’ex mercato dei fiori (N031) è una delle 45 aree ad aver completato l’intero percorso. In attesa nel 2020, iter avviato a fine 2021, cantiere aperto a dicembre 2022 — e a fine 2025 riaperto come centro fitness e wellness, con piscine e palestra.',
 
       // Step 11 — Mercato dei Fiori aerial pop-up
       'saer.num': '11 — Dall’alto',
