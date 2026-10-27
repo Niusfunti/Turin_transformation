@@ -351,7 +351,7 @@ const CONFIG = {
       's5.num': '05 — Il cantiere',
       's5.h2':  '<span class="big-num">54</span> in cantiere',
       's5.p1':  'Il gruppo più numeroso a dicembre 2025: aree dove i lavori sono fisicamente iniziati — gru, ponteggi, scavi in tutta la città.',
-      's5.p2':  'È il numero di cantieri più alto fra tutte e sette le rilevazioni.',
+      's5.p2':  'Solo una rilevazione ne contava di più: febbraio 2025, con 55.',
 
       // Step 06 — completed
       's6.num': '06 — Il traguardo',
@@ -362,12 +362,12 @@ const CONFIG = {
       // Step 07 — July 2020
       's7.num': '07 — Luglio 2020',
       's7.h2':  'Dove tutto è iniziato',
-      's7.p1':  'Nella prima rilevazione la mappa è oro e bronzo — iter aperti, aree in attesa. Appena una macchia di arancione: su 145 aree, solo 19 avevano lavori in corso e nessuna era conclusa.',
+      's7.p1':  'Nella prima rilevazione la mappa è oro e bronzo — iter aperti, aree in attesa. Appena una macchia di arancione: su 145 aree, solo 20 avevano lavori in corso e nessuna era conclusa.',
 
       // Step 08 — July 2022
       's8.num': '08 — Dicembre 2022',
       's8.h2':  'La svolta',
-      's8.p1':  'Due anni e mezzo dopo, l’arancione è più che raddoppiato — 39 aree in cantiere, contro 19 — e 15 aree sono ormai viola, concluse.',
+      's8.p1':  'Due anni e mezzo dopo, l’arancione è più che raddoppiato — 41 aree in cantiere, contro 20 — e 15 aree sono ormai viola, concluse.',
 
       // Step 09 — December 2025
       's9.num': '09 — Dicembre 2025',
@@ -412,7 +412,7 @@ const CONFIG = {
       // Step 16/17 — CSEA (N059)
       'cse.num':  '14 — Sulla carta',
       'cse.h2':   'CSEA',
-      'cse.p1':   'L’ex centro di formazione CSEA (N059) lascia il posto a un complesso residenziale. Le rilevazioni lo registrano con un procedimento in corso in ogni rilevazione da luglio 2020 a dicembre 2022, in cantiere da aprile 2024 e completato entro dicembre 2025.',
+      'cse.p1':   'L’ex centro di formazione CSEA (N059) lascia il posto a un complesso residenziale. Le rilevazioni lo registrano con un procedimento in corso a luglio 2020 e ottobre 2021, in cantiere da luglio 2022 e completato entro dicembre 2025.',
       'caer.num': '15 — Dall’alto',
       'caer.h2':  'Più avanti del dato',
       'caer.p1':  'Le fotografie raccontano un’altra storia: qui un edificio è già in costruzione nell’estate 2021 e nell’inverno 2022, mentre le rilevazioni indicano ancora un procedimento in corso. Nel 2025 l’edificio è finito e il resto del lotto è sistemato con percorsi e verde. Dato e terreno non sempre coincidono — ed è per questo che guardiamo.',
